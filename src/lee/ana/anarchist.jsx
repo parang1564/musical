@@ -95,7 +95,7 @@ const floor2Rows = {
   Q: [null, null, 20, 19, 18, 17, null, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
 };
 
-const DB_NAME = 'MusicalSchedulerDB_Anarchist_vEachCollapse';
+const DB_NAME = 'MusicalSchedulerDB_Anarchist_vFullReordered';
 const STORE_NAME = 'schedules';
 const SETTING_STORE = 'settings';
 const DB_VERSION = 1;
@@ -124,12 +124,15 @@ export default function Anarchist() {
   const [showForm, setShowForm] = useState(false);
   const [searchActor, setSearchActor] = useState('이진혁');
 
-  // 🎫 각 도장판별 추가 도장 맵 { 1: 0, 2: 0, 3: 0, ... } 및 추가판 수
+  // 🎫 각 도장판별 추가 도장 맵 및 추가판 수
   const [cardBonuses, setCardBonuses] = useState({});
   const [extraCards, setExtraCards] = useState(0);
 
-  // 📂 도장판별 개별 접힘 상태 맵 { 1: true/false, 2: true/false, ... }
+  // 📂 도장판별 개별 접힘 상태 맵 { 1: true/false, ... }
   const [cardCollapsedMap, setCardCollapsedMap] = useState({});
+
+  // 📅 월별 스케줄 개별 접힘 상태 맵 { 9: false, 10: false, ... }
+  const [monthCollapsedMap, setMonthCollapsedMap] = useState({});
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -169,8 +172,11 @@ export default function Anarchist() {
     const savedCards = await db.get(SETTING_STORE, 'extraCards');
     if (savedCards) setExtraCards(savedCards.value || 0);
 
-    const savedCollapsed = await db.get(SETTING_STORE, 'cardCollapsedMap');
-    if (savedCollapsed) setCardCollapsedMap(savedCollapsed.value || {});
+    const savedCardCollapsed = await db.get(SETTING_STORE, 'cardCollapsedMap');
+    if (savedCardCollapsed) setCardCollapsedMap(savedCardCollapsed.value || {});
+
+    const savedMonthCollapsed = await db.get(SETTING_STORE, 'monthCollapsedMap');
+    if (savedMonthCollapsed) setMonthCollapsedMap(savedMonthCollapsed.value || {});
   };
 
   useEffect(() => {
@@ -194,6 +200,15 @@ export default function Anarchist() {
     setCardCollapsedMap(updatedMap);
     const db = await initDB();
     await db.put(SETTING_STORE, { key: 'cardCollapsedMap', value: updatedMap });
+  };
+
+  const toggleMonthCollapse = async (monthNum) => {
+    const currentState = Boolean(monthCollapsedMap[monthNum]);
+    const updatedMap = { ...monthCollapsedMap, [monthNum]: !currentState };
+
+    setMonthCollapsedMap(updatedMap);
+    const db = await initDB();
+    await db.put(SETTING_STORE, { key: 'monthCollapsedMap', value: updatedMap });
   };
 
   const handleAddExtraCard = async () => {
@@ -225,7 +240,6 @@ export default function Anarchist() {
     );
   };
 
-  // 🎯 선택 회차 및 그 아래 좌석 미입력 회차들을 선택한 번호로 일괄 변경
   const handleCardTargetChange = (targetId, value) => {
     const targetCardNum = Number(value);
     
@@ -234,11 +248,9 @@ export default function Anarchist() {
       if (targetIndex === -1) return prev;
 
       return prev.map((item, idx) => {
-        // 선택한 바로 그 회차는 무조건 변경
         if (item.id === targetId) {
           return { ...item, cardTarget: targetCardNum };
         }
-        // 선택한 회차보다 뒤(아래)에 있으면서 좌석이 비어있는 회차는 일괄 변경
         if (idx > targetIndex && (!item.seat || item.seat.trim() === "")) {
           return { ...item, cardTarget: targetCardNum };
         }
@@ -295,6 +307,7 @@ export default function Anarchist() {
     await db.put(SETTING_STORE, { key: 'cardBonuses', value: cardBonuses });
     await db.put(SETTING_STORE, { key: 'extraCards', value: extraCards });
     await db.put(SETTING_STORE, { key: 'cardCollapsedMap', value: cardCollapsedMap });
+    await db.put(SETTING_STORE, { key: 'monthCollapsedMap', value: monthCollapsedMap });
     alert('모든 스케줄 및 도장판 정보가 저장되었습니다! 💾');
   };
 
@@ -307,7 +320,8 @@ export default function Anarchist() {
       schedules, 
       cardBonuses, 
       extraCards,
-      cardCollapsedMap 
+      cardCollapsedMap,
+      monthCollapsedMap
     };
     const dataStr = JSON.stringify(backupObject, null, 2);
     const blob = new Blob([dataStr], { type: 'application/json' });
@@ -349,6 +363,9 @@ export default function Anarchist() {
           if (importedData.cardCollapsedMap !== undefined) {
             await db.put(SETTING_STORE, { key: 'cardCollapsedMap', value: importedData.cardCollapsedMap });
           }
+          if (importedData.monthCollapsedMap !== undefined) {
+            await db.put(SETTING_STORE, { key: 'monthCollapsedMap', value: importedData.monthCollapsedMap });
+          }
 
           alert('성공적으로 스케줄 및 도장판 데이터를 복구했습니다! 📂');
           loadInitialData();
@@ -369,6 +386,7 @@ export default function Anarchist() {
       setCardBonuses({});
       setExtraCards(0);
       setCardCollapsedMap({});
+      setMonthCollapsedMap({});
       loadInitialData();
       alert('초기화가 완료되었습니다.');
     }
@@ -632,22 +650,23 @@ export default function Anarchist() {
         </form>
       )}
 
-      {/* 📊 관람 통계 대시보드 */}
-      <section className="w-full bg-[#FFF9E6] border-2 border-stone-900 rounded-2xl shadow-md p-4 flex justify-around text-center mb-4">
-        <div className="flex-1 border-r-2 border-stone-900/10">
-          <p className="text-xs font-black text-amber-700">이진혁 (덕형) 관람</p>
-          <p className="text-2xl font-black mt-1 text-stone-950">{leeJinHyukCount} <span className="text-xs font-bold text-stone-500">/ {totalLeeJinHyuk}회</span></p>
-        </div>
-        <div className="flex-1">
-          <p className="text-xs font-black text-red-700">총 관람합계</p>
-          <p className="text-2xl font-black mt-1 text-stone-950">{watchedShows.length} <span className="text-xs font-bold text-stone-500">/ {schedules.length}회</span></p>
-        </div>
-      </section>
+      {/* 1️⃣ [배우이름 입력] 🔍 배우 검색창 */}
+      <div className="w-full relative mb-4">
+        <input 
+          type="text" 
+          placeholder="🔍 출연 배우 이름으로 필터링 (예: 이진혁, 정재환, 김도빈, 김재한)" 
+          value={searchActor}
+          onChange={(e) => setSearchActor(e.target.value)}
+          className="w-full p-3.5 text-xs border-2 border-stone-900 rounded-2xl bg-[#FFFDF5] shadow-md focus:outline-none focus:ring-2 focus:ring-amber-500 font-bold placeholder:text-stone-400"
+        />
+        {searchActor && (
+          <button onClick={() => setSearchActor('')} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-black text-stone-600 hover:text-stone-950 bg-stone-200 rounded-full w-5 h-5 flex items-center justify-center pb-0.5">×</button>
+        )}
+      </div>
 
-      {/* 🎫 [도장판별 개별 접기/펼치기 & 즉시 자동 저장] 재관람 혜택 카드 */}
+      {/* 2️⃣ [도장판별 적립] 🎫 재관람 혜택 카드 */}
       <section className="w-full bg-[#FFF9E6] border-2 border-stone-900 rounded-2xl p-4 shadow-md mb-5">
         
-        {/* 상단 컨트롤러 */}
         <div className="flex items-center justify-between gap-2.5 mb-3 border-b-2 border-stone-900/10 pb-3">
           <div>
             <h2 className="font-black text-xs md:text-sm text-stone-950 flex items-center gap-1.5">
@@ -666,15 +685,12 @@ export default function Anarchist() {
           </button>
         </div>
 
-        {/* 📋 각 도장판 렌더링 (판별 개별 아코디언) */}
         <div className="flex flex-col gap-3.5">
           {cardBoardStats.map((board) => (
             <div key={`stamp-card-${board.cardNumber}`} className="bg-[#FFFDF5] border-2 border-stone-900/70 rounded-xl p-3 shadow-sm transition-all">
               
-              {/* 도장판 상단 타이틀 & 진행 스탬프 & 개별 추가도장 & 개별 접기/펼치기 버튼 */}
               <div className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 ${board.isCollapsed ? '' : 'mb-2.5 pb-2 border-b border-stone-200'}`}>
                 
-                {/* 타이틀 영역 (클릭 시 해당 판 토글) */}
                 <div 
                   onClick={() => toggleSingleCardCollapse(board.cardNumber)}
                   className="flex items-center gap-2 flex-wrap cursor-pointer select-none group"
@@ -696,7 +712,6 @@ export default function Anarchist() {
                 </div>
 
                 <div className="flex items-center gap-2 self-end sm:self-auto">
-                  {/* 각 판별 독립 추가도장 증감 버튼 */}
                   <div className="flex items-center bg-white border border-stone-900/40 rounded-lg px-1.5 py-0.5 gap-1 text-xs">
                     <span className="text-[9.5px] font-bold text-stone-500">추가</span>
                     <button onClick={() => handleCardBonusChange(board.cardNumber, -1)} className="w-4 h-4 bg-stone-200 hover:bg-stone-300 text-stone-900 rounded font-black flex items-center justify-center text-[10px]">-</button>
@@ -715,10 +730,8 @@ export default function Anarchist() {
                 </div>
               </div>
 
-              {/* 📂 도장판 본문 (해당 도장판이 펼쳐져 있을 때만 렌더링) */}
               {!board.isCollapsed && (
                 <div className="animate-in fade-in duration-150">
-                  {/* 🏷️ 이 판에 매핑된 관람 회차 일람 뱃지 */}
                   <div className="flex items-center gap-1.5 flex-wrap mb-3 text-[10px]">
                     <span className="font-black text-stone-500">배정된 회차:</span>
                     {board.shows.length === 0 ? (
@@ -738,10 +751,8 @@ export default function Anarchist() {
                     )}
                   </div>
 
-                  {/* 3회 / 6회 / 9회 혜택 카드 그리드 */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs">
                     
-                    {/* 3회 관람 */}
                     <div className={`p-2.5 rounded-lg border-2 flex items-center justify-between transition-all ${
                       board.stamps >= 3 
                         ? 'bg-[#FFF2C9] border-amber-500 shadow-sm' 
@@ -759,7 +770,6 @@ export default function Anarchist() {
                       </div>
                     </div>
 
-                    {/* 6회 관람 */}
                     <div className={`p-2.5 rounded-lg border-2 flex items-center justify-between transition-all ${
                       board.stamps >= 6 
                         ? 'bg-[#FFF2C9] border-amber-500 shadow-sm' 
@@ -777,7 +787,6 @@ export default function Anarchist() {
                       </div>
                     </div>
 
-                    {/* 9회 관람 */}
                     <div className={`p-2.5 rounded-lg border-2 flex items-center justify-between transition-all ${
                       board.stamps >= 9 
                         ? 'bg-[#FFF2C9] border-amber-500 shadow-sm' 
@@ -803,21 +812,124 @@ export default function Anarchist() {
         </div>
       </section>
 
-      {/* 🔍 배우 검색창 */}
-      <div className="w-full relative mb-4">
-        <input 
-          type="text" 
-          placeholder="🔍 출연 배우 이름으로 필터링 (예: 이진혁, 정재환, 김도빈, 김재한)" 
-          value={searchActor}
-          onChange={(e) => setSearchActor(e.target.value)}
-          className="w-full p-3.5 text-xs border-2 border-stone-900 rounded-2xl bg-[#FFFDF5] shadow-md focus:outline-none focus:ring-2 focus:ring-amber-500 font-bold placeholder:text-stone-400"
-        />
-        {searchActor && (
-          <button onClick={() => setSearchActor('')} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-black text-stone-600 hover:text-stone-950 bg-stone-200 rounded-full w-5 h-5 flex items-center justify-center pb-0.5">×</button>
-        )}
-      </div>
+      {/* 3️⃣ [월별 스케줄] 📅 월별 스케줄 리스트 */}
+      <main className="w-full flex flex-col gap-5 text-sm mb-8">
+        {[9, 10].map(m => {
+          const monthSchedules = filteredSchedules.filter(item => item.month === m);
+          if (monthSchedules.length === 0) return null;
+          const isMonthCollapsed = Boolean(monthCollapsedMap[m]);
 
-      {/* 👥 [검색 연동] 페어별 회차 현황 카드 */}
+          return (
+            <div key={m} className="bg-[#FFFDF5] border-2 border-stone-900 rounded-2xl overflow-hidden shadow-md transition-all">
+              
+              <div 
+                onClick={() => toggleMonthCollapse(m)}
+                className="p-3 bg-stone-900 text-[#F3B329] font-black text-center text-xs tracking-widest uppercase flex items-center justify-center gap-2 cursor-pointer select-none hover:bg-stone-800 transition-colors"
+                title={`${m}월 스케줄 접기/펼치기`}
+              >
+                <span>✦</span> 
+                {m}월 회차 스케줄 ({monthSchedules.length}회) 
+                <span className="text-[10px] text-amber-200/90 font-bold ml-1">
+                  {isMonthCollapsed ? '▶ 펼치기' : '▼ 접기'}
+                </span>
+                <span>✦</span>
+              </div>
+
+              {!isMonthCollapsed && (
+                <div className="w-full select-none animate-in fade-in duration-150">
+                  <div className="divide-y divide-stone-900/10">
+                    {monthSchedules.map((item) => {
+                      const eventInfo = getEventForDate(item.date);
+                      const isWatched = item.seat && item.seat.trim() !== "";
+
+                      return (
+                        <div key={item.id} className="p-2.5 flex items-center justify-between gap-2 hover:bg-[#FFF5D6] transition-colors">
+                          
+                          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                            <div className="flex flex-col items-start flex-shrink-0">
+                              <span className="font-black text-stone-900 text-xs tabular-nums">{item.date}</span>
+                              <span className="text-[9px] text-stone-600 bg-stone-200/80 px-1 rounded mt-0.5 tabular-nums font-bold">{item.time}</span>
+                            </div>
+
+                            <div className="flex flex-col gap-0.5 min-w-0">
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <span className="text-stone-800 text-[11px] sm:text-xs font-bold truncate" title={`자경: ${item.actor1}`}>{item.actor1}</span>
+                                <span className="text-stone-800 text-[11px] sm:text-xs font-bold truncate" title={`무혁: ${item.actor2}`}>{item.actor2}</span>
+                                <span className={`text-[11px] sm:text-xs font-black ${item.mainActor === '이진혁' ? 'text-red-700' : 'text-stone-900'}`} title={`덕형: ${item.mainActor}`}>
+                                  {item.mainActor}
+                                </span>
+                              </div>
+
+                              {eventInfo && (
+                                <div>
+                                  <a
+                                    href={eventInfo.link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={`inline-block px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] border transition-all hover:opacity-85 leading-tight ${eventInfo.color}`}
+                                    title={`${eventInfo.name} (클릭 시 공지 이동)`}
+                                  >
+                                    🎁 {eventInfo.name}
+                                  </a>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
+                            <input 
+                              type="text" 
+                              placeholder="좌석" 
+                              value={item.seat || ""} 
+                              onChange={(e) => handleSeatChange(item.id, e.target.value)} 
+                              className="w-11 sm:w-14 p-1 text-[11px] border-2 border-stone-800 text-stone-900 bg-white rounded-lg text-center font-black uppercase placeholder:font-normal placeholder:text-[9px] h-7 focus:outline-none focus:border-amber-500" 
+                            />
+
+                            <select
+                              value={item.cardTarget || 1}
+                              onChange={(e) => handleCardTargetChange(item.id, e.target.value)}
+                              disabled={!isWatched}
+                              className={`p-1 text-[10px] border-2 rounded-lg font-black h-7 focus:outline-none ${
+                                isWatched 
+                                  ? 'border-amber-500 bg-[#FFF2C9] text-stone-950 cursor-pointer' 
+                                  : 'border-stone-200 bg-stone-100 text-stone-400 opacity-60'
+                              }`}
+                              title={isWatched ? '적립할 도장판 번호를 선택하세요' : '좌석 입력 시 도장판에 자동 매핑됩니다'}
+                            >
+                              {Array.from({ length: Math.max(3, totalCardBoards) }).map((_, i) => (
+                                <option key={`card-opt-${i+1}`} value={i+1}>{i+1}번</option>
+                              ))}
+                            </select>
+
+                            <button onClick={() => handleOpenCopyModal(item)} className="px-1.5 sm:px-2 py-1 text-[10px] anarchist-btn-copy rounded-lg h-7 flex items-center justify-center">양도</button>
+                            <button onClick={() => handleEditStart(item)} className="px-1.5 sm:px-2 py-1 text-[10px] bg-stone-700 hover:bg-stone-800 text-white rounded-lg font-bold h-7 flex items-center justify-center">수정</button>
+                            <button onClick={() => handleScheduleDelete(item.id)} className="px-1.5 sm:px-2 py-1 text-[10px] bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold h-7 flex items-center justify-center">삭제</button>
+                          </div>
+
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </main>
+
+      {/* 4️⃣ [총 관람 합계] 📊 관람 통계 대시보드 */}
+      <section className="w-full bg-[#FFF9E6] border-2 border-stone-900 rounded-2xl shadow-md p-4 flex justify-around text-center mb-5">
+        <div className="flex-1 border-r-2 border-stone-900/10">
+          <p className="text-xs font-black text-amber-700">이진혁 (덕형) 관람</p>
+          <p className="text-2xl font-black mt-1 text-stone-950">{leeJinHyukCount} <span className="text-xs font-bold text-stone-500">/ {totalLeeJinHyuk}회</span></p>
+        </div>
+        <div className="flex-1">
+          <p className="text-xs font-black text-red-700">총 관람합계</p>
+          <p className="text-2xl font-black mt-1 text-stone-950">{watchedShows.length} <span className="text-xs font-bold text-stone-500">/ {schedules.length}회</span></p>
+        </div>
+      </section>
+
+      {/* 5️⃣ [페어 현황] 👥 페어별 회차 현황 카드 */}
       <section className="w-full bg-[#FFF9E6] border-2 border-stone-900 rounded-2xl p-4 shadow-md mb-5">
         <div className="flex items-center justify-between mb-3 border-b-2 border-stone-900/10 pb-2">
           <h2 className="font-black text-xs md:text-sm text-stone-950 flex items-center gap-1.5">
@@ -859,104 +971,7 @@ export default function Anarchist() {
         )}
       </section>
 
-      {/* 📅 월별 스케줄 리스트 */}
-      <main className="w-full flex flex-col gap-5 text-sm mb-8">
-        {[9, 10].map(m => {
-          const monthSchedules = filteredSchedules.filter(item => item.month === m);
-          if (monthSchedules.length === 0) return null;
-          
-          return (
-            <div key={m} className="bg-[#FFFDF5] border-2 border-stone-900 rounded-2xl overflow-hidden shadow-md">
-              <div className="p-3 bg-stone-900 text-[#F3B329] font-black text-center text-xs tracking-widest uppercase flex items-center justify-center gap-2">
-                <span>✦</span> {m}월 회차 스케줄 ({monthSchedules.length}회) <span>✦</span>
-              </div>
-              <div className="w-full select-none">
-                <div className="divide-y divide-stone-900/10">
-                  {monthSchedules.map((item) => {
-                    const eventInfo = getEventForDate(item.date);
-                    const isWatched = item.seat && item.seat.trim() !== "";
-
-                    return (
-                      <div key={item.id} className="p-2.5 flex items-center justify-between gap-2 hover:bg-[#FFF5D6] transition-colors">
-                        
-                        {/* 👈 좌측 정보 (일자/시간 + 배우) */}
-                        <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-                          <div className="flex flex-col items-start flex-shrink-0">
-                            <span className="font-black text-stone-900 text-xs tabular-nums">{item.date}</span>
-                            <span className="text-[9px] text-stone-600 bg-stone-200/80 px-1 rounded mt-0.5 tabular-nums font-bold">{item.time}</span>
-                          </div>
-
-                          <div className="flex flex-col gap-0.5 min-w-0">
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className="text-stone-800 text-[11px] sm:text-xs font-bold truncate" title={`자경: ${item.actor1}`}>{item.actor1}</span>
-                              <span className="text-stone-800 text-[11px] sm:text-xs font-bold truncate" title={`무혁: ${item.actor2}`}>{item.actor2}</span>
-                              <span className={`text-[11px] sm:text-xs font-black ${item.mainActor === '이진혁' ? 'text-red-700' : 'text-stone-900'}`} title={`덕형: ${item.mainActor}`}>
-                                {item.mainActor}
-                              </span>
-                            </div>
-
-                            {eventInfo && (
-                              <div>
-                                <a
-                                  href={eventInfo.link}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className={`inline-block px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] border transition-all hover:opacity-85 leading-tight ${eventInfo.color}`}
-                                  title={`${eventInfo.name} (클릭 시 공지 이동)`}
-                                >
-                                  🎁 {eventInfo.name}
-                                </a>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* 👉 우측 조작 (좌석 + 도장판 번호 선택 + 버튼) */}
-                        <div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
-                          
-                          {/* 좌석 입력란 */}
-                          <input 
-                            type="text" 
-                            placeholder="좌석" 
-                            value={item.seat || ""} 
-                            onChange={(e) => handleSeatChange(item.id, e.target.value)} 
-                            className="w-11 sm:w-14 p-1 text-[11px] border-2 border-stone-800 text-stone-900 bg-white rounded-lg text-center font-black uppercase placeholder:font-normal placeholder:text-[9px] h-7 focus:outline-none focus:border-amber-500" 
-                          />
-
-                          {/* 🎫 도장판 배정 선택기 */}
-                          <select
-                            value={item.cardTarget || 1}
-                            onChange={(e) => handleCardTargetChange(item.id, e.target.value)}
-                            disabled={!isWatched}
-                            className={`p-1 text-[10px] border-2 rounded-lg font-black h-7 focus:outline-none ${
-                              isWatched 
-                                ? 'border-amber-500 bg-[#FFF2C9] text-stone-950 cursor-pointer' 
-                                : 'border-stone-200 bg-stone-100 text-stone-400 opacity-60'
-                            }`}
-                            title={isWatched ? '적립할 도장판 번호를 선택하세요' : '좌석 입력 시 도장판에 자동 매핑됩니다'}
-                          >
-                            {Array.from({ length: Math.max(3, totalCardBoards) }).map((_, i) => (
-                              <option key={`card-opt-${i+1}`} value={i+1}>{i+1}번</option>
-                            ))}
-                          </select>
-
-                          {/* 버튼들 */}
-                          <button onClick={() => handleOpenCopyModal(item)} className="px-1.5 sm:px-2 py-1 text-[10px] anarchist-btn-copy rounded-lg h-7 flex items-center justify-center">양도</button>
-                          <button onClick={() => handleEditStart(item)} className="px-1.5 sm:px-2 py-1 text-[10px] bg-stone-700 hover:bg-stone-800 text-white rounded-lg font-bold h-7 flex items-center justify-center">수정</button>
-                          <button onClick={() => handleScheduleDelete(item.id)} className="px-1.5 sm:px-2 py-1 text-[10px] bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold h-7 flex items-center justify-center">삭제</button>
-                        </div>
-
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </main>
-
-      {/* 🪑 실시간 좌석 배치도 */}
+      {/* 6️⃣ [좌석 배치도] 🪑 실시간 좌석 배치도 */}
       <section className="w-full bg-[#1C1A17] text-stone-100 rounded-3xl p-4 md:p-6 flex flex-col items-center shadow-xl mb-6 border-2 border-stone-900">
         
         <div className="w-full flex justify-between items-center mb-3">
