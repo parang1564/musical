@@ -1,7 +1,8 @@
 import { Routes, Route, Link, Navigate } from 'react-router-dom';
 import Gloomy from './lee/glo/gloomy.jsx';       // 사의찬미
-import Anarchist from './lee/ana/anarchist.jsx'; // 👈 새로 만든 아나키스트 파일 경로 확인
-import Western from './park/western.jsx';    // 웨스턴스토리
+import Anarchist from './lee/ana/anarchist.jsx'; // 아나키스트
+import Western from './park/western/western.jsx';    // 웨스턴스토리
+import Othello from "./park/oi/othelloIago.jsx"; // 오셀로와이아고
 
 export default function App() {
   return (
@@ -11,10 +12,11 @@ export default function App() {
 
       {/* 🚀 이진혁 배우 작품들 */}
       <Route path="/lee/glo" element={<Gloomy />} />
-      <Route path="/lee/ana" element={<Anarchist />} /> {/* 👈 http://localhost:5173/musical/lee/ana 매핑 */}
+      <Route path="/lee/ana" element={<Anarchist />} /> 
       
       {/* 🚀 박규원 배우 작품 */}
-      <Route path="/park" element={<Western />} />
+      <Route path="/park/western" element={<Western />} />
+      <Route path="/park/oi" element={<Othello />} />
 
       {/* ⚠️ 그 외 경로는 메인으로 리다이렉트 */}
       <Route path="*" element={<Navigate to="/" replace />} />
