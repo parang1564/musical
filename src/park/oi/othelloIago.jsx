@@ -92,7 +92,7 @@ export default function OthelloIago() {
     transferSeat: '', 
     discountType: '재관람할인 25%',
     price: calcDiscountPrice('재관람할인 25%'),
-    notice: '증빙 필요, 찾아드릴 수 있습니다',
+    notice: '',
     twitterTag: '@YeonMyuticket'
   });
 
@@ -250,7 +250,7 @@ export default function OthelloIago() {
       transferSeat: item.seat || '',
       discountType: defaultDiscount,
       price: calcDiscountPrice(defaultDiscount),
-      notice: '증빙 필요, 찾아드릴 수 있습니다'
+      notice: ''
     }));
     setIsModalOpen(true);
   };
