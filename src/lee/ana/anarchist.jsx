@@ -548,7 +548,7 @@ export default function Anarchist() {
         )}
       </section>
 
-      {/* 📅 월별 스케줄 리스트 (일정한 간격으로 전체 밀착 정렬) */}
+      {/* 📅 월별 스케줄 리스트 (좌측 정보 + 우측 버튼/좌석 우측 정렬 반응형) */}
       <main className="w-full flex flex-col gap-5 text-sm mb-8">
         {[9, 10].map(m => {
           const monthSchedules = filteredSchedules.filter(item => item.month === m);
@@ -559,61 +559,66 @@ export default function Anarchist() {
               <div className="p-3 bg-stone-900 text-[#F3B329] font-black text-center text-xs tracking-widest uppercase flex items-center justify-center gap-2">
                 <span>✦</span> {m}월 회차 스케줄 ({monthSchedules.length}회) <span>✦</span>
               </div>
-              <div className="w-full overflow-x-auto select-none">
-                <div className="divide-y divide-stone-900/10 min-w-[430px]">
+              <div className="w-full select-none">
+                <div className="divide-y divide-stone-900/10">
                   {monthSchedules.map((item) => {
                     const eventInfo = getEventForDate(item.date);
 
                     return (
-                      <div key={item.id} className="p-2 flex items-center justify-start gap-2.5 hover:bg-[#FFF5D6] transition-colors">
+                      <div key={item.id} className="p-2.5 flex items-center justify-between gap-2 hover:bg-[#FFF5D6] transition-colors">
                         
-                        {/* 1. 일자 / 시간 */}
-                        <div className="flex flex-col items-start w-[50px] flex-shrink-0 pl-1">
-                          <span className="font-black text-stone-900 text-xs tabular-nums">{item.date}</span>
-                          <span className="text-[9px] text-stone-600 bg-stone-200/80 px-1 rounded mt-0.5 tabular-nums font-bold">{item.time}</span>
-                        </div>
-
-                        {/* 2. 이름 & 이벤트 배지 */}
-                        <div className="flex flex-col gap-0.5 w-[145px] flex-shrink-0">
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-stone-800 text-[11px] font-bold" title={`자경: ${item.actor1}`}>{item.actor1}</span>
-                            <span className="text-stone-800 text-[11px] font-bold" title={`무혁: ${item.actor2}`}>{item.actor2}</span>
-                            <span className={`text-[12px] font-black ${item.mainActor === '이진혁' ? 'text-red-700' : 'text-stone-900'}`} title={`덕형: ${item.mainActor}`}>
-                              {item.mainActor}
-                            </span>
+                        {/* 👈 [좌측 그룹]: 일자/시간 + 출연진 + 이벤트 배지 */}
+                        <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                          
+                          {/* 일자 / 시간 */}
+                          <div className="flex flex-col items-start flex-shrink-0">
+                            <span className="font-black text-stone-900 text-xs tabular-nums">{item.date}</span>
+                            <span className="text-[9px] text-stone-600 bg-stone-200/80 px-1 rounded mt-0.5 tabular-nums font-bold">{item.time}</span>
                           </div>
 
-                          {eventInfo && (
-                            <div className="w-full">
-                              <a
-                                href={eventInfo.link}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className={`inline-block px-1.5 py-0.5 rounded text-[8.5px] border transition-all hover:opacity-85 leading-tight ${eventInfo.color}`}
-                                title={`${eventInfo.name} (클릭 시 공지 이동)`}
-                              >
-                                🎁 {eventInfo.name}
-                              </a>
+                          {/* 출연진 이름 & 이벤트 배지 */}
+                          <div className="flex flex-col gap-0.5 min-w-0">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className="text-stone-800 text-[11px] sm:text-xs font-bold truncate" title={`자경: ${item.actor1}`}>{item.actor1}</span>
+                              <span className="text-stone-800 text-[11px] sm:text-xs font-bold truncate" title={`무혁: ${item.actor2}`}>{item.actor2}</span>
+                              <span className={`text-[11px] sm:text-xs font-black ${item.mainActor === '이진혁' ? 'text-red-700' : 'text-stone-900'}`} title={`덕형: ${item.mainActor}`}>
+                                {item.mainActor}
+                              </span>
                             </div>
-                          )}
+
+                            {eventInfo && (
+                              <div>
+                                <a
+                                  href={eventInfo.link}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className={`inline-block px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] border transition-all hover:opacity-85 leading-tight ${eventInfo.color}`}
+                                  title={`${eventInfo.name} (클릭 시 공지 이동)`}
+                                >
+                                  🎁 {eventInfo.name}
+                                </a>
+                              </div>
+                            )}
+                          </div>
+
                         </div>
 
-                        {/* 3. 좌석 입력란 */}
-                        <div className="w-[50px] flex-shrink-0">
+                        {/* 👉 [우측 그룹]: 좌석 입력란 + 양도/수정/삭제 버튼 */}
+                        <div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
+                          
+                          {/* 좌석 입력란 */}
                           <input 
                             type="text" 
                             placeholder="좌석" 
                             value={item.seat || ""} 
                             onChange={(e) => handleSeatChange(item.id, e.target.value)} 
-                            className="w-full p-1 text-[11px] border-2 border-stone-800 text-stone-900 bg-white rounded-lg text-center font-black uppercase placeholder:font-normal placeholder:text-[9px] h-7 focus:outline-none focus:border-amber-500" 
+                            className="w-11 sm:w-14 p-1 text-[11px] border-2 border-stone-800 text-stone-900 bg-white rounded-lg text-center font-black uppercase placeholder:font-normal placeholder:text-[9px] h-7 focus:outline-none focus:border-amber-500" 
                           />
-                        </div>
 
-                        {/* 4. 버튼들 */}
-                        <div className="flex gap-1 flex-shrink-0">
-                          <button onClick={() => handleOpenCopyModal(item)} className="px-2 py-1 text-[10px] anarchist-btn-copy rounded-lg h-7 flex items-center justify-center">양도</button>
-                          <button onClick={() => handleEditStart(item)} className="px-2 py-1 text-[10px] bg-stone-700 hover:bg-stone-800 text-white rounded-lg font-bold h-7 flex items-center justify-center">수정</button>
-                          <button onClick={() => handleScheduleDelete(item.id)} className="px-2 py-1 text-[10px] bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold h-7 flex items-center justify-center">삭제</button>
+                          {/* 조작 버튼들 */}
+                          <button onClick={() => handleOpenCopyModal(item)} className="px-1.5 sm:px-2 py-1 text-[10px] anarchist-btn-copy rounded-lg h-7 flex items-center justify-center">양도</button>
+                          <button onClick={() => handleEditStart(item)} className="px-1.5 sm:px-2 py-1 text-[10px] bg-stone-700 hover:bg-stone-800 text-white rounded-lg font-bold h-7 flex items-center justify-center">수정</button>
+                          <button onClick={() => handleScheduleDelete(item.id)} className="px-1.5 sm:px-2 py-1 text-[10px] bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold h-7 flex items-center justify-center">삭제</button>
                         </div>
 
                       </div>
