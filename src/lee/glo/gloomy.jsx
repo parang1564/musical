@@ -391,7 +391,7 @@ export default function Gloomy() {
       {/* 🚢 헤더 및 제어 버튼 */}
       <header className="w-full flex flex-col gap-2 mb-5">
         <div className="flex justify-between items-center">
-          <h1 className="text-xl font-bold text-emerald-800">🚢 사의찬미 정산 & 관리</h1>
+          <h1 className="text-xl font-bold text-emerald-800">🚢 사의찬미 정산1 & 관리</h1>
           <button onClick={() => { setShowForm(!showForm); setEditingId(null); }} className="px-3 py-1 bg-teal-600 text-white rounded text-xs font-bold">
             {showForm ? '닫기' : '➕ 스케줄 추가'}
           </button>
