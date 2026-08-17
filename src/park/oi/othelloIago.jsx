@@ -6,19 +6,20 @@ const FIRST_TICKET_LINK = "https://x.com/newpro_OI/status/2085603813692711207?s=
 const REVISIT_BENEFIT_LINK = "https://x.com/newpro_OI/status/2084874609149784274?s=20";
 const SEAT_CHART_LINK = "https://x.com/newpro_OI/status/2084874555882082479?s=20";
 
-// 🎟️ 티켓 원가 및 할인 계산 데이터 (원가 77,000원 + 예매 수수료 2,000원)
-const TICKET_ORIGIN_PRICE = 77000;
+// 🎟️ 티켓 원가 및 할인 계산 데이터 (원가 66,000원 + 예매 수수료 2,000원)
+const TICKET_ORIGIN_PRICE = 66000;
 const TICKET_FEE = 2000;
 
 const DISCOUNT_OPTIONS = {
-  "재관람할인 30%": { rate: 0.3, label: "재관람할인 30%" },
+  "재관람할인 25%": { rate: 0.25, label: "재관람할인 25%" },
+  "마티네할인 30%": { rate: 0.3, label: "마티네할인 30%" },
   "프리뷰할인 50%": { rate: 0.5, label: "프리뷰할인 50%" },
-  "40% 할인권": { rate: 0.4, label: "40% 할인권" },
+  "40% 할인권": { rate: 0.4, label: "40% 할인권" }
 };
 
 // 할인 계산 헬퍼 함수
 const calcDiscountPrice = (discountKey) => {
-  const option = DISCOUNT_OPTIONS[discountKey] || DISCOUNT_OPTIONS["재관람할인 30%"];
+  const option = DISCOUNT_OPTIONS[discountKey] || DISCOUNT_OPTIONS["재관람할인 25%"];
   const discounted = TICKET_ORIGIN_PRICE * (1 - option.rate) + TICKET_FEE;
   return `${discounted.toLocaleString()}원`;
 };
@@ -89,8 +90,8 @@ export default function OthelloIago() {
   const [modalInputs, setModalInputs] = useState({
     musicalName: '뮤지컬 오셀로와 이아고', 
     transferSeat: '', 
-    discountType: '재관람할인 30%',
-    price: calcDiscountPrice('재관람할인 30%'),
+    discountType: '재관람할인 25%',
+    price: calcDiscountPrice('재관람할인 25%'),
     notice: '증빙 필요, 찾아드릴 수 있습니다',
     twitterTag: '@YeonMyuticket'
   });
@@ -242,7 +243,7 @@ export default function OthelloIago() {
 
   const handleOpenCopyModal = (item) => {
     setSelectedItem(item);
-    const defaultDiscount = "재관람할인 30%";
+    const defaultDiscount = "재관람할인 25%";
 
     setModalInputs(prev => ({
       ...prev,
@@ -378,7 +379,7 @@ export default function OthelloIago() {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-24 bg-[#7A0C17]/25 blur-3xl pointer-events-none" />
 
         <div className="flex items-center gap-3.5 z-10">
-          {/* 🎙️🎀 붉은 리본이 묶인 스탠드 마이크 엠블럼 (정적 고정) */}
+          {/* 🎙️🎀 붉은 리본이 묶인 스탠드 마이크 엠블럼 */}
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#21060B] to-[#0A0203] flex items-center justify-center relative shadow-inner border border-[#8C1F2B] flex-shrink-0">
             <span className="text-2xl leading-none select-none">🎙️</span>
             <span className="absolute -bottom-1 -right-1 text-sm select-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">🎀</span>
@@ -679,7 +680,8 @@ export default function OthelloIago() {
                     onChange={handleDiscountChange} 
                     className="p-2 border border-[#4A141A] rounded-xl bg-[#080203] text-center font-bold text-stone-200 text-xs focus:outline-none focus:border-[#D4AF37] cursor-pointer"
                   >
-                    <option value="재관람할인 30%">재관람할인 30%</option>
+                    <option value="재관람할인 25%">재관람할인 25%</option>
+                    <option value="마티네할인 30%">마티네할인 30%</option>
                     <option value="프리뷰할인 50%">프리뷰할인 50%</option>
                     <option value="40% 할인권">40% 할인권</option>
                   </select>
