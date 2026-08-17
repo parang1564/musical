@@ -77,12 +77,12 @@ export default function OthelloIago() {
   const fileInputRef = useRef(null);
   
   const [mainTargetActor, setMainTargetActor] = useState('박규원');
+
   const [formData, setFormData] = useState({
     month: 9, date: '', day: '', time: '20:00', actor1: '박규원', actor2: '', seat: ''
   });
   const [editingId, setEditingId] = useState(null);
   const [showForm, setShowForm] = useState(false);
-  const [searchActor, setSearchActor] = useState('');
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -154,7 +154,7 @@ export default function OthelloIago() {
       alert('새로운 스케줄이 추가되었습니다! 📅');
     }
 
-    setFormData({ month: 9, date: '', day: '', time: '20:00', actor1: mainTargetActor, actor2: '', seat: '' });
+    setFormData({ month: 9, date: '', day: '', time: '20:00', actor1: mainTargetActor || '박규원', actor2: '', seat: '' });
     setShowForm(false);
     loadInitialData();
   };
@@ -290,11 +290,12 @@ export default function OthelloIago() {
 
   const watchedShows = schedules.filter(item => item.seat && item.seat.trim() !== "");
   const targetActorTrimmed = mainTargetActor.trim();
+  
   const targetActorShows = schedules.filter(item => 
-    targetActorTrimmed && (item.actor1.includes(targetActorTrimmed) || item.actor2.includes(targetActorTrimmed))
+    targetActorTrimmed ? (item.actor1.includes(targetActorTrimmed) || item.actor2.includes(targetActorTrimmed)) : true
   );
   const targetActorWatched = watchedShows.filter(item => 
-    targetActorTrimmed && (item.actor1.includes(targetActorTrimmed) || item.actor2.includes(targetActorTrimmed))
+    targetActorTrimmed ? (item.actor1.includes(targetActorTrimmed) || item.actor2.includes(targetActorTrimmed)) : true
   ).length;
 
   const pairStats = useMemo(() => {
@@ -317,24 +318,21 @@ export default function OthelloIago() {
     });
 
     const allPairs = Object.values(map);
-    const query = searchActor.trim();
-    if (!query) {
+    if (!targetActorTrimmed) {
       return allPairs.sort((a, b) => b.total - a.total);
     }
 
     return allPairs
-      .filter(p => (p.actor1 && p.actor1.includes(query)) || (p.actor2 && p.actor2.includes(query)))
+      .filter(p => p.actor1.includes(targetActorTrimmed) || p.actor2.includes(targetActorTrimmed))
       .sort((a, b) => b.total - a.total);
-  }, [schedules, searchActor]);
+  }, [schedules, targetActorTrimmed]);
 
-  const filteredSchedules = schedules.filter(item => {
-    if (!searchActor.trim()) return true;
-    const query = searchActor.trim();
-    return (
-      (item.actor1 && item.actor1.includes(query)) ||
-      (item.actor2 && item.actor2.includes(query))
+  const filteredSchedules = useMemo(() => {
+    if (!targetActorTrimmed) return schedules;
+    return schedules.filter(item => 
+      item.actor1.includes(targetActorTrimmed) || item.actor2.includes(targetActorTrimmed)
     );
-  });
+  }, [schedules, targetActorTrimmed]);
 
   const renderRowBlock = (rowConfigMap) => {
     return Object.keys(rowConfigMap).map(row => (
@@ -377,12 +375,13 @@ export default function OthelloIago() {
       
       {/* 🎭 포스터 스타일 상단 헤더 */}
       <header className="w-full flex flex-col md:flex-row justify-between items-center gap-4 mb-6 bg-gradient-to-b from-[#260509] to-[#160305] p-5 md:p-6 rounded-2xl shadow-2xl border border-[#5C141D] relative overflow-hidden">
-        {/* 상단 앰비언트 레드 글로우 효과 */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-24 bg-[#7A0C17]/25 blur-3xl pointer-events-none" />
 
         <div className="flex items-center gap-3.5 z-10">
-          <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#1C0508] to-[#0D0204] flex items-center justify-center text-xl shadow-inner border border-[#8C1F2B] text-[#D4AF37]">
-            🗡️
+          {/* 🎙️🎀 붉은 리본이 묶인 스탠드 마이크 엠블럼 (정적 고정) */}
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#21060B] to-[#0A0203] flex items-center justify-center relative shadow-inner border border-[#8C1F2B] flex-shrink-0">
+            <span className="text-2xl leading-none select-none">🎙️</span>
+            <span className="absolute -bottom-1 -right-1 text-sm select-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">🎀</span>
           </div>
           <div>
             <span className="text-[10px] tracking-[0.25em] font-serif font-bold text-[#A8202E] uppercase block mb-0.5">
@@ -446,8 +445,8 @@ export default function OthelloIago() {
             <input type="text" name="time" placeholder="시간 (예: 20:00)" value={formData.time} onChange={handleInputChange} className="p-2.5 border border-[#4A141A] rounded-xl bg-[#0D0406] font-bold text-stone-200 placeholder:text-stone-600 focus:outline-none focus:border-[#D4AF37]" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 text-xs">
-            <input type="text" name="actor1" placeholder="오셀로" value={formData.actor1} onChange={handleInputChange} className="p-2.5 border border-[#7A1C26] bg-[#24080D] rounded-xl font-black text-[#F5D77F] focus:outline-none focus:border-[#D4AF37]" />
-            <input type="text" name="actor2" placeholder="이아고" value={formData.actor2} onChange={handleInputChange} className="p-2.5 border border-[#4A141A] rounded-xl bg-[#0D0406] font-bold text-stone-200 placeholder:text-stone-600 focus:outline-none focus:border-[#D4AF37]" />
+            <input type="text" name="actor1" placeholder="오셀로" value={formData.actor1} onChange={handleInputChange} className="p-2 border border-[#7A1C26] bg-[#24080D] rounded-xl font-black text-[#F5D77F] focus:outline-none focus:border-[#D4AF37]" />
+            <input type="text" name="actor2" placeholder="이아고" value={formData.actor2} onChange={handleInputChange} className="p-2 border border-[#4A141A] rounded-xl bg-[#0D0406] font-bold text-stone-200 placeholder:text-stone-600 focus:outline-none focus:border-[#D4AF37]" />
           </div>
           <div className="flex flex-col gap-1 text-xs">
             <label className="font-bold text-[#E56A77] text-[11px]">📍 정산 및 관람 기록용 좌석 (배치도 자동 반영)</label>
@@ -461,33 +460,42 @@ export default function OthelloIago() {
         </form>
       )}
 
-      {/* 🌟 주배우 설정 & 관람 통계 대시보드 */}
-      <section className="w-full bg-gradient-to-b from-[#1C0508] to-[#120305] border border-[#52131B] rounded-2xl shadow-xl p-4 mb-4 flex flex-col gap-3">
-        {/* 기준 주배우 입력창 */}
-        <div className="flex items-center justify-between gap-2 bg-[#0D0204] p-2.5 rounded-xl border border-[#3D0D14] text-xs">
+      {/* 🌟 기준 배우 설정 & 관람 통계 대시보드 */}
+      <section className="w-full bg-gradient-to-b from-[#1C0508] to-[#120305] border border-[#52131B] rounded-2xl shadow-xl p-4 mb-5 flex flex-col gap-3">
+        <div className="flex items-center justify-between gap-2.5 bg-[#0D0204] p-3 rounded-xl border border-[#3D0D14] text-xs">
           <label className="font-bold text-[#D4AF37] flex items-center gap-1.5 flex-shrink-0 font-serif">
-            <span>⚔️</span> 기준 주배우:
+            <span>⚔️</span> 기준 배우:
           </label>
-          <input 
-            type="text" 
-            value={mainTargetActor}
-            onChange={(e) => setMainTargetActor(e.target.value)}
-            placeholder="이름 입력 (예: 박규원, 변희상, 양지원)" 
-            className="p-1.5 px-3 border border-[#7A1C26] bg-[#21060B] rounded-lg font-black text-[#F5D77F] text-xs flex-1 max-w-[200px] focus:outline-none focus:border-[#D4AF37]"
-          />
-          <span className="text-[10px] text-stone-500 hidden sm:inline font-medium">대시보드와 리스트에 실시간 반영</span>
+          <div className="relative flex-1 max-w-[220px]">
+            <input 
+              type="text" 
+              value={mainTargetActor}
+              onChange={(e) => setMainTargetActor(e.target.value)}
+              placeholder="배우 이름 입력 (비우면 전체보기)" 
+              className="w-full p-2 px-3 pr-7 border border-[#7A1C26] bg-[#21060B] rounded-lg font-black text-[#F5D77F] text-xs focus:outline-none focus:border-[#D4AF37]"
+            />
+            {mainTargetActor && (
+              <button 
+                onClick={() => setMainTargetActor('')} 
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-stone-500 hover:text-stone-300 font-bold text-xs"
+                title="입력 지우기 (전체보기)"
+              >
+                ×
+              </button>
+            )}
+          </div>
+          <span className="text-[10px] text-stone-500 hidden sm:inline font-medium">해당 배우의 페어 & 스케줄만 필터링됩니다</span>
         </div>
 
-        {/* 통계 수치 */}
         <div className="flex justify-around text-center pt-1">
           <div className="flex-1 border-r border-[#3D0D14]">
-            <p className="text-xs font-bold text-[#E56A77]">{mainTargetActor || '주배우'} 관람</p>
+            <p className="text-xs font-bold text-[#E56A77]">{mainTargetActor ? `${mainTargetActor} 관람` : '선택 배우 관람'}</p>
             <p className="text-2xl font-serif font-black mt-1 text-[#F5EAD4]">
               {targetActorWatched} <span className="text-xs font-sans font-normal text-stone-500">/ {targetActorShows.length}회</span>
             </p>
           </div>
           <div className="flex-1">
-            <p className="text-xs font-bold text-[#D4AF37]">총 관람합계</p>
+            <p className="text-xs font-bold text-[#D4AF37]">전체 관람합계</p>
             <p className="text-2xl font-serif font-black mt-1 text-[#F5EAD4]">
               {watchedShows.length} <span className="text-xs font-sans font-normal text-stone-500">/ {schedules.length}회</span>
             </p>
@@ -495,25 +503,11 @@ export default function OthelloIago() {
         </div>
       </section>
 
-      {/* 🔍 배우 검색창 */}
-      <div className="w-full relative mb-4">
-        <input 
-          type="text" 
-          placeholder="🔍 특정 배우로 필터링 (예: 박규원, 변희상, 김지온, 양지원 등)" 
-          value={searchActor}
-          onChange={(e) => setSearchActor(e.target.value)}
-          className="w-full p-3.5 text-xs border border-[#4A141A] rounded-2xl bg-[#140407] text-[#E8DCC4] shadow-md focus:outline-none focus:border-[#D4AF37] font-bold placeholder:text-stone-600"
-        />
-        {searchActor && (
-          <button onClick={() => setSearchActor('')} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-black text-stone-400 hover:text-white bg-[#260509] rounded-full w-5 h-5 flex items-center justify-center pb-0.5 border border-[#5C141D]">×</button>
-        )}
-      </div>
-
-      {/* 👥 페어별 회차 현황 카드 */}
+      {/* 👥 [기준 배우 연동] 페어별 회차 현황 카드 */}
       <section className="w-full bg-[#140407] border border-[#4A141A] rounded-2xl p-4 shadow-xl mb-5">
         <div className="flex items-center justify-between mb-3 border-b border-[#2E0A10] pb-2">
           <h2 className="font-serif font-bold text-xs md:text-sm text-[#F5EAD4] flex items-center gap-1.5">
-            <span>👥</span> {searchActor ? `'${searchActor}' 포함 캐스팅 현황` : '전체 페어별 현황'}
+            <span>👥</span> {mainTargetActor ? `'${mainTargetActor}' 출연 페어 현황` : '전체 페어별 현황'}
             <span className="text-stone-500 text-[11px] font-normal">({pairStats.length}개 조합)</span>
           </h2>
           <span className="text-[10px] text-[#A8202E] font-serif font-bold uppercase tracking-wider">OTHELLO · IAGO</span>
@@ -521,41 +515,33 @@ export default function OthelloIago() {
 
         {pairStats.length === 0 ? (
           <div className="p-4 text-center text-xs text-stone-500 bg-[#0D0204] rounded-xl border border-[#2E0A10]">
-            검색어와 일치하는 페어가 없습니다.
+            '{mainTargetActor}' 배우가 포함된 페어가 없습니다.
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
-            {pairStats.map((pair) => {
-              const isTargetPair = targetActorTrimmed && (pair.actor1.includes(targetActorTrimmed) || pair.actor2.includes(targetActorTrimmed));
-
-              return (
-                <div 
-                  key={pair.key} 
-                  className={`p-2.5 rounded-xl border flex items-center justify-between text-xs transition-all ${
-                    isTargetPair
-                      ? 'bg-gradient-to-r from-[#2B080E] to-[#1F0509] border-[#8C1F2B] shadow-sm' 
-                      : 'bg-[#0D0204] border-[#2E0A10] hover:border-[#4A141A]'
-                  }`}
-                >
-                  <div className="flex flex-col text-left">
-                    <span className={`font-bold ${isTargetPair ? 'text-[#F5D77F] font-black' : 'text-stone-300'}`}>
-                      {pair.key}
-                    </span>
-                  </div>
-                  <div className="text-right pl-2">
-                    <span className={`font-serif font-black text-sm tabular-nums ${pair.watched > 0 ? 'text-[#E56A77]' : 'text-[#D4AF37]'}`}>
-                      {pair.watched}
-                    </span>
-                    <span className="text-[11px] font-sans font-normal text-stone-500 tabular-nums"> / {pair.total}회</span>
-                  </div>
+            {pairStats.map((pair) => (
+              <div 
+                key={pair.key} 
+                className="p-2.5 rounded-xl border flex items-center justify-between text-xs transition-all bg-gradient-to-r from-[#2B080E] to-[#1F0509] border-[#8C1F2B] shadow-sm"
+              >
+                <div className="flex flex-col text-left">
+                  <span className="font-bold text-[#F5D77F] font-black">
+                    {pair.key}
+                  </span>
                 </div>
-              );
-            })}
+                <div className="text-right pl-2">
+                  <span className={`font-serif font-black text-sm tabular-nums ${pair.watched > 0 ? 'text-[#E56A77]' : 'text-[#D4AF37]'}`}>
+                    {pair.watched}
+                  </span>
+                  <span className="text-[11px] font-sans font-normal text-stone-500 tabular-nums"> / {pair.total}회</span>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </section>
 
-      {/* 📅 월별 스케줄 리스트 */}
+      {/* 📅 [기준 배우 연동] 월별 스케줄 리스트 */}
       <main className="w-full flex flex-col gap-5 text-sm mb-8">
         {[9, 10, 11, 12].map(m => {
           const monthSchedules = filteredSchedules.filter(item => item.month === m);
@@ -564,7 +550,7 @@ export default function OthelloIago() {
           return (
             <div key={m} className="bg-[#140407] border border-[#4A141A] rounded-2xl overflow-hidden shadow-2xl">
               <div className="p-3 bg-gradient-to-r from-[#2B080E] via-[#4A0D15] to-[#2B080E] text-[#D4AF37] font-serif font-bold text-center text-xs tracking-widest uppercase flex items-center justify-center gap-2 border-b border-[#5C141D]">
-                <span>✦</span> {m}월 회차 스케줄 ({monthSchedules.length}회) <span>✦</span>
+                <span>✦</span> {m}월 회차 스케줄 {mainTargetActor && `('${mainTargetActor}' 출연)`} ({monthSchedules.length}회) <span>✦</span>
               </div>
               <div className="w-full select-none">
                 <div className="divide-y divide-[#260509]">
@@ -622,7 +608,7 @@ export default function OthelloIago() {
         })}
       </main>
 
-      {/* 🪑 실시간 좌석 배치도 (포스터풍 다크 크림슨 프레임) */}
+      {/* 🪑 실시간 좌석 배치도 */}
       <section className="w-full bg-[#120305] text-[#E8DCC4] rounded-3xl p-4 md:p-6 flex flex-col items-center shadow-2xl mb-6 border border-[#52131B]">
         <div className="w-full flex justify-between items-center mb-3">
           <div className="py-1 bg-gradient-to-r from-[#D4AF37] to-[#AA8520] px-4 text-[#140406] rounded-md font-serif font-black tracking-[0.2em] text-[11px] shadow-md">S T A G E</div>
