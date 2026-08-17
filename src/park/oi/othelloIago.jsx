@@ -399,7 +399,7 @@ export default function OthelloIago() {
               MUSICAL OTHELLO & IAGO
             </span>
             <h1 className="text-xl md:text-2xl font-serif font-black text-[#F5EAD4] tracking-tight drop-shadow-[0_2px_10px_rgba(180,24,37,0.4)]">
-              오셀로와 이아고 정산소
+              오셀로와 이아고
             </h1>
           </div>
         </div>
@@ -411,7 +411,7 @@ export default function OthelloIago() {
             rel="noopener noreferrer"
             className="px-3.5 py-2 bg-gradient-to-r from-[#6E0E18] to-[#45050C] hover:from-[#87121F] hover:to-[#570710] text-[#F5EAD4] rounded-xl text-xs font-bold shadow-lg border border-[#961D2B] transition-all active:scale-95 flex items-center gap-1"
           >
-            <span>🎟️</span> 1차 티켓
+            <span>🎟️</span> 1차
           </a>
           <a
             href={REVISIT_BENEFIT_LINK}

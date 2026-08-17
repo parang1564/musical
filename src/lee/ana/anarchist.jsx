@@ -6,6 +6,7 @@ import './anarchist.css';
 const FIRST_TICKET_LINK = "https://x.com/mbz_anarchist/status/2085597396302692384?s=20";
 const REVISIT_BENEFIT_LINK = "https://x.com/mbz_anarchist/status/2085597121311633728?s=20";
 const EVENT_NOTICE_LINK = "https://x.com/mbz_anarchist/status/2087736240338776409/photo/1";
+const SEAT_MAP_NOTICE_LINK = "https://x.com/mbz_anarchist/status/2085596842814013917?s=20";
 
 // 🎟️ 티켓 원가 및 할인 계산 데이터 (원가 77,000원 + 예매 수수료 2,000원)
 const TICKET_ORIGIN_PRICE = 77000;
@@ -27,47 +28,47 @@ const calcDiscountPrice = (discountKey) => {
 // 🎁 일자별 이벤트 매핑 함수
 const getEventForDate = (dateStr) => {
   if (dateStr >= "09.15" && dateStr <= "09.20") {
-    return { name: "프리뷰", color: "bg-amber-200 text-amber-950 border-amber-400 font-bold", link: EVENT_NOTICE_LINK };
+    return { name: "프리뷰", color: "bg-amber-200 text-amber-950 border-amber-400 font-bold", link: EVENT_NOTICE_LINK, isTriple: false };
   }
   if (dateStr >= "09.22" && dateStr <= "09.27") {
-    return { name: "커튼콜 & 트리플 적립", color: "bg-stone-800 text-amber-300 border-stone-900 font-bold", link: EVENT_NOTICE_LINK };
+    return { name: "커튼콜 & 트리플 적립", color: "bg-stone-800 text-amber-300 border-stone-900 font-bold", link: EVENT_NOTICE_LINK, isTriple: true };
   }
   if ((dateStr >= "09.29" && dateStr <= "09.30") || (dateStr >= "10.01" && dateStr <= "10.05")) {
-    return { name: "스페셜 커튼콜 & 쿠폰팩 증정", color: "bg-red-700 text-white border-red-800 font-bold", link: EVENT_NOTICE_LINK };
+    return { name: "스페셜 커튼콜 & 쿠폰팩 증정", color: "bg-red-700 text-white border-red-800 font-bold", link: EVENT_NOTICE_LINK, isTriple: false };
   }
   return null;
 };
 
 // 📅 9월 ~ 10월 캐스팅 스케줄 기본 데이터
 const defaultInitialData = [
-  { id: 1, month: 9, date: "09.15", day: "화", time: "20:00", actor1: "정재환", actor2: "진호", mainActor: "김도빈", seat: "" },
-  { id: 2, month: 9, date: "09.16", day: "수", time: "20:00", actor1: "박좌헌", actor2: "박준형", mainActor: "이진혁", seat: "" },
-  { id: 3, month: 9, date: "09.17", day: "목", time: "20:00", actor1: "정우연", actor2: "홍나현", mainActor: "이지현", seat: "" },
-  { id: 4, month: 9, date: "09.18", day: "금", time: "20:00", actor1: "정재환", actor2: "박주혁", mainActor: "김도빈", seat: "" },
-  { id: 5, month: 9, date: "09.19", day: "토", time: "15:00", actor1: "정우연", actor2: "홍나현", mainActor: "이지현", seat: "" },
-  { id: 6, month: 9, date: "09.19", day: "토", time: "19:00", actor1: "박좌헌", actor2: "박주혁", mainActor: "이진혁", seat: "" },
-  { id: 7, month: 9, date: "09.20", day: "일", time: "14:00", actor1: "정재환", actor2: "진호", mainActor: "김도빈", seat: "" },
-  { id: 8, month: 9, date: "09.20", day: "일", time: "18:00", actor1: "김재한", actor2: "박준형", mainActor: "이진혁", seat: "" },
-  { id: 9, month: 9, date: "09.22", day: "화", time: "20:00", actor1: "박좌헌", actor2: "박주혁", mainActor: "이진혁", seat: "" },
-  { id: 10, month: 9, date: "09.23", day: "수", time: "16:00", actor1: "정우연", actor2: "홍나현", mainActor: "이지현", seat: "" },
-  { id: 11, month: 9, date: "09.23", day: "수", time: "20:00", actor1: "정우연", actor2: "홍나현", mainActor: "이지현", seat: "" },
-  { id: 12, month: 9, date: "09.24", day: "목", time: "14:00", actor1: "정재환", actor2: "진호", mainActor: "김도빈", seat: "" },
-  { id: 13, month: 9, date: "09.24", day: "목", time: "18:00", actor1: "김재한", actor2: "박준형", mainActor: "이진혁", seat: "" },
-  { id: 14, month: 9, date: "09.26", day: "토", time: "14:00", actor1: "정재환", actor2: "박주혁", mainActor: "김도빈", seat: "" },
-  { id: 15, month: 9, date: "09.26", day: "토", time: "18:00", actor1: "박좌헌", actor2: "박준형", mainActor: "김도빈", seat: "" },
-  { id: 16, month: 9, date: "09.27", day: "일", time: "14:00", actor1: "정재환", actor2: "박준형", mainActor: "이진혁", seat: "" },
-  { id: 17, month: 9, date: "09.27", day: "일", time: "18:00", actor1: "김재한", actor2: "진호", mainActor: "이진혁", seat: "" },
-  { id: 18, month: 9, date: "09.29", day: "화", time: "20:00", actor1: "정재환", actor2: "진호", mainActor: "김도빈", seat: "" },
-  { id: 19, month: 9, date: "09.30", day: "수", time: "16:00", actor1: "정우연", actor2: "홍나현", mainActor: "이지현", seat: "" },
-  { id: 20, month: 9, date: "09.30", day: "수", time: "20:00", actor1: "정재환", actor2: "박준형", mainActor: "이진혁", seat: "" },
-  { id: 21, month: 10, date: "10.01", day: "목", time: "20:00", actor1: "박좌헌", actor2: "박주혁", mainActor: "최호승", seat: "" },
-  { id: 22, month: 10, date: "10.02", day: "금", time: "20:00", actor1: "정우연", actor2: "홍나현", mainActor: "이지현", seat: "" },
-  { id: 23, month: 10, date: "10.03", day: "토", time: "15:00", actor1: "정재환", actor2: "박준형", mainActor: "최호승", seat: "" },
-  { id: 24, month: 10, date: "10.03", day: "토", time: "19:00", actor1: "박좌헌", actor2: "박주혁", mainActor: "최호승", seat: "" },
-  { id: 25, month: 10, date: "10.04", day: "일", time: "14:00", actor1: "정우연", actor2: "홍나현", mainActor: "이지현", seat: "" },
-  { id: 26, month: 10, date: "10.04", day: "일", time: "18:00", actor1: "김재한", actor2: "박준형", mainActor: "이진혁", seat: "" },
-  { id: 27, month: 10, date: "10.05", day: "월", time: "14:00", actor1: "박좌헌", actor2: "진호", mainActor: "김도빈", seat: "" },
-  { id: 28, month: 10, date: "10.05", day: "월", time: "18:00", actor1: "정재환", actor2: "박주혁", mainActor: "김도빈", seat: "" }
+  { id: 1, month: 9, date: "09.15", day: "화", time: "20:00", actor1: "정재환", actor2: "진호", mainActor: "김도빈", seat: "", cardTarget: 1 },
+  { id: 2, month: 9, date: "09.16", day: "수", time: "20:00", actor1: "박좌헌", actor2: "박준형", mainActor: "이진혁", seat: "", cardTarget: 1 },
+  { id: 3, month: 9, date: "09.17", day: "목", time: "20:00", actor1: "정우연", actor2: "홍나현", mainActor: "이지현", seat: "", cardTarget: 1 },
+  { id: 4, month: 9, date: "09.18", day: "금", time: "20:00", actor1: "정재환", actor2: "박주혁", mainActor: "김도빈", seat: "", cardTarget: 1 },
+  { id: 5, month: 9, date: "09.19", day: "토", time: "15:00", actor1: "정우연", actor2: "홍나현", mainActor: "이지현", seat: "", cardTarget: 1 },
+  { id: 6, month: 9, date: "09.19", day: "토", time: "19:00", actor1: "박좌헌", actor2: "박주혁", mainActor: "이진혁", seat: "", cardTarget: 1 },
+  { id: 7, month: 9, date: "09.20", day: "일", time: "14:00", actor1: "정재환", actor2: "진호", mainActor: "김도빈", seat: "", cardTarget: 1 },
+  { id: 8, month: 9, date: "09.20", day: "일", time: "18:00", actor1: "김재한", actor2: "박준형", mainActor: "이진혁", seat: "", cardTarget: 1 },
+  { id: 9, month: 9, date: "09.22", day: "화", time: "20:00", actor1: "박좌헌", actor2: "박주혁", mainActor: "이진혁", seat: "", cardTarget: 1 },
+  { id: 10, month: 9, date: "09.23", day: "수", time: "16:00", actor1: "정우연", actor2: "홍나현", mainActor: "이지현", seat: "", cardTarget: 1 },
+  { id: 11, month: 9, date: "09.23", day: "수", time: "20:00", actor1: "정우연", actor2: "홍나현", mainActor: "이지현", seat: "", cardTarget: 1 },
+  { id: 12, month: 9, date: "09.24", day: "목", time: "14:00", actor1: "정재환", actor2: "진호", mainActor: "김도빈", seat: "", cardTarget: 1 },
+  { id: 13, month: 9, date: "09.24", day: "목", time: "18:00", actor1: "김재한", actor2: "박준형", mainActor: "이진혁", seat: "", cardTarget: 1 },
+  { id: 14, month: 9, date: "09.26", day: "토", time: "14:00", actor1: "정재환", actor2: "박주혁", mainActor: "김도빈", seat: "", cardTarget: 1 },
+  { id: 15, month: 9, date: "09.26", day: "토", time: "18:00", actor1: "박좌헌", actor2: "박준형", mainActor: "김도빈", seat: "", cardTarget: 1 },
+  { id: 16, month: 9, date: "09.27", day: "일", time: "14:00", actor1: "정재환", actor2: "박준형", mainActor: "이진혁", seat: "", cardTarget: 1 },
+  { id: 17, month: 9, date: "09.27", day: "일", time: "18:00", actor1: "김재한", actor2: "진호", mainActor: "이진혁", seat: "", cardTarget: 1 },
+  { id: 18, month: 9, date: "09.29", day: "화", time: "20:00", actor1: "정재환", actor2: "진호", mainActor: "김도빈", seat: "", cardTarget: 1 },
+  { id: 19, month: 9, date: "09.30", day: "수", time: "16:00", actor1: "정우연", actor2: "홍나현", mainActor: "이지현", seat: "", cardTarget: 1 },
+  { id: 20, month: 9, date: "09.30", day: "수", time: "20:00", actor1: "정재환", actor2: "박준형", mainActor: "이진혁", seat: "", cardTarget: 1 },
+  { id: 21, month: 10, date: "10.01", day: "목", time: "20:00", actor1: "박좌헌", actor2: "박주혁", mainActor: "최호승", seat: "", cardTarget: 1 },
+  { id: 22, month: 10, date: "10.02", day: "금", time: "20:00", actor1: "정우연", actor2: "홍나현", mainActor: "이지현", seat: "", cardTarget: 1 },
+  { id: 23, month: 10, date: "10.03", day: "토", time: "15:00", actor1: "정재환", actor2: "박준형", mainActor: "최호승", seat: "", cardTarget: 1 },
+  { id: 24, month: 10, date: "10.03", day: "토", time: "19:00", actor1: "박좌헌", actor2: "박주혁", mainActor: "최호승", seat: "", cardTarget: 1 },
+  { id: 25, month: 10, date: "10.04", day: "일", time: "14:00", actor1: "정우연", actor2: "홍나현", mainActor: "이지현", seat: "", cardTarget: 1 },
+  { id: 26, month: 10, date: "10.04", day: "일", time: "18:00", actor1: "김재한", actor2: "박준형", mainActor: "이진혁", seat: "", cardTarget: 1 },
+  { id: 27, month: 10, date: "10.05", day: "월", time: "14:00", actor1: "박좌헌", actor2: "진호", mainActor: "김도빈", seat: "", cardTarget: 1 },
+  { id: 28, month: 10, date: "10.05", day: "월", time: "18:00", actor1: "정재환", actor2: "박주혁", mainActor: "김도빈", seat: "", cardTarget: 1 }
 ];
 
 // 🪑 좌석 배치도 (B2F 1층 / B1F 2층)
@@ -94,8 +95,9 @@ const floor2Rows = {
   Q: [null, null, 20, 19, 18, 17, null, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
 };
 
-const DB_NAME = 'MusicalSchedulerDB_Anarchist_vSafe';
+const DB_NAME = 'MusicalSchedulerDB_Anarchist_vEachCollapse';
 const STORE_NAME = 'schedules';
+const SETTING_STORE = 'settings';
 const DB_VERSION = 1;
 
 const initDB = async () => {
@@ -103,6 +105,9 @@ const initDB = async () => {
     upgrade(db) {
       if (!db.objectStoreNames.contains(STORE_NAME)) {
         db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains(SETTING_STORE)) {
+        db.createObjectStore(SETTING_STORE, { keyPath: 'key' });
       }
     },
   });
@@ -113,11 +118,18 @@ export default function Anarchist() {
   const fileInputRef = useRef(null);
   
   const [formData, setFormData] = useState({
-    month: 9, date: '', day: '', time: '20:00', actor1: '', actor2: '', mainActor: '이진혁', seat: ''
+    month: 9, date: '', day: '', time: '20:00', actor1: '', actor2: '', mainActor: '이진혁', seat: '', cardTarget: 1
   });
   const [editingId, setEditingId] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [searchActor, setSearchActor] = useState('이진혁');
+
+  // 🎫 각 도장판별 추가 도장 맵 { 1: 0, 2: 0, 3: 0, ... } 및 추가판 수
+  const [cardBonuses, setCardBonuses] = useState({});
+  const [extraCards, setExtraCards] = useState(0);
+
+  // 📂 도장판별 개별 접힘 상태 맵 { 1: true/false, 2: true/false, ... }
+  const [cardCollapsedMap, setCardCollapsedMap] = useState({});
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -150,17 +162,60 @@ export default function Anarchist() {
     } else {
       setSchedules(savedData.sort((a, b) => a.id - b.id));
     }
+
+    const savedBonuses = await db.get(SETTING_STORE, 'cardBonuses');
+    if (savedBonuses) setCardBonuses(savedBonuses.value || {});
+
+    const savedCards = await db.get(SETTING_STORE, 'extraCards');
+    if (savedCards) setExtraCards(savedCards.value || 0);
+
+    const savedCollapsed = await db.get(SETTING_STORE, 'cardCollapsedMap');
+    if (savedCollapsed) setCardCollapsedMap(savedCollapsed.value || {});
   };
 
   useEffect(() => {
     loadInitialData();
   }, []);
 
+  const handleCardBonusChange = async (cardNum, changeAmount) => {
+    const currentVal = cardBonuses[cardNum] || 0;
+    const nextVal = Math.max(0, currentVal + changeAmount);
+    const updatedBonuses = { ...cardBonuses, [cardNum]: nextVal };
+    
+    setCardBonuses(updatedBonuses);
+    const db = await initDB();
+    await db.put(SETTING_STORE, { key: 'cardBonuses', value: updatedBonuses });
+  };
+
+  const toggleSingleCardCollapse = async (cardNum) => {
+    const currentState = Boolean(cardCollapsedMap[cardNum]);
+    const updatedMap = { ...cardCollapsedMap, [cardNum]: !currentState };
+    
+    setCardCollapsedMap(updatedMap);
+    const db = await initDB();
+    await db.put(SETTING_STORE, { key: 'cardCollapsedMap', value: updatedMap });
+  };
+
+  const handleAddExtraCard = async () => {
+    const nextVal = extraCards + 1;
+    setExtraCards(nextVal);
+    const db = await initDB();
+    await db.put(SETTING_STORE, { key: 'extraCards', value: nextVal });
+  };
+
+  const handleRemoveExtraCard = async () => {
+    if (extraCards <= 0) return;
+    const nextVal = extraCards - 1;
+    setExtraCards(nextVal);
+    const db = await initDB();
+    await db.put(SETTING_STORE, { key: 'extraCards', value: nextVal });
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'month' ? Number(value) : (name === 'seat' ? formatSeatInput(value) : value)
+      [name]: name === 'month' || name === 'cardTarget' ? Number(value) : (name === 'seat' ? formatSeatInput(value) : value)
     }));
   };
 
@@ -168,6 +223,28 @@ export default function Anarchist() {
     setSchedules(prev =>
       prev.map(item => item.id === id ? { ...item, seat: formatSeatInput(value) } : item)
     );
+  };
+
+  // 🎯 선택 회차 및 그 아래 좌석 미입력 회차들을 선택한 번호로 일괄 변경
+  const handleCardTargetChange = (targetId, value) => {
+    const targetCardNum = Number(value);
+    
+    setSchedules(prev => {
+      const targetIndex = prev.findIndex(item => item.id === targetId);
+      if (targetIndex === -1) return prev;
+
+      return prev.map((item, idx) => {
+        // 선택한 바로 그 회차는 무조건 변경
+        if (item.id === targetId) {
+          return { ...item, cardTarget: targetCardNum };
+        }
+        // 선택한 회차보다 뒤(아래)에 있으면서 좌석이 비어있는 회차는 일괄 변경
+        if (idx > targetIndex && (!item.seat || item.seat.trim() === "")) {
+          return { ...item, cardTarget: targetCardNum };
+        }
+        return item;
+      });
+    });
   };
 
   const handleFormSubmit = async (e) => {
@@ -189,14 +266,14 @@ export default function Anarchist() {
       alert('새로운 스케줄이 추가되었습니다! 📅');
     }
 
-    setFormData({ month: 9, date: '', day: '', time: '20:00', actor1: '', actor2: '', mainActor: '이진혁', seat: '' });
+    setFormData({ month: 9, date: '', day: '', time: '20:00', actor1: '', actor2: '', mainActor: '이진혁', seat: '', cardTarget: 1 });
     setShowForm(false);
     loadInitialData();
   };
 
   const handleEditStart = (item) => {
     setEditingId(item.id);
-    setFormData({ ...item });
+    setFormData({ ...item, cardTarget: item.cardTarget || 1 });
     setShowForm(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -215,7 +292,10 @@ export default function Anarchist() {
     for (const item of schedules) {
       await db.put(STORE_NAME, item);
     }
-    alert('모든 변경사항이 저장되었습니다! 💾');
+    await db.put(SETTING_STORE, { key: 'cardBonuses', value: cardBonuses });
+    await db.put(SETTING_STORE, { key: 'extraCards', value: extraCards });
+    await db.put(SETTING_STORE, { key: 'cardCollapsedMap', value: cardCollapsedMap });
+    alert('모든 스케줄 및 도장판 정보가 저장되었습니다! 💾');
   };
 
   const handleExportFile = () => {
@@ -223,7 +303,13 @@ export default function Anarchist() {
       alert('백업할 데이터가 없습니다.');
       return;
     }
-    const dataStr = JSON.stringify(schedules, null, 2);
+    const backupObject = { 
+      schedules, 
+      cardBonuses, 
+      extraCards,
+      cardCollapsedMap 
+    };
+    const dataStr = JSON.stringify(backupObject, null, 2);
     const blob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     
@@ -244,15 +330,27 @@ export default function Anarchist() {
     reader.onload = async (event) => {
       try {
         const importedData = JSON.parse(event.target.result);
-        if (!Array.isArray(importedData)) throw new Error('올바른 형식이 아닙니다.');
+        const scheduleList = Array.isArray(importedData) ? importedData : importedData.schedules;
+        if (!Array.isArray(scheduleList)) throw new Error('올바른 형식이 아닙니다.');
 
         if (window.confirm('파일을 불러오면 현재 기록이 덮어써집니다. 진행하시겠습니까?')) {
           const db = await initDB();
           await db.clear(STORE_NAME);
-          for (const item of importedData) {
-            await db.put(STORE_NAME, { ...item, seat: formatSeatInput(item.seat) });
+          for (const item of scheduleList) {
+            await db.put(STORE_NAME, { ...item, seat: formatSeatInput(item.seat), cardTarget: item.cardTarget || 1 });
           }
-          alert('성공적으로 데이터를 복구했습니다! 📂');
+
+          if (importedData.cardBonuses !== undefined) {
+            await db.put(SETTING_STORE, { key: 'cardBonuses', value: importedData.cardBonuses });
+          }
+          if (importedData.extraCards !== undefined) {
+            await db.put(SETTING_STORE, { key: 'extraCards', value: importedData.extraCards });
+          }
+          if (importedData.cardCollapsedMap !== undefined) {
+            await db.put(SETTING_STORE, { key: 'cardCollapsedMap', value: importedData.cardCollapsedMap });
+          }
+
+          alert('성공적으로 스케줄 및 도장판 데이터를 복구했습니다! 📂');
           loadInitialData();
         }
       } catch (error) {
@@ -264,9 +362,13 @@ export default function Anarchist() {
   };
 
   const handleReset = async () => {
-    if (window.confirm('정말 최초 기본 스케줄 상태로 되돌리시겠습니까?')) {
+    if (window.confirm('정말 최초 기본 상태로 되돌리시겠습니까?')) {
       const db = await initDB();
       await db.clear(STORE_NAME);
+      await db.clear(SETTING_STORE);
+      setCardBonuses({});
+      setExtraCards(0);
+      setCardCollapsedMap({});
       loadInitialData();
       alert('초기화가 완료되었습니다.');
     }
@@ -327,6 +429,38 @@ export default function Anarchist() {
   const watchedShows = schedules.filter(item => item.seat && item.seat.trim() !== "");
   const leeJinHyukCount = watchedShows.filter(item => item.mainActor === "이진혁").length;
   const totalLeeJinHyuk = schedules.filter(item => item.mainActor === "이진혁").length;
+
+  const maxTargetedCard = useMemo(() => {
+    return watchedShows.reduce((max, cur) => Math.max(max, cur.cardTarget || 1), 1);
+  }, [watchedShows]);
+
+  const totalCardBoards = useMemo(() => {
+    return Math.max(1, maxTargetedCard, 1 + extraCards);
+  }, [maxTargetedCard, extraCards]);
+
+  const cardBoardStats = useMemo(() => {
+    const cards = [];
+    for (let c = 1; c <= totalCardBoards; c++) {
+      const cardShows = watchedShows.filter(item => (item.cardTarget || 1) === c);
+      const earnedStamps = cardShows.reduce((acc, item) => {
+        const event = getEventForDate(item.date);
+        return acc + (event && event.isTriple ? 3 : 1);
+      }, 0);
+
+      const thisBonus = cardBonuses[c] || 0;
+      const totalInThisCard = earnedStamps + thisBonus;
+
+      cards.push({
+        cardNumber: c,
+        shows: cardShows,
+        stamps: totalInThisCard,
+        bonus: thisBonus,
+        earnedStamps,
+        isCollapsed: Boolean(cardCollapsedMap[c])
+      });
+    }
+    return cards;
+  }, [totalCardBoards, watchedShows, cardBonuses, cardCollapsedMap]);
 
   const pairStats = useMemo(() => {
     const map = {};
@@ -417,7 +551,7 @@ export default function Anarchist() {
           <div>
             <span className="text-[10px] tracking-widest font-black text-red-700 uppercase block mb-0.5">MUSICAL ANARCHIST</span>
             <h1 className="text-xl md:text-2xl font-black text-stone-950 tracking-tighter">
-              뮤지컬 &lt;아나키스트&gt; 정산소
+              아나키스트
             </h1>
           </div>
         </div>
@@ -429,7 +563,15 @@ export default function Anarchist() {
             rel="noopener noreferrer"
             className="px-3.5 py-2 bg-red-700 hover:bg-red-800 text-white rounded-xl text-xs font-black shadow-sm flex items-center gap-1 border border-red-900 transition-all active:scale-95"
           >
-            <span>🎟️</span> 1차 티켓
+            <span>🎟️</span> 1차
+          </a>
+          <a
+            href={SEAT_MAP_NOTICE_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3.5 py-2 bg-[#F3B329] hover:bg-[#e0a21f] text-stone-950 rounded-xl text-xs font-black shadow-sm flex items-center gap-1 border border-stone-900 transition-all active:scale-95"
+          >
+            <span>🪑</span> 좌석배치도
           </a>
           <a
             href={REVISIT_BENEFIT_LINK}
@@ -441,7 +583,7 @@ export default function Anarchist() {
           </a>
           <button 
             onClick={() => { setShowForm(!showForm); setEditingId(null); }} 
-            className="px-3.5 py-2 bg-[#F3B329] hover:bg-[#e0a21f] text-stone-950 rounded-xl text-xs font-black shadow-sm border border-stone-900 transition-all active:scale-95"
+            className="px-3.5 py-2 bg-stone-100 hover:bg-stone-200 text-stone-900 rounded-xl text-xs font-black shadow-sm border border-stone-900 transition-all active:scale-95"
           >
             {showForm ? '닫기' : '➕ 스케줄 추가'}
           </button>
@@ -468,9 +610,19 @@ export default function Anarchist() {
             <input type="text" name="actor1" placeholder="자경" value={formData.actor1} onChange={handleInputChange} className="p-2.5 border-2 border-stone-900 rounded-xl bg-white font-bold" />
             <input type="text" name="actor2" placeholder="무혁" value={formData.actor2} onChange={handleInputChange} className="p-2.5 border-2 border-stone-900 rounded-xl bg-white font-bold" />
           </div>
-          <div className="flex flex-col gap-1 text-xs">
-            <label className="font-black text-red-800 text-[11px]">📍 정산 및 관람 기록용 좌석 (배치도 자동 반영)</label>
-            <input type="text" name="seat" placeholder="예: A11 이나 B5 처럼 하이픈 없이 적어도 자동인식" value={formData.seat} onChange={handleInputChange} className="p-2.5 border-2 border-red-700 rounded-xl bg-red-50/50 font-black text-red-900 uppercase" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+            <div className="flex flex-col gap-1">
+              <label className="font-black text-red-800 text-[11px]">📍 관람 기록용 좌석 (배치도 자동 반영)</label>
+              <input type="text" name="seat" placeholder="예: A11 이나 B5 처럼 하이픈 없이 적어도 자동인식" value={formData.seat} onChange={handleInputChange} className="p-2.5 border-2 border-red-700 rounded-xl bg-red-50/50 font-black text-red-900 uppercase" />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="font-black text-amber-800 text-[11px]">🎫 적립할 도장판 번호</label>
+              <select name="cardTarget" value={formData.cardTarget || 1} onChange={handleInputChange} className="p-2.5 border-2 border-stone-900 rounded-xl bg-white font-bold text-stone-900">
+                {Array.from({ length: Math.max(3, totalCardBoards) }).map((_, i) => (
+                  <option key={`opt-form-${i+1}`} value={i+1}>{i+1}번 도장판에 적립</option>
+                ))}
+              </select>
+            </div>
           </div>
           <div className="flex gap-2 text-xs mt-1">
             <button type="submit" className="flex-1 py-2.5 bg-stone-900 hover:bg-stone-800 text-[#F3B329] font-black rounded-xl shadow transition-all border border-stone-950">
@@ -489,6 +641,165 @@ export default function Anarchist() {
         <div className="flex-1">
           <p className="text-xs font-black text-red-700">총 관람합계</p>
           <p className="text-2xl font-black mt-1 text-stone-950">{watchedShows.length} <span className="text-xs font-bold text-stone-500">/ {schedules.length}회</span></p>
+        </div>
+      </section>
+
+      {/* 🎫 [도장판별 개별 접기/펼치기 & 즉시 자동 저장] 재관람 혜택 카드 */}
+      <section className="w-full bg-[#FFF9E6] border-2 border-stone-900 rounded-2xl p-4 shadow-md mb-5">
+        
+        {/* 상단 컨트롤러 */}
+        <div className="flex items-center justify-between gap-2.5 mb-3 border-b-2 border-stone-900/10 pb-3">
+          <div>
+            <h2 className="font-black text-xs md:text-sm text-stone-950 flex items-center gap-1.5">
+              <span>🎫</span> 도장판별 적립 & 혜택 매핑
+            </h2>
+            <p className="text-[10px] text-stone-500 font-bold mt-0.5">
+              각 도장판별로 개별 접기/펼치기가 가능하며 상태가 자동 기억됩니다.
+            </p>
+          </div>
+
+          <button 
+            onClick={handleAddExtraCard}
+            className="px-2.5 py-1.5 bg-[#F3B329] hover:bg-[#e0a21f] text-stone-950 text-[10.5px] font-black rounded-xl border border-stone-900 shadow-sm transition-all active:scale-95 flex-shrink-0"
+          >
+            ➕ 새 도장판 추가
+          </button>
+        </div>
+
+        {/* 📋 각 도장판 렌더링 (판별 개별 아코디언) */}
+        <div className="flex flex-col gap-3.5">
+          {cardBoardStats.map((board) => (
+            <div key={`stamp-card-${board.cardNumber}`} className="bg-[#FFFDF5] border-2 border-stone-900/70 rounded-xl p-3 shadow-sm transition-all">
+              
+              {/* 도장판 상단 타이틀 & 진행 스탬프 & 개별 추가도장 & 개별 접기/펼치기 버튼 */}
+              <div className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 ${board.isCollapsed ? '' : 'mb-2.5 pb-2 border-b border-stone-200'}`}>
+                
+                {/* 타이틀 영역 (클릭 시 해당 판 토글) */}
+                <div 
+                  onClick={() => toggleSingleCardCollapse(board.cardNumber)}
+                  className="flex items-center gap-2 flex-wrap cursor-pointer select-none group"
+                >
+                  <span className="px-2 py-0.5 bg-stone-900 text-[#F3B329] text-[10.5px] font-black rounded-md">
+                    {board.cardNumber}번
+                  </span>
+                  <span className="text-xs font-black text-stone-900 group-hover:text-amber-700 transition-colors">
+                    {board.cardNumber}번 도장판 ({board.stamps} / 9)
+                  </span>
+                  {board.bonus > 0 && (
+                    <span className="text-[9.5px] font-bold text-amber-800 bg-amber-100 border border-amber-300 px-1.5 py-0.2 rounded">
+                      추가 +{board.bonus}
+                    </span>
+                  )}
+                  <span className="text-[10px] text-stone-400 font-bold ml-1">
+                    {board.isCollapsed ? '▶ 펼치기' : '▼ 접기'}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2 self-end sm:self-auto">
+                  {/* 각 판별 독립 추가도장 증감 버튼 */}
+                  <div className="flex items-center bg-white border border-stone-900/40 rounded-lg px-1.5 py-0.5 gap-1 text-xs">
+                    <span className="text-[9.5px] font-bold text-stone-500">추가</span>
+                    <button onClick={() => handleCardBonusChange(board.cardNumber, -1)} className="w-4 h-4 bg-stone-200 hover:bg-stone-300 text-stone-900 rounded font-black flex items-center justify-center text-[10px]">-</button>
+                    <span className="font-black text-amber-900 px-0.5 text-[11px]">{board.bonus}</span>
+                    <button onClick={() => handleCardBonusChange(board.cardNumber, 1)} className="w-4 h-4 bg-amber-400 hover:bg-amber-500 text-stone-950 rounded font-black flex items-center justify-center text-[10px]">+</button>
+                  </div>
+
+                  {board.cardNumber > 1 && (
+                    <button 
+                      onClick={handleRemoveExtraCard} 
+                      className="text-[9px] font-bold text-red-600 hover:underline pl-1"
+                    >
+                      제거
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* 📂 도장판 본문 (해당 도장판이 펼쳐져 있을 때만 렌더링) */}
+              {!board.isCollapsed && (
+                <div className="animate-in fade-in duration-150">
+                  {/* 🏷️ 이 판에 매핑된 관람 회차 일람 뱃지 */}
+                  <div className="flex items-center gap-1.5 flex-wrap mb-3 text-[10px]">
+                    <span className="font-black text-stone-500">배정된 회차:</span>
+                    {board.shows.length === 0 ? (
+                      <span className="text-stone-400 font-medium">아직 배정된 회차가 없습니다 (스케줄에서 선택)</span>
+                    ) : (
+                      board.shows.map(s => {
+                        const event = getEventForDate(s.date);
+                        return (
+                          <span key={`mapped-tag-${s.id}`} className="bg-stone-100 text-stone-800 border border-stone-300 font-bold px-1.5 py-0.5 rounded flex items-center gap-1">
+                            {s.date}
+                            <span className={`font-black text-[9px] ${event && event.isTriple ? 'text-purple-700' : 'text-stone-500'}`}>
+                              ({event && event.isTriple ? '+3' : '+1'})
+                            </span>
+                          </span>
+                        );
+                      })
+                    )}
+                  </div>
+
+                  {/* 3회 / 6회 / 9회 혜택 카드 그리드 */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs">
+                    
+                    {/* 3회 관람 */}
+                    <div className={`p-2.5 rounded-lg border-2 flex items-center justify-between transition-all ${
+                      board.stamps >= 3 
+                        ? 'bg-[#FFF2C9] border-amber-500 shadow-sm' 
+                        : 'bg-white/80 border-stone-300 opacity-80'
+                    }`}>
+                      <div className="flex flex-col">
+                        <span className="text-[9px] font-black text-stone-500 uppercase">STEP 1</span>
+                        <span className="font-black text-stone-900 text-xs">3회 적립</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="font-bold text-stone-950 block text-[11px]">40% 할인권 2매</span>
+                        <span className={`text-[9px] font-extrabold ${board.stamps >= 3 ? 'text-emerald-700' : 'text-stone-400'}`}>
+                          {board.stamps >= 3 ? '✓ 달성 완료' : `${3 - board.stamps}개 남음`}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* 6회 관람 */}
+                    <div className={`p-2.5 rounded-lg border-2 flex items-center justify-between transition-all ${
+                      board.stamps >= 6 
+                        ? 'bg-[#FFF2C9] border-amber-500 shadow-sm' 
+                        : 'bg-white/80 border-stone-300 opacity-80'
+                    }`}>
+                      <div className="flex flex-col">
+                        <span className="text-[9px] font-black text-stone-500 uppercase">STEP 2</span>
+                        <span className="font-black text-stone-900 text-xs">6회 적립</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="font-bold text-stone-950 block text-[11px]">지정 폴라로이드 1매</span>
+                        <span className={`text-[9px] font-extrabold ${board.stamps >= 6 ? 'text-emerald-700' : 'text-stone-400'}`}>
+                          {board.stamps >= 6 ? '✓ 달성 완료' : `${6 - board.stamps}개 남음`}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* 9회 관람 */}
+                    <div className={`p-2.5 rounded-lg border-2 flex items-center justify-between transition-all ${
+                      board.stamps >= 9 
+                        ? 'bg-[#FFF2C9] border-amber-500 shadow-sm' 
+                        : 'bg-white/80 border-stone-300 opacity-80'
+                    }`}>
+                      <div className="flex flex-col">
+                        <span className="text-[9px] font-black text-stone-500 uppercase">STEP 3</span>
+                        <span className="font-black text-stone-900 text-xs">9회 적립</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="font-bold text-stone-950 block text-[11px]">전캐스트 실황 OST</span>
+                        <span className={`text-[9px] font-extrabold ${board.stamps >= 9 ? 'text-emerald-700' : 'text-stone-400'}`}>
+                          {board.stamps >= 9 ? '✓ 달성 완료' : `${9 - board.stamps}개 남음`}
+                        </span>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       </section>
 
@@ -548,7 +859,7 @@ export default function Anarchist() {
         )}
       </section>
 
-      {/* 📅 월별 스케줄 리스트 (좌측 정보 + 우측 버튼/좌석 우측 정렬 반응형) */}
+      {/* 📅 월별 스케줄 리스트 */}
       <main className="w-full flex flex-col gap-5 text-sm mb-8">
         {[9, 10].map(m => {
           const monthSchedules = filteredSchedules.filter(item => item.month === m);
@@ -563,20 +874,18 @@ export default function Anarchist() {
                 <div className="divide-y divide-stone-900/10">
                   {monthSchedules.map((item) => {
                     const eventInfo = getEventForDate(item.date);
+                    const isWatched = item.seat && item.seat.trim() !== "";
 
                     return (
                       <div key={item.id} className="p-2.5 flex items-center justify-between gap-2 hover:bg-[#FFF5D6] transition-colors">
                         
-                        {/* 👈 [좌측 그룹]: 일자/시간 + 출연진 + 이벤트 배지 */}
+                        {/* 👈 좌측 정보 (일자/시간 + 배우) */}
                         <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-                          
-                          {/* 일자 / 시간 */}
                           <div className="flex flex-col items-start flex-shrink-0">
                             <span className="font-black text-stone-900 text-xs tabular-nums">{item.date}</span>
                             <span className="text-[9px] text-stone-600 bg-stone-200/80 px-1 rounded mt-0.5 tabular-nums font-bold">{item.time}</span>
                           </div>
 
-                          {/* 출연진 이름 & 이벤트 배지 */}
                           <div className="flex flex-col gap-0.5 min-w-0">
                             <div className="flex items-center gap-1.5 flex-wrap">
                               <span className="text-stone-800 text-[11px] sm:text-xs font-bold truncate" title={`자경: ${item.actor1}`}>{item.actor1}</span>
@@ -600,10 +909,9 @@ export default function Anarchist() {
                               </div>
                             )}
                           </div>
-
                         </div>
 
-                        {/* 👉 [우측 그룹]: 좌석 입력란 + 양도/수정/삭제 버튼 */}
+                        {/* 👉 우측 조작 (좌석 + 도장판 번호 선택 + 버튼) */}
                         <div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
                           
                           {/* 좌석 입력란 */}
@@ -615,7 +923,24 @@ export default function Anarchist() {
                             className="w-11 sm:w-14 p-1 text-[11px] border-2 border-stone-800 text-stone-900 bg-white rounded-lg text-center font-black uppercase placeholder:font-normal placeholder:text-[9px] h-7 focus:outline-none focus:border-amber-500" 
                           />
 
-                          {/* 조작 버튼들 */}
+                          {/* 🎫 도장판 배정 선택기 */}
+                          <select
+                            value={item.cardTarget || 1}
+                            onChange={(e) => handleCardTargetChange(item.id, e.target.value)}
+                            disabled={!isWatched}
+                            className={`p-1 text-[10px] border-2 rounded-lg font-black h-7 focus:outline-none ${
+                              isWatched 
+                                ? 'border-amber-500 bg-[#FFF2C9] text-stone-950 cursor-pointer' 
+                                : 'border-stone-200 bg-stone-100 text-stone-400 opacity-60'
+                            }`}
+                            title={isWatched ? '적립할 도장판 번호를 선택하세요' : '좌석 입력 시 도장판에 자동 매핑됩니다'}
+                          >
+                            {Array.from({ length: Math.max(3, totalCardBoards) }).map((_, i) => (
+                              <option key={`card-opt-${i+1}`} value={i+1}>{i+1}번</option>
+                            ))}
+                          </select>
+
+                          {/* 버튼들 */}
                           <button onClick={() => handleOpenCopyModal(item)} className="px-1.5 sm:px-2 py-1 text-[10px] anarchist-btn-copy rounded-lg h-7 flex items-center justify-center">양도</button>
                           <button onClick={() => handleEditStart(item)} className="px-1.5 sm:px-2 py-1 text-[10px] bg-stone-700 hover:bg-stone-800 text-white rounded-lg font-bold h-7 flex items-center justify-center">수정</button>
                           <button onClick={() => handleScheduleDelete(item.id)} className="px-1.5 sm:px-2 py-1 text-[10px] bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold h-7 flex items-center justify-center">삭제</button>
@@ -750,11 +1075,11 @@ export default function Anarchist() {
         </div>
       )}
 
-      {/* 🚀 플로팅 좌석저장 버튼 */}
+      {/* 🚀 플로팅 좌석/도장판 통합 저장 버튼 */}
       <div className="fixed bottom-6 right-6 z-50 shadow-2xl">
-        <button onClick={handleAllSave} className="w-16 h-16 bg-stone-900 hover:bg-stone-800 active:scale-95 text-[#F3B329] rounded-full flex flex-col items-center justify-center font-black transition-all border-2 border-[#F3B329] shadow-lg" title="모든 좌석 정보 저장">
+        <button onClick={handleAllSave} className="w-16 h-16 bg-stone-900 hover:bg-stone-800 active:scale-95 text-[#F3B329] rounded-full flex flex-col items-center justify-center font-black transition-all border-2 border-[#F3B329] shadow-lg" title="모든 좌석 및 도장판 정보 저장">
           <span className="text-xl">💾</span>
-          <span className="text-[9px] leading-tight mt-0.5">좌석저장</span>
+          <span className="text-[9px] leading-tight mt-0.5">전체저장</span>
         </button>
       </div>
 
