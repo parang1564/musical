@@ -118,7 +118,6 @@ export default function Anarchist() {
   const [editingId, setEditingId] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [searchActor, setSearchActor] = useState('이진혁');
-  const [selectedSeatFromMap, setSelectedSeatFromMap] = useState('');
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -191,7 +190,6 @@ export default function Anarchist() {
     }
 
     setFormData({ month: 9, date: '', day: '', time: '20:00', actor1: '', actor2: '', mainActor: '이진혁', seat: '' });
-    setSelectedSeatFromMap(''); 
     setShowForm(false);
     loadInitialData();
   };
@@ -326,13 +324,6 @@ export default function Anarchist() {
       .catch(err => alert("복사 실패: " + err));
   };
 
-  const handleSeatMapCellClick = (seatKey) => {
-    setSelectedSeatFromMap(seatKey);
-    setFormData(prev => ({ ...prev, seat: seatKey }));
-    setShowForm(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   const watchedShows = schedules.filter(item => item.seat && item.seat.trim() !== "");
   const leeJinHyukCount = watchedShows.filter(item => item.mainActor === "이진혁").length;
   const totalLeeJinHyuk = schedules.filter(item => item.mainActor === "이진혁").length;
@@ -398,14 +389,10 @@ export default function Anarchist() {
           else if (visitCount === 3) bgClass = "bg-orange-600 text-white font-bold border border-orange-500";
           else if (visitCount >= 4) bgClass = "bg-red-700 text-white font-black border border-red-600 ring-1 ring-red-400";
 
-          const isCurrentSelected = selectedSeatFromMap === seatKey;
-          const borderClass = isCurrentSelected ? "ring-2 ring-amber-300 ring-offset-1 ring-offset-stone-900 z-10 scale-110" : "";
-
           return (
             <div 
               key={`seat-${seatKey}`} 
-              onClick={() => handleSeatMapCellClick(seatKey)}
-              className={`w-[17px] md:w-[20px] h-[17px] md:h-[20px] text-[8px] md:text-[9.5px] rounded flex items-center justify-center font-bold shadow-sm flex-shrink-0 cursor-pointer hover:scale-125 transition-transform ${bgClass} ${borderClass}`} 
+              className={`w-[17px] md:w-[20px] h-[17px] md:h-[20px] text-[8px] md:text-[9.5px] rounded flex items-center justify-center font-bold shadow-sm flex-shrink-0 cursor-default select-none ${bgClass}`} 
               title={`${seatKey} (정산기록: ${visitCount}회)`}
             >
               <span className="leading-none text-center block w-full tabular-nums">{seatNumber}</span>
@@ -419,7 +406,6 @@ export default function Anarchist() {
   };
 
   return (
-    // 🛡️ anarchist-wrapper 클래스로 다른 페이지와 완전 분리된 배경 및 폰트색 적용
     <div className="anarchist-wrapper p-3 md:p-6 lg:p-8 flex flex-col items-center max-w-4xl mx-auto pb-28 selection:bg-stone-900 selection:text-[#F3B329]">
       
       {/* 🎭 포스터 스타일 상단 헤더 */}
@@ -562,7 +548,7 @@ export default function Anarchist() {
         )}
       </section>
 
-      {/* 📅 월별 스케줄 리스트 */}
+      {/* 📅 월별 스케줄 리스트 (일정한 간격으로 전체 밀착 정렬) */}
       <main className="w-full flex flex-col gap-5 text-sm mb-8">
         {[9, 10].map(m => {
           const monthSchedules = filteredSchedules.filter(item => item.month === m);
@@ -574,22 +560,22 @@ export default function Anarchist() {
                 <span>✦</span> {m}월 회차 스케줄 ({monthSchedules.length}회) <span>✦</span>
               </div>
               <div className="w-full overflow-x-auto select-none">
-                <div className="divide-y divide-stone-900/10 min-w-[520px]">
+                <div className="divide-y divide-stone-900/10 min-w-[430px]">
                   {monthSchedules.map((item) => {
                     const eventInfo = getEventForDate(item.date);
 
                     return (
-                      <div key={item.id} className="p-2.5 flex items-center justify-between hover:bg-[#FFF5D6] transition-colors gap-3">
+                      <div key={item.id} className="p-2 flex items-center justify-start gap-2.5 hover:bg-[#FFF5D6] transition-colors">
                         
-                        {/* 1. 날짜 / 시간 */}
-                        <div className="flex flex-col items-start w-[55px] flex-shrink-0 pl-1">
+                        {/* 1. 일자 / 시간 */}
+                        <div className="flex flex-col items-start w-[50px] flex-shrink-0 pl-1">
                           <span className="font-black text-stone-900 text-xs tabular-nums">{item.date}</span>
                           <span className="text-[9px] text-stone-600 bg-stone-200/80 px-1 rounded mt-0.5 tabular-nums font-bold">{item.time}</span>
                         </div>
 
-                        {/* 2. 출연진 & 이벤트 배지 */}
-                        <div className="flex-1 flex flex-col gap-1 min-w-[170px]">
-                          <div className="flex items-center gap-2">
+                        {/* 2. 이름 & 이벤트 배지 */}
+                        <div className="flex flex-col gap-0.5 w-[145px] flex-shrink-0">
+                          <div className="flex items-center gap-1.5">
                             <span className="text-stone-800 text-[11px] font-bold" title={`자경: ${item.actor1}`}>{item.actor1}</span>
                             <span className="text-stone-800 text-[11px] font-bold" title={`무혁: ${item.actor2}`}>{item.actor2}</span>
                             <span className={`text-[12px] font-black ${item.mainActor === '이진혁' ? 'text-red-700' : 'text-stone-900'}`} title={`덕형: ${item.mainActor}`}>
@@ -603,7 +589,7 @@ export default function Anarchist() {
                                 href={eventInfo.link}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className={`inline-block px-2 py-0.5 rounded text-[9px] border transition-all hover:opacity-85 leading-tight ${eventInfo.color}`}
+                                className={`inline-block px-1.5 py-0.5 rounded text-[8.5px] border transition-all hover:opacity-85 leading-tight ${eventInfo.color}`}
                                 title={`${eventInfo.name} (클릭 시 공지 이동)`}
                               >
                                 🎁 {eventInfo.name}
@@ -613,7 +599,7 @@ export default function Anarchist() {
                         </div>
 
                         {/* 3. 좌석 입력란 */}
-                        <div className="w-[60px] flex-shrink-0">
+                        <div className="w-[50px] flex-shrink-0">
                           <input 
                             type="text" 
                             placeholder="좌석" 
@@ -623,9 +609,9 @@ export default function Anarchist() {
                           />
                         </div>
 
-                        {/* 4. 조작 버튼 */}
-                        <div className="flex gap-1 justify-end flex-shrink-0">
-                          <button onClick={() => handleOpenCopyModal(item)} className="px-2.5 py-1 text-[10px] anarchist-btn-copy rounded-lg h-7 flex items-center justify-center">양도</button>
+                        {/* 4. 버튼들 */}
+                        <div className="flex gap-1 flex-shrink-0">
+                          <button onClick={() => handleOpenCopyModal(item)} className="px-2 py-1 text-[10px] anarchist-btn-copy rounded-lg h-7 flex items-center justify-center">양도</button>
                           <button onClick={() => handleEditStart(item)} className="px-2 py-1 text-[10px] bg-stone-700 hover:bg-stone-800 text-white rounded-lg font-bold h-7 flex items-center justify-center">수정</button>
                           <button onClick={() => handleScheduleDelete(item.id)} className="px-2 py-1 text-[10px] bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold h-7 flex items-center justify-center">삭제</button>
                         </div>
@@ -645,7 +631,7 @@ export default function Anarchist() {
         
         <div className="w-full flex justify-between items-center mb-3">
           <div className="py-1 bg-[#F3B329] px-4 text-stone-950 rounded-md font-black tracking-widest text-[11px] shadow">S T A G E</div>
-          <span className="text-[10px] text-amber-400 font-bold">좌석 선택 시 상단 스케줄에 자동 등록됩니다.</span>
+          <span className="text-[10px] text-amber-400 font-bold">좌석 배치 현황 (관람 회차별 자동 집계)</span>
         </div>
         
         <div className="flex gap-2.5 justify-center items-center mb-4 text-[10px] bg-stone-900 px-3 py-2 rounded-xl text-stone-300 font-bold w-full flex-wrap border border-stone-800">
