@@ -562,26 +562,26 @@ export default function OthelloIago() {
             <span>🎟️</span> 1차
           </a>
           <a
-            href={REVISIT_BENEFIT_LINK}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-3.5 py-2 bg-[#1C0609] hover:bg-[#2B0A0F] text-[#D4AF37] rounded-xl text-xs font-bold shadow-md flex items-center gap-1 border border-[#52131B] transition-all active:scale-95"
-          >
-            <span>🎁</span> 재관람 혜택
-          </a>
-          <a
             href={SEAT_CHART_LINK}
             target="_blank"
             rel="noopener noreferrer"
             className="px-3.5 py-2 bg-[#171415] hover:bg-[#262123] text-stone-300 rounded-xl text-xs font-bold shadow-md flex items-center gap-1 border border-stone-700 transition-all active:scale-95"
           >
-            <span>🗺️</span> 좌석배치도
+            <span>🗺️</span> 좌석
+          </a>
+          <a
+            href={REVISIT_BENEFIT_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3.5 py-2 bg-[#1C0609] hover:bg-[#2B0A0F] text-[#D4AF37] rounded-xl text-xs font-bold shadow-md flex items-center gap-1 border border-[#52131B] transition-all active:scale-95"
+          >
+            <span>🎁</span> 재관카드
           </a>
           <button 
             onClick={() => { setShowForm(!showForm); setEditingId(null); }} 
             className="px-3.5 py-2 bg-gradient-to-r from-[#D4AF37] to-[#AA8520] hover:from-[#E2BF4D] hover:to-[#B89228] text-[#140406] rounded-xl text-xs font-black shadow-md border border-[#F2D785] transition-all active:scale-95"
           >
-            {showForm ? '닫기' : '➕ 스케줄 추가'}
+            {showForm ? '닫기' : '➕ 추가'}
           </button>
         </div>
       </header>

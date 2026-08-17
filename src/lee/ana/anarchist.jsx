@@ -95,7 +95,7 @@ const floor2Rows = {
   Q: [null, null, 20, 19, 18, 17, null, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
 };
 
-const DB_NAME = 'MusicalSchedulerDB_Anarchist_vFullReordered';
+const DB_NAME = 'MusicalSchedulerDB_Anarchist_vBtnTextUpdated';
 const STORE_NAME = 'schedules';
 const SETTING_STORE = 'settings';
 const DB_VERSION = 1;
@@ -124,14 +124,9 @@ export default function Anarchist() {
   const [showForm, setShowForm] = useState(false);
   const [searchActor, setSearchActor] = useState('이진혁');
 
-  // 🎫 각 도장판별 추가 도장 맵 및 추가판 수
   const [cardBonuses, setCardBonuses] = useState({});
   const [extraCards, setExtraCards] = useState(0);
-
-  // 📂 도장판별 개별 접힘 상태 맵 { 1: true/false, ... }
   const [cardCollapsedMap, setCardCollapsedMap] = useState({});
-
-  // 📅 월별 스케줄 개별 접힘 상태 맵 { 9: false, 10: false, ... }
   const [monthCollapsedMap, setMonthCollapsedMap] = useState({});
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -560,7 +555,7 @@ export default function Anarchist() {
   return (
     <div className="anarchist-wrapper p-3 md:p-6 lg:p-8 flex flex-col items-center max-w-4xl mx-auto pb-28 selection:bg-stone-900 selection:text-[#F3B329]">
       
-      {/* 🎭 포스터 스타일 상단 헤더 */}
+      {/* 🎭 포스터 스타일 상단 헤더 (버튼 문구: 1차, 좌석, 재관카드, 추가) */}
       <header className="w-full flex flex-col md:flex-row justify-between items-center gap-3 mb-5 bg-[#FFF9E6] p-4 md:p-5 rounded-2xl shadow-md border-2 border-stone-900">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-stone-900 flex items-center justify-center text-xl shadow-inner border border-amber-400">
@@ -579,7 +574,7 @@ export default function Anarchist() {
             href={FIRST_TICKET_LINK}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-3.5 py-2 bg-red-700 hover:bg-red-800 text-white rounded-xl text-xs font-black shadow-sm flex items-center gap-1 border border-red-900 transition-all active:scale-95"
+            className="px-3 py-2 bg-red-700 hover:bg-red-800 text-white rounded-xl text-xs font-black shadow-sm flex items-center gap-1 border border-red-900 transition-all active:scale-95"
           >
             <span>🎟️</span> 1차
           </a>
@@ -587,23 +582,23 @@ export default function Anarchist() {
             href={SEAT_MAP_NOTICE_LINK}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-3.5 py-2 bg-[#F3B329] hover:bg-[#e0a21f] text-stone-950 rounded-xl text-xs font-black shadow-sm flex items-center gap-1 border border-stone-900 transition-all active:scale-95"
+            className="px-3 py-2 bg-[#F3B329] hover:bg-[#e0a21f] text-stone-950 rounded-xl text-xs font-black shadow-sm flex items-center gap-1 border border-stone-900 transition-all active:scale-95"
           >
-            <span>🪑</span> 좌석배치도
+            <span>🪑</span> 좌석
           </a>
           <a
             href={REVISIT_BENEFIT_LINK}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-3.5 py-2 bg-stone-900 hover:bg-stone-800 text-amber-300 rounded-xl text-xs font-bold shadow-sm flex items-center gap-1 border border-stone-950 transition-all active:scale-95"
+            className="px-3 py-2 bg-stone-900 hover:bg-stone-800 text-amber-300 rounded-xl text-xs font-bold shadow-sm flex items-center gap-1 border border-stone-950 transition-all active:scale-95"
           >
-            <span>🎁</span> 재관람 혜택
+            <span>🎁</span> 재관카드
           </a>
           <button 
             onClick={() => { setShowForm(!showForm); setEditingId(null); }} 
-            className="px-3.5 py-2 bg-stone-100 hover:bg-stone-200 text-stone-900 rounded-xl text-xs font-black shadow-sm border border-stone-900 transition-all active:scale-95"
+            className="px-3 py-2 bg-stone-100 hover:bg-stone-200 text-stone-900 rounded-xl text-xs font-black shadow-sm border border-stone-900 transition-all active:scale-95"
           >
-            {showForm ? '닫기' : '➕ 스케줄 추가'}
+            {showForm ? '닫기' : '➕ 추가'}
           </button>
         </div>
       </header>
