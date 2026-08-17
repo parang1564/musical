@@ -5,6 +5,7 @@ import { openDB } from 'idb';
 const FIRST_TICKET_LINK = "https://x.com/newpro_OI/status/2085603813692711207?s=20";
 const REVISIT_BENEFIT_LINK = "https://x.com/newpro_OI/status/2084874609149784274?s=20";
 const SEAT_CHART_LINK = "https://x.com/newpro_OI/status/2084874555882082479?s=20";
+const SEEYA_LINK = "https://musicalseeya.com/seeyatheater/25";
 
 // 🎟️ 티켓 원가 및 할인 계산 데이터 (원가 66,000원 + 예매 수수료 2,000원)
 const TICKET_ORIGIN_PRICE = 66000;
@@ -81,6 +82,7 @@ const initDB = async () => {
 export default function OthelloIago() {
   const [schedules, setSchedules] = useState([]);
   const fileInputRef = useRef(null);
+  const captureRef = useRef(null);
   
   // 🌟 기준 배우: localStorage에서 마지막 입력값을 불러오며, 없으면 빈 문자열("")
   const [mainTargetActor, setMainTargetActor] = useState(() => {
@@ -157,6 +159,38 @@ export default function OthelloIago() {
   useEffect(() => {
     loadInitialData();
   }, []);
+
+  // 📸 이미지 다운로드 핸들러 (html2canvas 동적 로드)
+  const handleCaptureImage = async () => {
+    if (!captureRef.current) return;
+    try {
+      if (!window.html2canvas) {
+        await new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+          script.onload = resolve;
+          script.onerror = reject;
+          document.body.appendChild(script);
+        });
+      }
+
+      const canvas = await window.html2canvas(captureRef.current, {
+        scale: 2, // 고해상도
+        backgroundColor: '#0D0B0C', // 다크 배경 유지
+        useCORS: true
+      });
+
+      const image = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.href = image;
+      link.download = `othello_iago_summary_${new Date().toISOString().split('T')[0]}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      alert('이미지 저장 중 오류가 발생했습니다: ' + err.message);
+    }
+  };
 
   const handleCardBonusChange = async (cardNum, changeAmount) => {
     const currentVal = cardBonuses[cardNum] || 0;
@@ -570,19 +604,21 @@ export default function OthelloIago() {
             <span>🗺️</span> 좌석
           </a>
           <a
+            href={SEEYA_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3.5 py-2 bg-stone-800 hover:bg-stone-700 text-amber-300 rounded-xl text-xs font-bold shadow-md flex items-center gap-1 border border-stone-600 transition-all active:scale-95"
+          >
+            <span>🥽</span> 시야
+          </a>
+          <a
             href={REVISIT_BENEFIT_LINK}
             target="_blank"
             rel="noopener noreferrer"
             className="px-3.5 py-2 bg-[#1C0609] hover:bg-[#2B0A0F] text-[#D4AF37] rounded-xl text-xs font-bold shadow-md flex items-center gap-1 border border-[#52131B] transition-all active:scale-95"
           >
-            <span>🎁</span> 재관카드
+            <span>🎁</span> 재관
           </a>
-          <button 
-            onClick={() => { setShowForm(!showForm); setEditingId(null); }} 
-            className="px-3.5 py-2 bg-gradient-to-r from-[#D4AF37] to-[#AA8520] hover:from-[#E2BF4D] hover:to-[#B89228] text-[#140406] rounded-xl text-xs font-black shadow-md border border-[#F2D785] transition-all active:scale-95"
-          >
-            {showForm ? '닫기' : '➕ 추가'}
-          </button>
         </div>
       </header>
 
@@ -625,6 +661,9 @@ export default function OthelloIago() {
             <button type="submit" className="flex-1 py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#AA8520] hover:from-[#E2BF4D] hover:to-[#B89228] text-[#140406] font-black rounded-xl shadow transition-all border border-[#F2D785]">
               {editingId ? '수정 완료하기' : '이 스케줄 저장하기'}
             </button>
+            <button type="button" onClick={() => { setShowForm(false); setEditingId(null); }} className="px-4 py-2.5 bg-[#21060B] hover:bg-[#330910] text-stone-400 font-bold rounded-xl border border-[#4A141A]">
+              닫기
+            </button>
           </div>
         </form>
       )}
@@ -660,7 +699,7 @@ export default function OthelloIago() {
         <div className="flex items-center justify-between gap-2.5 mb-3 border-b border-[#3D0D14] pb-3">
           <div>
             <h2 className="font-serif font-bold text-xs md:text-sm text-[#F5EAD4] flex items-center gap-1.5">
-              <span>🎫</span> 도장판별 적립 & 혜택 매핑
+              <span>🎫</span> 도장판별 적립 & 혜택
             </h2>
             <p className="text-[10px] text-stone-500 mt-0.5">
               각 도장판별로 개별 접기/펼치기가 가능하며 상태가 자동 기억됩니다.
@@ -882,87 +921,96 @@ export default function OthelloIago() {
         })}
       </main>
 
-      {/* 4️⃣ [총 관람 합계] 📊 관람 통계 대시보드 */}
-      <section className="w-full bg-gradient-to-b from-[#1C0508] to-[#120305] border border-[#52131B] rounded-2xl shadow-xl p-4 mb-5 flex justify-around text-center">
-        <div className="flex-1 border-r border-[#3D0D14]">
-          <p className="text-xs font-bold text-[#E56A77]">{mainTargetActor ? `${mainTargetActor} 관람` : '선택 배우 관람'}</p>
-          <p className="text-2xl font-serif font-black mt-1 text-[#F5EAD4]">
-            {targetActorWatched} <span className="text-xs font-sans font-normal text-stone-500">/ {targetActorShows.length}회</span>
-          </p>
-        </div>
-        <div className="flex-1">
-          <p className="text-xs font-bold text-[#D4AF37]">전체 관람합계</p>
-          <p className="text-2xl font-serif font-black mt-1 text-[#F5EAD4]">
-            {watchedShows.length} <span className="text-xs font-sans font-normal text-stone-500">/ {schedules.length}회</span>
-          </p>
-        </div>
-      </section>
-
-      {/* 5️⃣ [페어 현황] 👥 페어별 회차 현황 카드 */}
-      <section className="w-full bg-[#140407] border border-[#4A141A] rounded-2xl p-4 shadow-xl mb-5">
-        <div className="flex items-center justify-between mb-3 border-b border-[#2E0A10] pb-2">
-          <h2 className="font-serif font-bold text-xs md:text-sm text-[#F5EAD4] flex items-center gap-1.5">
-            <span>👥</span> {mainTargetActor ? `'${mainTargetActor}' 출연 페어 현황` : '전체 페어별 현황'}
-            <span className="text-stone-500 text-[11px] font-normal">({pairStats.length}개 조합)</span>
-          </h2>
-          <span className="text-[10px] text-[#A8202E] font-serif font-bold uppercase tracking-wider">OTHELLO · IAGO</span>
-        </div>
-
-        {pairStats.length === 0 ? (
-          <div className="p-4 text-center text-xs text-stone-500 bg-[#0D0204] rounded-xl border border-[#2E0A10]">
-            '{mainTargetActor}' 배우가 포함된 페어가 없습니다.
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
-            {pairStats.map((pair) => (
-              <div 
-                key={pair.key} 
-                className="p-2.5 rounded-xl border flex items-center justify-between text-xs transition-all bg-gradient-to-r from-[#2B080E] to-[#1F0509] border-[#8C1F2B] shadow-sm"
-              >
-                <div className="flex flex-col text-left">
-                  <span className="font-bold text-[#F5D77F] font-black">
-                    {pair.key}
-                  </span>
-                </div>
-                <div className="text-right pl-2">
-                  <span className={`font-serif font-black text-sm tabular-nums ${pair.watched > 0 ? 'text-[#E56A77]' : 'text-[#D4AF37]'}`}>
-                    {pair.watched}
-                  </span>
-                  <span className="text-[11px] font-sans font-normal text-stone-500 tabular-nums"> / {pair.total}회</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* 6️⃣ [좌석 배치도] 🪑 실시간 좌석 배치도 */}
-      <section className="w-full bg-[#120305] text-[#E8DCC4] rounded-3xl p-4 md:p-6 flex flex-col items-center shadow-2xl mb-6 border border-[#52131B]">
-        <div className="w-full flex justify-between items-center mb-3">
-          <div className="py-1 bg-gradient-to-r from-[#D4AF37] to-[#AA8520] px-4 text-[#140406] rounded-md font-serif font-black tracking-[0.2em] text-[11px] shadow-md">S T A G E</div>
-          <span className="text-[10px] text-[#D4AF37] font-serif font-bold">SEAT GUIDE (관람 회차별 자동 집계)</span>
-        </div>
+      {/* 📸 캡처 대상 영역 (오셀로와 이아고 정산 타이틀부터 배치도까지) */}
+      <div ref={captureRef} className="w-full flex flex-col items-center bg-[#0D0B0C]">
         
-        <div className="flex gap-2.5 justify-center items-center mb-4 text-[10px] bg-[#0A0203] px-3 py-2 rounded-xl text-stone-400 font-bold w-full flex-wrap border border-[#2E0A10]">
-          <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 bg-gradient-to-br from-[#E2B755] to-[#B38728] rounded-sm"></div>1회</div>
-          <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 bg-emerald-600 rounded-sm"></div>2회</div>
-          <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 bg-orange-600 rounded-sm"></div>3회</div>
-          <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 bg-[#800F1A] border border-[#C92A38] rounded-sm"></div>4회 이상</div>
+        {/* 타이틀 헤더 (스케줄 밑) */}
+        <div className="w-full text-center py-4 mb-2">
+          <h2 className="text-xl md:text-2xl font-serif font-black text-[#F5EAD4] tracking-wider">
+            오셀로와 이아고 정산
+          </h2>
         </div>
 
-        <div className="w-full overflow-x-auto pb-2 flex flex-col gap-4">
-          <div className="flex flex-col gap-1 w-full min-w-[580px] select-none p-4 bg-[#080203] rounded-2xl border border-[#2E0A10]">
-            <div className="text-[11px] font-serif font-black text-[#D4AF37] mb-1.5 pl-1">객석 (A열 ~ L열)</div>
-            {renderRowBlock(othelloSeatRows)}
+        {/* 4️⃣ [총 관람 합계] 📊 관람 통계 대시보드 */}
+        <section className="w-full bg-gradient-to-b from-[#1C0508] to-[#120305] border border-[#52131B] rounded-2xl shadow-xl p-4 mb-5 flex justify-around text-center">
+          <div className="flex-1 border-r border-[#3D0D14]">
+            <p className="text-xs font-bold text-[#E56A77]">{mainTargetActor ? `${mainTargetActor} 관람` : '선택 배우 관람'}</p>
+            <p className="text-2xl font-serif font-black mt-1 text-[#F5EAD4]">
+              {targetActorWatched} <span className="text-xs font-sans font-normal text-stone-500">/ {targetActorShows.length}회</span>
+            </p>
           </div>
-        </div>
-      </section>
+          <div className="flex-1">
+            <p className="text-xs font-bold text-[#D4AF37]">총 관람 합계</p>
+            <p className="text-2xl font-serif font-black mt-1 text-[#F5EAD4]">
+              {watchedShows.length} <span className="text-xs font-sans font-normal text-stone-500">/ {schedules.length}회</span>
+            </p>
+          </div>
+        </section>
 
-      {/* 💾 백업 & 복원 카드 */}
-      <div className="w-full bg-[#140407] border border-[#4A141A] rounded-2xl p-4 shadow-xl flex items-center justify-between text-xs">
-        <div className="flex gap-2">
+        {/* 5️⃣ [페어 현황] 👥 페어별 회차 현황 카드 */}
+        <section className="w-full bg-[#140407] border border-[#4A141A] rounded-2xl p-4 shadow-xl mb-5">
+          <div className="flex items-center justify-between mb-3 border-b border-[#2E0A10] pb-2">
+            <span className="text-[10px] text-[#A8202E] font-serif font-bold uppercase tracking-wider">OTHELLO · IAGO</span>
+          </div>
+
+          {pairStats.length === 0 ? (
+            <div className="p-4 text-center text-xs text-stone-500 bg-[#0D0204] rounded-xl border border-[#2E0A10]">
+              '{mainTargetActor}' 배우가 포함된 페어가 없습니다.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+              {pairStats.map((pair) => (
+                <div 
+                  key={pair.key} 
+                  className="p-2.5 rounded-xl border flex items-center justify-between text-xs transition-all bg-gradient-to-r from-[#2B080E] to-[#1F0509] border-[#8C1F2B] shadow-sm"
+                >
+                  <div className="flex flex-col text-left">
+                    <span className="font-bold text-[#F5D77F] font-black">
+                      {pair.key}
+                    </span>
+                  </div>
+                  <div className="text-right pl-2">
+                    <span className={`font-serif font-black text-sm tabular-nums ${pair.watched > 0 ? 'text-[#E56A77]' : 'text-[#D4AF37]'}`}>
+                      {pair.watched}
+                    </span>
+                    <span className="text-[11px] font-sans font-normal text-stone-500 tabular-nums"> / {pair.total}회</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* 6️⃣ [좌석 배치도] 🪑 실시간 좌석 배치도 */}
+        <section className="w-full bg-[#120305] text-[#E8DCC4] rounded-3xl p-4 md:p-6 flex flex-col items-center shadow-2xl mb-2 border border-[#52131B]">
+          <div className="w-full flex justify-between items-center mb-3">
+            <div className="py-1 bg-gradient-to-r from-[#D4AF37] to-[#AA8520] px-4 text-[#140406] rounded-md font-serif font-black tracking-[0.2em] text-[11px] shadow-md">S T A G E</div>
+            <span className="text-[10px] text-[#D4AF37] font-serif font-bold">SEAT GUIDE (관람 회차별 자동 집계)</span>
+          </div>
+          
+          <div className="flex gap-2.5 justify-center items-center mb-4 text-[10px] bg-[#0A0203] px-3 py-2 rounded-xl text-stone-400 font-bold w-full flex-wrap border border-[#2E0A10]">
+            <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 bg-gradient-to-br from-[#E2B755] to-[#B38728] rounded-sm"></div>1회</div>
+            <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 bg-emerald-600 rounded-sm"></div>2회</div>
+            <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 bg-orange-600 rounded-sm"></div>3회</div>
+            <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 bg-[#800F1A] border border-[#C92A38] rounded-sm"></div>4회 이상</div>
+          </div>
+
+          <div className="w-full overflow-x-auto pb-2 flex flex-col gap-4">
+            <div className="flex flex-col gap-1 w-full min-w-[580px] select-none p-4 bg-[#080203] rounded-2xl border border-[#2E0A10]">
+              <div className="text-[11px] font-serif font-black text-[#D4AF37] mb-1.5 pl-1">객석 (A열 ~ L열)</div>
+              {renderRowBlock(othelloSeatRows)}
+            </div>
+          </div>
+        </section>
+
+      </div>{/* 📸 캡처 영역 끝 */}
+
+      {/* 💾 백업 & 복원 카드 & 이미지 저장 버튼 */}
+      <div className="w-full bg-[#140407] border border-[#4A141A] rounded-2xl p-4 shadow-xl flex items-center justify-between text-xs flex-wrap gap-3">
+        <div className="flex gap-2 flex-wrap">
           <button onClick={handleExportFile} className="px-3.5 py-2 bg-[#21060B] hover:bg-[#330910] text-[#D4AF37] rounded-xl font-bold shadow transition-all border border-[#52131B] active:scale-95">📥 파일 백업</button>
           <button onClick={() => fileInputRef.current.click()} className="px-3.5 py-2 bg-gradient-to-r from-[#D4AF37] to-[#AA8520] hover:from-[#E2BF4D] hover:to-[#B89228] text-[#140406] rounded-xl font-black shadow transition-all border border-[#F2D785] active:scale-95">📤 파일 복구</button>
+          <button onClick={handleCaptureImage} className="px-3.5 py-2 bg-[#7A1C26] hover:bg-[#961D2B] text-[#F5EAD4] rounded-xl font-bold shadow transition-all border border-[#8C1F2B] active:scale-95 flex items-center gap-1"><span>📷</span> 이미지 저장</button>
           <input type="file" ref={fileInputRef} onChange={handleImportFile} accept=".json" className="hidden" />
         </div>
         <button onClick={handleReset} className="px-3.5 py-2 bg-[#3D0A11] hover:bg-[#540E18] text-[#E56A77] rounded-xl font-bold transition-all border border-[#6B1420]">초기화</button>
