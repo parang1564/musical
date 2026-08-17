@@ -62,6 +62,7 @@ const othelloSeatRows = {
 const DB_NAME = 'MusicalSchedulerDB_OthelloIago_v3_Poster';
 const STORE_NAME = 'schedules';
 const DB_VERSION = 1;
+const STORAGE_ACTOR_KEY = 'oi_target_actor_pref';
 
 const initDB = async () => {
   return openDB(DB_NAME, DB_VERSION, {
@@ -77,10 +78,13 @@ export default function OthelloIago() {
   const [schedules, setSchedules] = useState([]);
   const fileInputRef = useRef(null);
   
-  const [mainTargetActor, setMainTargetActor] = useState('박규원');
+  // 🌟 기준 배우: localStorage에서 마지막 입력값을 불러오며, 없으면 빈 문자열("")
+  const [mainTargetActor, setMainTargetActor] = useState(() => {
+    return localStorage.getItem(STORAGE_ACTOR_KEY) || '';
+  });
 
   const [formData, setFormData] = useState({
-    month: 9, date: '', day: '', time: '20:00', actor1: '박규원', actor2: '', seat: ''
+    month: 9, date: '', day: '', time: '20:00', actor1: '', actor2: '', seat: ''
   });
   const [editingId, setEditingId] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -95,6 +99,12 @@ export default function OthelloIago() {
     notice: '',
     twitterTag: '@YeonMyuticket'
   });
+
+  // 🌟 기준 배우 입력 핸들러 (실시간 localStorage 저장)
+  const handleTargetActorChange = (val) => {
+    setMainTargetActor(val);
+    localStorage.setItem(STORAGE_ACTOR_KEY, val);
+  };
 
   const formatSeatInput = (val) => {
     let clean = val.toUpperCase().trim().replace(/\s+/g, '').replace(/-/g, '');
@@ -155,7 +165,7 @@ export default function OthelloIago() {
       alert('새로운 스케줄이 추가되었습니다! 📅');
     }
 
-    setFormData({ month: 9, date: '', day: '', time: '20:00', actor1: mainTargetActor || '박규원', actor2: '', seat: '' });
+    setFormData({ month: 9, date: '', day: '', time: '20:00', actor1: mainTargetActor, actor2: '', seat: '' });
     setShowForm(false);
     loadInitialData();
   };
@@ -237,6 +247,7 @@ export default function OthelloIago() {
         await db.put(STORE_NAME, item);
       }
       setSchedules(defaultInitialData);
+      handleTargetActorChange('');
       alert('초기화가 완료되었습니다.');
     }
   };
@@ -277,7 +288,7 @@ export default function OthelloIago() {
     const [monthStr, dayStr] = item.date.split('.');
     const formattedDate = `${parseInt(monthStr, 10)}월 ${parseInt(dayStr, 10)}일`;
     const castingList = `${item.actor1} ${item.actor2}`;
-    const noticeText = modalInputs.notice.trim() ? ` (${modalInputs.notice})` : '';
+    const noticeText = modalInputs.notice.trim() ? ` (${modalInputs.notice.trim()})` : '';
 
     const copyText = `${modalInputs.musicalName} 양도\n\n${formattedDate} ${item.day}요일 ${item.time}\n${castingList}\n${finalSeat}\n${modalInputs.discountType} ${modalInputs.price}${noticeText}\n${modalInputs.twitterTag}`;
 
@@ -379,7 +390,6 @@ export default function OthelloIago() {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-24 bg-[#7A0C17]/25 blur-3xl pointer-events-none" />
 
         <div className="flex items-center gap-3.5 z-10">
-          {/* 🎙️🎀 붉은 리본이 묶인 스탠드 마이크 엠블럼 */}
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#21060B] to-[#0A0203] flex items-center justify-center relative shadow-inner border border-[#8C1F2B] flex-shrink-0">
             <span className="text-2xl leading-none select-none">🎙️</span>
             <span className="absolute -bottom-1 -right-1 text-sm select-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">🎀</span>
@@ -471,13 +481,13 @@ export default function OthelloIago() {
             <input 
               type="text" 
               value={mainTargetActor}
-              onChange={(e) => setMainTargetActor(e.target.value)}
-              placeholder="배우 이름 입력 (비우면 전체보기)" 
-              className="w-full p-2 px-3 pr-7 border border-[#7A1C26] bg-[#21060B] rounded-lg font-black text-[#F5D77F] text-xs focus:outline-none focus:border-[#D4AF37]"
+              onChange={(e) => handleTargetActorChange(e.target.value)}
+              placeholder="배우 이름 입력" 
+              className="w-full p-2 px-3 pr-7 border border-[#7A1C26] bg-[#21060B] rounded-lg font-black text-[#F5D77F] text-xs focus:outline-none focus:border-[#D4AF37] placeholder:text-stone-600 placeholder:font-normal"
             />
             {mainTargetActor && (
               <button 
-                onClick={() => setMainTargetActor('')} 
+                onClick={() => handleTargetActorChange('')} 
                 className="absolute right-2 top-1/2 -translate-y-1/2 text-stone-500 hover:text-stone-300 font-bold text-xs"
                 title="입력 지우기 (전체보기)"
               >
@@ -701,7 +711,14 @@ export default function OthelloIago() {
 
               <div className="flex flex-col gap-1">
                 <label className="font-bold text-stone-400 text-[11px]">괄호() 내 안내 문구</label>
-                <input type="text" name="notice" value={modalInputs.notice} onChange={handleModalInputChange} className="p-2 border border-[#4A141A] rounded-xl bg-[#080203] text-stone-200 font-bold focus:outline-none focus:border-[#D4AF37]" />
+                <input 
+                  type="text" 
+                  name="notice" 
+                  placeholder="비워두면 괄호 없이 복사됩니다" 
+                  value={modalInputs.notice} 
+                  onChange={handleModalInputChange} 
+                  className="p-2 border border-[#4A141A] rounded-xl bg-[#080203] text-stone-200 font-bold focus:outline-none focus:border-[#D4AF37]" 
+                />
               </div>
 
               <div className="flex flex-col gap-1">
