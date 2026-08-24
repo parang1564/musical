@@ -3,7 +3,8 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
-  base: '/musical-scheduler/', // 👈 본인의 실제 깃허브 레포지토리 이름 (앞뒤로 슬래시 필수)
+  // 본인의 깃허브 배포 주소에 맞게 설정 (루트 바로 아래라면 '/' 혹은 './')
+  base: './', 
   plugins: [
     react(),
     tailwindcss(),
