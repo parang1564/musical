@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Musical Scheduler</title>
+    <script type="text/javascript">
+      // 현재 주소를 세션스토리지에 저장하고 index.html로 강제 이동
+      var segmentCount = 1;
+      var l = window.location;
+      var pathSegments = l.pathname.split('/').slice(1, 1 + segmentCount);
+      var base = '/' + pathSegments.join('/') + '/';
+      var redirect = l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + base + '?p=' + encodeURIComponent(l.pathname.substring(base.length - 1) + l.search + l.hash);
+      window.location.replace(redirect);
+    </script>
+  </head>
+  <body>
+  </body>
+</html>
