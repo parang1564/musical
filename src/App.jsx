@@ -7,7 +7,7 @@ import Othello from "./park/oi/othelloIago.jsx"; // 오셀로와이아고
 export default function App() {
   return (
     <Routes>
-      {/* 🏠 기본 홈 (basename="/musical" 기준 -> http://localhost:5173/musical/) */}
+      {/* 🏠 기본 홈 */}
       <Route path="/" element={<MainDirectory />} />
 
       {/* 🚀 이진혁 배우 작품들 */}
@@ -44,9 +44,9 @@ function MainDirectory() {
             <span className="text-xl">➔</span>
           </Link>
 
-          {/* 사의찬미 바로가기 버튼 */}
+          {/* 사의찬미 바로가기 버튼 (수정: to="/lee" -> to="/lee/glo") */}
           <Link 
-            to="/lee"
+            to="/lee/glo"
             className="w-full py-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-2xl font-bold text-sm shadow-md transition-all flex items-center justify-between px-6"
           >
             <div className="flex flex-col items-start text-left">
