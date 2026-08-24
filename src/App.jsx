@@ -19,7 +19,7 @@ export default function App() {
       <Route path="/park/oi" element={<Othello />} />
 
       {/* ⚠️ 그 외 경로는 메인으로 리다이렉트 */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
     </Routes>
   );
 }
