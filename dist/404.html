@@ -2,15 +2,18 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <title>Musical Scheduler</title>
+    <title>Redirecting...</title>
     <script type="text/javascript">
-      // 현재 주소를 세션스토리지에 저장하고 index.html로 강제 이동
-      var segmentCount = 1;
+      // GitHub Pages에서 404가 났을 때, 현재 주소 경로를 세션에 담고 index.html로 강제 이동시킴
+      var segmentCount = 1; // /musical/ 이 1개이므로 1
       var l = window.location;
-      var pathSegments = l.pathname.split('/').slice(1, 1 + segmentCount);
-      var base = '/' + pathSegments.join('/') + '/';
-      var redirect = l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + base + '?p=' + encodeURIComponent(l.pathname.substring(base.length - 1) + l.search + l.hash);
-      window.location.replace(redirect);
+      l.replace(
+        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+        l.pathname.split('/').slice(0, 1 + segmentCount).join('/') + '/?p=/' +
+        l.pathname.slice(1).split('/').slice(segmentCount).join('/') +
+        (l.search ? '&q=' + l.search.slice(1) : '') +
+        l.hash
+      );
     </script>
   </head>
   <body>
