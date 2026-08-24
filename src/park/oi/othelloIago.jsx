@@ -3,6 +3,7 @@ import { openDB } from 'idb';
 
 // 🔗 공지 및 링크 상수
 const FIRST_TICKET_LINK = "https://x.com/newpro_OI/status/2085603813692711207?s=20";
+const SECOND_TICKET_LINK = "https://x.com/newpro_OI/status/2090310432401789041?s=20";
 const REVISIT_BENEFIT_LINK = "https://x.com/newpro_OI/status/2084874609149784274?s=20";
 const SEAT_CHART_LINK = "https://x.com/newpro_OI/status/2084874555882082479?s=20";
 const SEEYA_LINK = "https://musicalseeya.com/seeyatheater/25";
@@ -42,16 +43,37 @@ const defaultInitialData = [
   { id: 13, month: 9, date: "09.19", day: "토", time: "18:00", actor1: "김지온", actor2: "김경록", seat: "", cardTarget: 1 },
   { id: 14, month: 9, date: "09.20", day: "일", time: "14:00", actor1: "박규원", actor2: "곽민수", seat: "", cardTarget: 1 },
   { id: 15, month: 9, date: "09.20", day: "일", time: "18:00", actor1: "김지온", actor2: "양지원", seat: "", cardTarget: 1 },
+  // ➕ 추가된 이미지 스케줄 데이터 (9월 22일 ~ 10월 11일)
   { id: 16, month: 9, date: "09.22", day: "화", time: "20:00", actor1: "박규원", actor2: "양지원", seat: "", cardTarget: 1 },
-  { id: 17, month: 9, date: "09.23", day: "수", time: "20:00", actor1: "박규원", actor2: "김경록", seat: "", cardTarget: 1 },
-  { id: 18, month: 9, date: "09.26", day: "토", time: "18:00", actor1: "박규원", actor2: "양지원", seat: "", cardTarget: 1 },
-  { id: 19, month: 9, date: "09.29", day: "화", time: "20:00", actor1: "박규원", actor2: "곽민수", seat: "", cardTarget: 1 },
-  { id: 20, month: 10, date: "10.01", day: "목", time: "20:00", actor1: "박규원", actor2: "김경록", seat: "", cardTarget: 1 },
-  { id: 21, month: 10, date: "10.04", day: "일", time: "14:00", actor1: "박규원", actor2: "곽민수", seat: "", cardTarget: 1 },
-  { id: 22, month: 10, date: "10.05", day: "월", time: "14:00", actor1: "박규원", actor2: "양지원", seat: "", cardTarget: 1 },
-  { id: 23, month: 10, date: "10.07", day: "수", time: "16:00", actor1: "박규원", actor2: "양지원", seat: "", cardTarget: 1 },
-  { id: 24, month: 10, date: "10.08", day: "목", time: "20:00", actor1: "박규원", actor2: "곽민수", seat: "", cardTarget: 1 },
-  { id: 25, month: 10, date: "10.11", day: "일", time: "18:00", actor1: "박규원", actor2: "김경록", seat: "", cardTarget: 1 }
+  { id: 17, month: 9, date: "09.23", day: "수", time: "16:00", actor1: "변희상", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 18, month: 9, date: "09.23", day: "수", time: "20:00", actor1: "박규원", actor2: "김경록", seat: "", cardTarget: 1 },
+  { id: 19, month: 9, date: "09.24", day: "목", time: "14:00", actor1: "김지온", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 20, month: 9, date: "09.24", day: "목", time: "18:00", actor1: "변희상", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 21, month: 9, date: "09.25", day: "금", time: "14:00", actor1: "김지온", actor2: "김경록", seat: "", cardTarget: 1 },
+  { id: 22, month: 9, date: "09.26", day: "토", time: "14:00", actor1: "변희상", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 23, month: 9, date: "09.26", day: "토", time: "18:00", actor1: "박규원", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 24, month: 9, date: "09.27", day: "일", time: "14:00", actor1: "김지온", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 25, month: 9, date: "09.27", day: "일", time: "18:00", actor1: "변희상", actor2: "김경록", seat: "", cardTarget: 1 },
+  { id: 26, month: 9, date: "09.29", day: "화", time: "20:00", actor1: "박규원", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 27, month: 9, date: "09.30", day: "수", time: "16:00", actor1: "변희상", actor2: "김경록", seat: "", cardTarget: 1 },
+  { id: 28, month: 9, date: "09.30", day: "수", time: "20:00", actor1: "김지온", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 29, month: 10, date: "10.01", day: "목", time: "20:00", actor1: "박규원", actor2: "김경록", seat: "", cardTarget: 1 },
+  { id: 30, month: 10, date: "10.02", day: "금", time: "20:00", actor1: "김지온", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 31, month: 10, date: "10.03", day: "토", time: "14:00", actor1: "변희상", actor2: "김경록", seat: "", cardTarget: 1 },
+  { id: 32, month: 10, date: "10.03", day: "토", time: "18:00", actor1: "김지온", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 33, month: 10, date: "10.04", day: "일", time: "14:00", actor1: "박규원", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 34, month: 10, date: "10.04", day: "일", time: "18:00", actor1: "변희상", actor2: "김경록", seat: "", cardTarget: 1 },
+  { id: 35, month: 10, date: "10.05", day: "월", time: "14:00", actor1: "박규원", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 36, month: 10, date: "10.05", day: "월", time: "18:00", actor1: "김지온", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 37, month: 10, date: "10.07", day: "수", time: "16:00", actor1: "박규원", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 38, month: 10, date: "10.07", day: "수", time: "20:00", actor1: "변희상", actor2: "김경록", seat: "", cardTarget: 1 },
+  { id: 39, month: 10, date: "10.08", day: "목", time: "20:00", actor1: "박규원", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 40, month: 10, date: "10.09", day: "금", time: "14:00", actor1: "김지온", actor2: "김경록", seat: "", cardTarget: 1 },
+  { id: 41, month: 10, date: "10.09", day: "금", time: "18:00", actor1: "변희상", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 42, month: 10, date: "10.10", day: "토", time: "14:00", actor1: "김지온", actor2: "김경록", seat: "", cardTarget: 1 },
+  { id: 43, month: 10, date: "10.10", day: "토", time: "18:00", actor1: "변희상", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 44, month: 10, date: "10.11", day: "일", time: "14:00", actor1: "김지온", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 45, month: 10, date: "10.11", day: "일", time: "18:00", actor1: "박규원", actor2: "김경록", seat: "", cardTarget: 1 }
 ];
 
 // 🪑 오셀로와 이아고 좌석 배치도
@@ -604,6 +626,14 @@ export default function OthelloIago() {
             className="px-3.5 py-2 bg-gradient-to-r from-[#6E0E18] to-[#45050C] hover:from-[#87121F] hover:to-[#570710] text-[#F5EAD4] rounded-xl text-xs font-bold shadow-lg border border-[#961D2B] transition-all active:scale-95 flex items-center gap-1"
           >
             <span>🎟️</span> 1차
+          </a>
+          <a
+            href={SECOND_TICKET_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3 py-1.5 bg-gradient-to-r from-red-900 to-red-950 hover:from-red-800 hover:to-red-900 text-amber-100 rounded-xl text-xs font-bold shadow-lg border border-red-700 transition-all active:scale-95 flex items-center gap-1"
+          >
+            <span>🎟️</span> 2차
           </a>
           <a
             href={SEAT_CHART_LINK}
