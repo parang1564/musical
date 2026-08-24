@@ -96,7 +96,7 @@ const floor2Rows = {
   Q: [null, null, 20, 19, 18, 17, null, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
 };
 
-const DB_NAME = 'MusicalSchedulerDB_Anarchist_vCaptureDirect';
+const DB_NAME = 'MusicalSchedulerDB_Anarchist_vIconCopyUpdated';
 const STORE_NAME = 'schedules';
 const SETTING_STORE = 'settings';
 const DB_VERSION = 1;
@@ -114,7 +114,6 @@ const initDB = async () => {
   });
 };
 
-// 💡 CDN 동적 로더 함수 (설치 에러 방지)
 const loadHtml2CanvasScript = () => {
   return new Promise((resolve, reject) => {
     if (window.html2canvas) {
@@ -281,7 +280,18 @@ export default function Anarchist() {
     alert('모든 스케줄 및 도장판 정보가 저장되었습니다! 💾');
   };
 
-  // 📸 CDN 자동 연동형 캡처 다운로드
+  const handleCastInfoClick = (item) => {
+    const [monthStr, dayStr] = item.date.split('.');
+    const formattedDate = `${parseInt(monthStr, 10)}/${parseInt(dayStr, 10)}`;
+    const copyText = `${formattedDate} ${item.actor1} ${item.actor2} ${item.mainActor}`;
+
+    navigator.clipboard.writeText(copyText)
+      .then(() => {
+        alert(`클립보드에 복사되었습니다: "${copyText}" 📋`);
+      })
+      .catch(err => alert("복사 실패: " + err));
+  };
+
   const handleCaptureImage = async () => {
     if (!captureAreaRef.current) return;
     try {
@@ -426,11 +436,11 @@ export default function Anarchist() {
     const finalSeat = modalInputs.transferSeat.trim() === "" ? "미입력 좌석" : modalInputs.transferSeat;
 
     const [monthStr, dayStr] = item.date.split('.');
-    const formattedDate = `${parseInt(monthStr, 10)}월 ${parseInt(dayStr, 10)}일`;
+    const formattedDate = `${parseInt(monthStr, 10)}/${parseInt(dayStr, 10)}`;
     const castingList = `${item.actor1} ${item.actor2} ${item.mainActor}`;
     const noticeText = modalInputs.notice.trim() ? ` (${modalInputs.notice})` : '';
 
-    const copyText = `${modalInputs.musicalName} 양도\n\n${formattedDate} ${item.day}요일 ${item.time}\n${castingList}\n${finalSeat}\n${modalInputs.discountType} ${modalInputs.price}${noticeText}\n${modalInputs.twitterTag}`;
+    const copyText = `${modalInputs.musicalName} 양도\n\n${formattedDate} ${item.time}\n${castingList}\n${finalSeat}\n${modalInputs.discountType} ${modalInputs.price}${noticeText}\n${modalInputs.twitterTag}`;
 
     navigator.clipboard.writeText(copyText)
       .then(() => {
@@ -797,6 +807,7 @@ export default function Anarchist() {
 
                         return (
                           <div key={item.id} className="p-2.5 flex items-center justify-between gap-2 hover:bg-[#FFF5D6] transition-colors">
+                            
                             <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                               <div className="flex flex-col items-start flex-shrink-0">
                                 <span className="font-black text-stone-900 text-xs tabular-nums">{item.date}</span>
@@ -810,19 +821,25 @@ export default function Anarchist() {
                                   <span className={`text-[11px] sm:text-xs font-black ${item.mainActor === '이진혁' ? 'text-red-700' : 'text-stone-900'}`} title={`덕형: ${item.mainActor}`}>
                                     {item.mainActor}
                                   </span>
+
+                                  {/* 🦊 클릭 시 복사되는 여우 아이콘 버튼 */}
+                                  <button 
+                                    type="button"
+                                    onClick={() => handleCastInfoClick(item)} 
+                                    className="ml-1 p-1 bg-stone-200 hover:bg-amber-400 text-stone-700 hover:text-stone-950 rounded-md text-[10px] transition-all active:scale-95 shadow-sm"
+                                    title="클릭 시 '날짜 캐스트' 정보 복사"
+                                  >
+                                    🦊
+                                  </button>
                                 </div>
 
                                 {eventInfo && (
                                   <div>
-                                    <a
-                                      href={eventInfo.link}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className={`inline-block px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] border transition-all hover:opacity-85 leading-tight ${eventInfo.color}`}
-                                      title={`${eventInfo.name} (클릭 시 공지 이동)`}
+                                    <span
+                                      className={`inline-block px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] border leading-tight ${eventInfo.color}`}
                                     >
                                       🎁 {eventInfo.name}
-                                    </a>
+                                    </span>
                                   </div>
                                 )}
                               </div>
@@ -856,6 +873,7 @@ export default function Anarchist() {
                               <button onClick={() => handleOpenCopyModal(item)} className="px-1.5 sm:px-2 py-1 text-[10px] anarchist-btn-copy rounded-lg h-7 flex items-center justify-center">양도</button>
                               <button onClick={() => handleScheduleDelete(item.id)} className="px-1.5 sm:px-2 py-1 text-[10px] bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold h-7 flex items-center justify-center">삭제</button>
                             </div>
+
                           </div>
                         );
                       })}
@@ -930,6 +948,7 @@ export default function Anarchist() {
 
         {/* 6️⃣ [좌석 배치도] */}
         <section className="w-full bg-[#1C1A17] text-stone-100 rounded-3xl p-4 md:p-6 flex flex-col items-center shadow-xl border-2 border-stone-900">
+          
           <div className="w-full flex justify-between items-center mb-3">
             <div className="py-1 bg-[#F3B329] px-4 text-stone-950 rounded-md font-black tracking-widest text-[11px] shadow">S T A G E</div>
             <span className="text-[10px] text-amber-400 font-bold">좌석 배치 현황 (관람 회차별 자동 집계)</span>
@@ -943,6 +962,7 @@ export default function Anarchist() {
           </div>
 
           <div className="w-full overflow-x-auto pb-2 flex flex-col gap-4">
+            
             <div className="flex flex-col gap-1 w-full min-w-[580px] select-none p-3.5 bg-[#12110F] rounded-2xl border border-stone-800">
               <div className="text-[11px] font-black text-[#F3B329] mb-1.5 pl-1">B2F 객석 1층</div>
               {renderRowBlock(floor1Rows)}
@@ -952,6 +972,7 @@ export default function Anarchist() {
               <div className="text-[11px] font-black text-[#F3B329] mb-1.5 pl-1">B1F 객석 2층</div>
               {renderRowBlock(floor2Rows)}
             </div>
+
           </div>
         </section>
 
@@ -983,6 +1004,7 @@ export default function Anarchist() {
               <button onClick={() => setIsModalOpen(false)} className="text-xl font-bold text-stone-400 hover:text-white transition-colors">×</button>
             </div>
             <div className="p-4 flex flex-col gap-3 text-xs text-stone-800 bg-[#FFFDF5]">
+              
               <div className="flex flex-col gap-1">
                 <label className="font-black text-stone-600 text-[11px]">작품명 및 헤더</label>
                 <input type="text" name="musicalName" value={modalInputs.musicalName} onChange={handleModalInputChange} className="p-2 border-2 border-stone-900 rounded-xl bg-white font-bold" />
@@ -1036,6 +1058,7 @@ export default function Anarchist() {
                 <label className="font-black text-stone-600 text-[11px]">하단 검색용 태그</label>
                 <input type="text" name="twitterTag" value={modalInputs.twitterTag} onChange={handleModalInputChange} className="p-2 border-2 border-stone-900 rounded-xl bg-white font-mono font-bold" />
               </div>
+
             </div>
             
             <div className="p-3.5 bg-[#FFF9E6] border-t-2 border-stone-900 flex gap-2">

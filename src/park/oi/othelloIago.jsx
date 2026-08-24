@@ -41,7 +41,17 @@ const defaultInitialData = [
   { id: 12, month: 9, date: "09.19", day: "토", time: "14:00", actor1: "변희상", actor2: "양지원", seat: "", cardTarget: 1 },
   { id: 13, month: 9, date: "09.19", day: "토", time: "18:00", actor1: "김지온", actor2: "김경록", seat: "", cardTarget: 1 },
   { id: 14, month: 9, date: "09.20", day: "일", time: "14:00", actor1: "박규원", actor2: "곽민수", seat: "", cardTarget: 1 },
-  { id: 15, month: 9, date: "09.20", day: "일", time: "18:00", actor1: "김지온", actor2: "양지원", seat: "", cardTarget: 1 }
+  { id: 15, month: 9, date: "09.20", day: "일", time: "18:00", actor1: "김지온", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 16, month: 9, date: "09.22", day: "화", time: "20:00", actor1: "박규원", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 17, month: 9, date: "09.23", day: "수", time: "20:00", actor1: "박규원", actor2: "김경록", seat: "", cardTarget: 1 },
+  { id: 18, month: 9, date: "09.26", day: "토", time: "18:00", actor1: "박규원", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 19, month: 9, date: "09.29", day: "화", time: "20:00", actor1: "박규원", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 20, month: 10, date: "10.01", day: "목", time: "20:00", actor1: "박규원", actor2: "김경록", seat: "", cardTarget: 1 },
+  { id: 21, month: 10, date: "10.04", day: "일", time: "14:00", actor1: "박규원", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 22, month: 10, date: "10.05", day: "월", time: "14:00", actor1: "박규원", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 23, month: 10, date: "10.07", day: "수", time: "16:00", actor1: "박규원", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 24, month: 10, date: "10.08", day: "목", time: "20:00", actor1: "박규원", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 25, month: 10, date: "10.11", day: "일", time: "18:00", actor1: "박규원", actor2: "김경록", seat: "", cardTarget: 1 }
 ];
 
 // 🪑 오셀로와 이아고 좌석 배치도
