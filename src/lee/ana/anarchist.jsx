@@ -30,25 +30,27 @@ const calcDiscountPrice = (discountKey) => {
   return `${discounted.toLocaleString()}원`;
 };
 
-// 🎁 일자별 이벤트 매핑 함수
+// 🎁 일자별 이벤트 정의
 const getEventForDate = (dateStr) => {
   if (dateStr >= "09.15" && dateStr <= "09.20") {
-    return { name: "프리뷰", color: "bg-amber-200 text-amber-950 border-amber-400 font-bold", link: EVENT_NOTICE_LINK1, isTriple: false };
+    return { name: "프리뷰", startDate: "09.15", endDate: "09.20", color: "bg-amber-200 text-amber-950", link: EVENT_NOTICE_LINK1, isTriple: false };
   }
   if (dateStr >= "09.22" && dateStr <= "09.27") {
-    return { name: "커튼콜 & 트리플", color: "bg-stone-800 text-amber-300 border-stone-900 font-bold", link: EVENT_NOTICE_LINK1, isTriple: true };
+    return { name: "커튼콜 & 트리플", startDate: "09.22", endDate: "09.27", color: "bg-stone-300 text-stone-900", link: EVENT_NOTICE_LINK1, isTriple: true };
   }
   if ((dateStr >= "09.29" && dateStr <= "09.30") || (dateStr >= "10.01" && dateStr <= "10.05")) {
-    return { name: "스페셜 커튼콜", color: "bg-red-700 text-white border-red-800 font-bold", link: EVENT_NOTICE_LINK1, isTriple: false };
+    const start = dateStr <= "09.30" ? "09.29" : "10.01";
+    const end = dateStr <= "09.30" ? "09.30" : "10.05";
+    return { name: "스페셜 커튼콜", startDate: start, endDate: end, color: "bg-red-200 text-red-950", link: EVENT_NOTICE_LINK1, isTriple: false };
   }
   if (dateStr >= "10.07" && dateStr <= "10.11") {
-    return { name: "미공개 페어 엽서 SET", color: "bg-purple-700 text-white border-purple-900 font-bold", link: EVENT_NOTICE_LINK2, isTriple: false };
+    return { name: "미공개 페어 엽서 SET", startDate: "10.07", endDate: "10.11", color: "bg-purple-200 text-purple-950", link: EVENT_NOTICE_LINK2, isTriple: false };
   }
   if (dateStr >= "10.13" && dateStr <= "10.18") {
-    return { name: "생일 축하 카드 증정 & 더블 적립", color: "bg-emerald-700 text-white border-emerald-900 font-bold", link: EVENT_NOTICE_LINK2, isTriple: true };
+    return { name: "생일 축하 카드 증정 & 더블 적립", startDate: "10.13", endDate: "10.18", color: "bg-emerald-200 text-emerald-950", link: EVENT_NOTICE_LINK2, isTriple: true };
   }
   if (dateStr >= "10.20" && dateStr <= "10.25") {
-    return { name: "혁명단 비밀문서 증정", color: "bg-blue-800 text-white border-blue-950 font-bold", link: EVENT_NOTICE_LINK2, isTriple: false };
+    return { name: "혁명단 비밀문서 증정", startDate: "10.20", endDate: "10.25", color: "bg-blue-200 text-blue-950", link: EVENT_NOTICE_LINK2, isTriple: false };
   }
   return null;
 };
@@ -135,7 +137,7 @@ const floor2Rows = {
   Q: [null, null, 20, 19, 18, 17, null, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
 };
 
-const DB_NAME = 'MusicalSchedulerDB_Anarchist_vFinalEventNamesUpdate';
+const DB_NAME = 'MusicalSchedulerDB_Anarchist_vRemoveCalendarLinks';
 const STORE_NAME = 'schedules';
 const SETTING_STORE = 'settings';
 const DB_VERSION = 1;
@@ -348,18 +350,6 @@ export default function Anarchist() {
     navigator.clipboard.writeText(copyText)
       .then(() => {
         alert(`클립보드에 복사되었습니다: "${copyText}" 📋`);
-      })
-      .catch(err => alert("복사 실패: " + err));
-  };
-
-  const handleExcelCopy = (item) => {
-    const [monthStr, dayStr] = item.date.split('.');
-    const formattedDate = `${parseInt(monthStr, 10)}월${parseInt(dayStr, 10)}일`;
-    const excelText = `${formattedDate}\t${item.time}`;
-
-    navigator.clipboard.writeText(excelText)
-      .then(() => {
-        alert(`엑셀용 복사 완료! 📋\n(${formattedDate} / ${item.time})\n(엑셀 날짜 칸에 바로 Ctrl + V 하세요)`);
       })
       .catch(err => alert("복사 실패: " + err));
   };
@@ -975,29 +965,13 @@ export default function Anarchist() {
                                   >
                                     🦊
                                   </button>
-
-                                  {/* 📋 엑셀복사 버튼 */}
-                                  <button 
-                                    type="button"
-                                    onClick={() => handleExcelCopy(item)} 
-                                    className="p-1 bg-emerald-100 hover:bg-emerald-300 text-emerald-800 rounded-md text-[10px] font-black transition-all active:scale-95 shadow-sm"
-                                    title="클릭 시 엑셀 붙여넣기용 복사"
-                                  >
-                                    📋엑셀
-                                  </button>
                                 </div>
 
                                 {eventInfo && (
                                   <div>
-                                    <a
-                                      href={eventInfo.link}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className={`inline-block px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] border transition-all hover:opacity-85 leading-tight ${eventInfo.color}`}
-                                      title={`${eventInfo.name} (클릭 시 공지 이동)`}
-                                    >
+                                    <span className={`inline-block px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] border leading-tight ${eventInfo.color}`}>
                                       🎁 {eventInfo.name}
-                                    </a>
+                                    </span>
                                   </div>
                                 )}
                               </div>
@@ -1043,7 +1017,7 @@ export default function Anarchist() {
           })}
         </main>
 
-        {/* 🗓️ [스케줄 리스트 바로 밑 독립된 영역] 월별 아코디언 캘린더 뷰 (수정된 이벤트명 반영) */}
+        {/* 🗓️ [스케줄 리스트 바로 밑 독립된 영역] 월별 아코디언 캘린더 뷰 (링크 제거 완료 & 작은 화면 최적화) */}
         <section className="w-full flex flex-col gap-4 mb-5">
           {[9, 10].map(m => {
             const monthSchedules = filteredSchedules.filter(item => item.month === m);
@@ -1079,62 +1053,63 @@ export default function Anarchist() {
                     <div className="grid grid-cols-7 gap-1.5">
                       {generateCalendarDays(2026, m).map((dayObj) => {
                         if (dayObj.empty) {
-                          return <div key={dayObj.key} className="h-32 md:h-36 bg-transparent" />;
+                          return <div key={dayObj.key} className="h-20 md:h-24 bg-transparent" />;
                         }
 
                         const dayShows = monthSchedules.filter(s => s.date === dayObj.dateStr);
                         const hasShows = dayShows.length > 0;
                         const eventInfo = getEventForDate(dayObj.dateStr);
+                        const isEventStart = eventInfo && eventInfo.startDate === dayObj.dateStr;
 
                         return (
                           <div 
                             key={dayObj.key} 
-                            className={`h-32 md:h-36 p-1 border rounded-lg flex flex-col justify-between overflow-hidden transition-all ${
+                            className={`p-1 border rounded-lg flex flex-col justify-between overflow-hidden transition-all ${
                               hasShows 
-                                ? 'bg-amber-50/90 border-amber-400 shadow-xs' 
-                                : 'bg-white border-stone-200 opacity-60'
+                                ? 'min-h-[120px] md:min-h-[140px] bg-amber-50/90 border-amber-400 shadow-xs' 
+                                : 'h-20 md:h-24 bg-white border-stone-200 opacity-60'
                             }`}
                           >
                             <div className="flex flex-col gap-0.5">
                               <div className="flex justify-start items-center">
-                                <span className="text-[11px] font-black text-stone-900 tabular-nums">{dayObj.dayNum}</span>
+                                <span className="text-[10px] md:text-[11px] font-black text-stone-900 tabular-nums">{dayObj.dayNum}</span>
                               </div>
 
-                              {/* 🎁 이벤트명 (수정된 이름 반영) */}
+                              {/* 🎁 이벤트 바 (링크 없이 순수 박스로 표시) */}
                               {eventInfo && (
-                                <div className="bg-purple-700 text-white text-[7.5px] font-black px-1 py-0.5 rounded leading-tight whitespace-normal text-center shadow-xs">
-                                  🎁 {eventInfo.name}
+                                <div
+                                  className={`block text-[6.5px] md:text-[7.5px] font-black px-1 py-0.5 leading-tight whitespace-normal text-center shadow-xs border ${eventInfo.color} ${
+                                    isEventStart ? 'rounded-md font-bold' : 'rounded-none'
+                                  }`}
+                                >
+                                  {isEventStart ? eventInfo.name : '\u00A0'}
                                 </div>
                               )}
                             </div>
 
-                            <div className="flex flex-col gap-1 overflow-y-auto max-h-[58px] text-[8px]">
-                              {hasShows ? (
-                                dayShows.map(show => {
-                                  const isWatched = show.seat && show.seat.trim() !== "";
-                                  return (
-                                    <div 
-                                      key={`cal-show-${show.id}`}
-                                      className={`px-1 py-0.5 rounded font-bold flex flex-col ${
-                                        isWatched 
-                                          ? 'bg-[#F3B329] text-stone-950 font-black' 
-                                          : 'bg-stone-200 text-stone-800'
-                                      }`}
-                                      title={`${show.time} | 자경:${show.actor1} 무혁:${show.actor2} 덕형:${show.mainActor} ${isWatched ? `[${show.seat}]` : ''}`}
-                                    >
-                                      <div className="flex justify-between items-center">
-                                        <span className="font-mono text-[7.5px]">{show.time.substring(0, 5)}</span>
-                                        {isWatched && <span className="text-[7px]">✓</span>}
-                                      </div>
-                                      <div className="text-[7px] truncate font-medium text-stone-900">
-                                        {show.actor1}·{show.actor2}·<span className="font-black text-red-800">{show.mainActor}</span>
-                                      </div>
+                            <div className="flex flex-col gap-1 overflow-y-auto max-h-[85px] text-[7.5px] md:text-[8.5px]">
+                              {hasShows && dayShows.map(show => {
+                                const isWatched = show.seat && show.seat.trim() !== "";
+                                return (
+                                  <div 
+                                    key={`cal-show-${show.id}`}
+                                    className={`px-1 py-0.5 rounded font-bold flex flex-col ${
+                                      isWatched 
+                                        ? 'bg-[#F3B329] text-stone-950 font-black' 
+                                        : 'bg-stone-200 text-stone-800'
+                                    }`}
+                                    title={`${show.time} | 자경:${show.actor1} 무혁:${show.actor2} 덕형:${show.mainActor} ${isWatched ? `[${show.seat}]` : ''}`}
+                                  >
+                                    <div className="flex justify-between items-center">
+                                      <span className="font-mono text-[7px] md:text-[7.5px] font-black">● {show.time.substring(0, 5)}</span>
+                                      {isWatched && <span className="text-[6.5px]">✓</span>}
                                     </div>
-                                  );
-                                })
-                              ) : (
-                                <span className="text-[8px] text-stone-400 text-center my-auto">휴관</span>
-                              )}
+                                    <div className="text-[6.5px] md:text-[7.5px] leading-tight font-medium text-stone-900 pl-1">
+                                      {show.actor1}, {show.actor2}, <span className="font-black text-red-800">{show.mainActor}</span>
+                                    </div>
+                                  </div>
+                                );
+                              })}
                             </div>
                           </div>
                         );
