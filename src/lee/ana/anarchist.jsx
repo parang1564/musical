@@ -4,10 +4,14 @@ import './anarchist.css';
 
 // 🔗 공지 및 외부 링크 상수
 const FIRST_TICKET_LINK = "https://x.com/mbz_anarchist/status/2085597396302692384?s=20";
+const SECOND_TICKET_LINK = "https://x.com/mbz_anarchist/status/2095726018099327113?s=20";
 const REVISIT_BENEFIT_LINK = "https://x.com/mbz_anarchist/status/2085597121311633728?s=20";
-const EVENT_NOTICE_LINK = "https://x.com/mbz_anarchist/status/2087736240338776409/photo/1";
 const SEAT_MAP_NOTICE_LINK = "https://x.com/mbz_anarchist/status/2085596842814013917?s=20";
 const SEEYA_LINK = "https://musicalseeya.com/seeyatheater/7";
+
+// 🎁 이벤트 공지 링크 상수 구분
+const EVENT_NOTICE_LINK1 = "https://x.com/mbz_anarchist/status/2087736240338776409/photo/1";
+const EVENT_NOTICE_LINK2 = "https://x.com/mbz_anarchist/status/2095726018099327113?s=20";
 
 // 🎟️ 티켓 원가 및 할인 계산 데이터 (원가 77,000원 + 예매 수수료 2,000원)
 const TICKET_ORIGIN_PRICE = 77000;
@@ -29,13 +33,22 @@ const calcDiscountPrice = (discountKey) => {
 // 🎁 일자별 이벤트 매핑 함수
 const getEventForDate = (dateStr) => {
   if (dateStr >= "09.15" && dateStr <= "09.20") {
-    return { name: "프리뷰", color: "bg-amber-200 text-amber-950 border-amber-400 font-bold", link: EVENT_NOTICE_LINK, isTriple: false };
+    return { name: "프리뷰", color: "bg-amber-200 text-amber-950 border-amber-400 font-bold", link: EVENT_NOTICE_LINK1, isTriple: false };
   }
   if (dateStr >= "09.22" && dateStr <= "09.27") {
-    return { name: "커튼콜 & 트리플 적립", color: "bg-stone-800 text-amber-300 border-stone-900 font-bold", link: EVENT_NOTICE_LINK, isTriple: true };
+    return { name: "커튼콜 & 트리플", color: "bg-stone-800 text-amber-300 border-stone-900 font-bold", link: EVENT_NOTICE_LINK1, isTriple: true };
   }
   if ((dateStr >= "09.29" && dateStr <= "09.30") || (dateStr >= "10.01" && dateStr <= "10.05")) {
-    return { name: "스페셜 커튼콜 & 쿠폰팩 증정", color: "bg-red-700 text-white border-red-800 font-bold", link: EVENT_NOTICE_LINK, isTriple: false };
+    return { name: "스페셜 커튼콜", color: "bg-red-700 text-white border-red-800 font-bold", link: EVENT_NOTICE_LINK1, isTriple: false };
+  }
+  if (dateStr >= "10.07" && dateStr <= "10.11") {
+    return { name: "미공개 페어 엽서 SET", color: "bg-purple-700 text-white border-purple-900 font-bold", link: EVENT_NOTICE_LINK2, isTriple: false };
+  }
+  if (dateStr >= "10.13" && dateStr <= "10.18") {
+    return { name: "생일 축하 카드 증정 & 더블 적립", color: "bg-emerald-700 text-white border-emerald-900 font-bold", link: EVENT_NOTICE_LINK2, isTriple: true };
+  }
+  if (dateStr >= "10.20" && dateStr <= "10.25") {
+    return { name: "혁명단 비밀문서 증정", color: "bg-blue-800 text-white border-blue-950 font-bold", link: EVENT_NOTICE_LINK2, isTriple: false };
   }
   return null;
 };
@@ -69,7 +82,33 @@ const defaultInitialData = [
   { id: 25, month: 10, date: "10.04", day: "일", time: "14:00", actor1: "정우연", actor2: "홍나현", mainActor: "이지현", seat: "", cardTarget: 1 },
   { id: 26, month: 10, date: "10.04", day: "일", time: "18:00", actor1: "김재한", actor2: "박준형", mainActor: "이진혁", seat: "", cardTarget: 1 },
   { id: 27, month: 10, date: "10.05", day: "월", time: "14:00", actor1: "박좌헌", actor2: "진호", mainActor: "김도빈", seat: "", cardTarget: 1 },
-  { id: 28, month: 10, date: "10.05", day: "월", time: "18:00", actor1: "정재환", actor2: "박주혁", mainActor: "김도빈", seat: "", cardTarget: 1 }
+  { id: 28, month: 10, date: "10.05", day: "월", time: "18:00", actor1: "정재환", actor2: "박주혁", mainActor: "김도빈", seat: "", cardTarget: 1 },
+  { id: 29, month: 10, date: "10.07", day: "수", time: "16:00", actor1: "정재환", actor2: "진호", mainActor: "김도빈", seat: "", cardTarget: 1 },
+  { id: 30, month: 10, date: "10.07", day: "수", time: "20:00", actor1: "정우연", actor2: "홍나현", mainActor: "이지현", seat: "", cardTarget: 1 },
+  { id: 31, month: 10, date: "10.08", day: "목", time: "20:00", actor1: "김재한", actor2: "박주혁", mainActor: "김도빈", seat: "", cardTarget: 1 },
+  { id: 32, month: 10, date: "10.09", day: "금", time: "14:00", actor1: "박좌헌", actor2: "박준형", mainActor: "최호승", seat: "", cardTarget: 1 },
+  { id: 33, month: 10, date: "10.09", day: "금", time: "18:00", actor1: "박좌헌", actor2: "박주혁", mainActor: "이진혁", seat: "", cardTarget: 1 },
+  { id: 34, month: 10, date: "10.10", day: "토", time: "15:00", actor1: "김재한", actor2: "박준형", mainActor: "김도빈", seat: "", cardTarget: 1 },
+  { id: 35, month: 10, date: "10.10", day: "토", time: "19:00", actor1: "정우연", actor2: "홍나현", mainActor: "이지연", seat: "", cardTarget: 1 },
+  { id: 36, month: 10, date: "10.11", day: "일", time: "14:00", actor1: "정재환", actor2: "박준형", mainActor: "이진혁", seat: "", cardTarget: 1 },
+  { id: 37, month: 10, date: "10.11", day: "일", time: "18:00", actor1: "정재환", actor2: "진호", mainActor: "최호승", seat: "", cardTarget: 1 },
+  { id: 38, month: 10, date: "10.13", day: "화", time: "20:00", actor1: "박좌헌", actor2: "박준형", mainActor: "김도빈", seat: "", cardTarget: 1 },
+  { id: 39, month: 10, date: "10.14", day: "수", time: "20:00", actor1: "정우연", actor2: "홍나현", mainActor: "이지현", seat: "", cardTarget: 1 },
+  { id: 40, month: 10, date: "10.15", day: "목", time: "20:00", actor1: "정재환", actor2: "진호", mainActor: "이진혁", seat: "", cardTarget: 1 },
+  { id: 41, month: 10, date: "10.16", day: "금", time: "20:00", actor1: "정우연", actor2: "홍나현", mainActor: "이지연", seat: "", cardTarget: 1 },
+  { id: 42, month: 10, date: "10.17", day: "토", time: "15:00", actor1: "김재한", actor2: "박준형", mainActor: "김도빈", seat: "", cardTarget: 1 },
+  { id: 43, month: 10, date: "10.17", day: "토", time: "19:00", actor1: "김재한", actor2: "박주혁", mainActor: "이진혁", seat: "", cardTarget: 1 },
+  { id: 44, month: 10, date: "10.18", day: "일", time: "14:00", actor1: "박좌헌", actor2: "진호", mainActor: "최호승", seat: "", cardTarget: 1 },
+  { id: 45, month: 10, date: "10.18", day: "일", time: "18:00", actor1: "정재환", actor2: "박준형", mainActor: "최호승", seat: "", cardTarget: 1 },
+  { id: 46, month: 10, date: "10.20", day: "화", time: "20:00", actor1: "박좌헌", actor2: "박준형", mainActor: "김도빈", seat: "", cardTarget: 1 },
+  { id: 47, month: 10, date: "10.21", day: "수", time: "16:00", actor1: "정재환", actor2: "진호", mainActor: "최호승", seat: "", cardTarget: 1 },
+  { id: 48, month: 10, date: "10.21", day: "수", time: "20:00", actor1: "정재환", actor2: "박준형", mainActor: "이진혁", seat: "", cardTarget: 1 },
+  { id: 49, month: 10, date: "10.22", day: "목", time: "20:00", actor1: "정우연", actor2: "홍나현", mainActor: "이지현", seat: "", cardTarget: 1 },
+  { id: 50, month: 10, date: "10.23", day: "금", time: "20:00", actor1: "김재한", actor2: "박준형", mainActor: "최호승", seat: "", cardTarget: 1 },
+  { id: 51, month: 10, date: "10.24", day: "토", time: "15:00", actor1: "정우연", actor2: "홍나현", mainActor: "이지현", seat: "", cardTarget: 1 },
+  { id: 52, month: 10, date: "10.24", day: "토", time: "19:00", actor1: "박좌헌", actor2: "진호", mainActor: "최호승", seat: "", cardTarget: 1 },
+  { id: 53, month: 10, date: "10.25", day: "일", time: "14:00", actor1: "김재한", actor2: "박준형", mainActor: "이진혁", seat: "", cardTarget: 1 },
+  { id: 54, month: 10, date: "10.25", day: "일", time: "18:00", actor1: "정재환", actor2: "박주혁", mainActor: "김도빈", seat: "", cardTarget: 1 }
 ];
 
 // 🪑 좌석 배치도 (B2F 1층 / B1F 2층)
@@ -96,7 +135,7 @@ const floor2Rows = {
   Q: [null, null, 20, 19, 18, 17, null, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
 };
 
-const DB_NAME = 'MusicalSchedulerDB_Anarchist_vIconCopyUpdated';
+const DB_NAME = 'MusicalSchedulerDB_Anarchist_vFinalEventNamesUpdate';
 const STORE_NAME = 'schedules';
 const SETTING_STORE = 'settings';
 const DB_VERSION = 1;
@@ -142,6 +181,12 @@ export default function Anarchist() {
   const [cardCollapsedMap, setCardCollapsedMap] = useState({});
   const [monthCollapsedMap, setMonthCollapsedMap] = useState({});
 
+  const [calendarCollapsedMap, setCalendarCollapsedMap] = useState({ 9: false, 10: false });
+
+  const [isRangeModalOpen, setIsRangeModalOpen] = useState(false);
+  const [targetMonthForRange, setTargetMonthForRange] = useState(9);
+  const [rangeInputs, setRangeInputs] = useState({ start: '1일', end: '15일' });
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [modalInputs, setModalInputs] = useState({
@@ -185,6 +230,11 @@ export default function Anarchist() {
 
     const savedMonthCollapsed = await db.get(SETTING_STORE, 'monthCollapsedMap');
     if (savedMonthCollapsed) setMonthCollapsedMap(savedMonthCollapsed.value || {});
+
+    const savedCalendarCollapsed = await db.get(SETTING_STORE, 'calendarCollapsedMap');
+    if (savedCalendarCollapsed) {
+      setCalendarCollapsedMap(savedCalendarCollapsed.value || { 9: false, 10: false });
+    }
   };
 
   useEffect(() => {
@@ -217,6 +267,15 @@ export default function Anarchist() {
     setMonthCollapsedMap(updatedMap);
     const db = await initDB();
     await db.put(SETTING_STORE, { key: 'monthCollapsedMap', value: updatedMap });
+  };
+
+  const toggleCalendarCollapse = async (monthNum) => {
+    const currentState = Boolean(calendarCollapsedMap[monthNum]);
+    const updatedMap = { ...calendarCollapsedMap, [monthNum]: !currentState };
+
+    setCalendarCollapsedMap(updatedMap);
+    const db = await initDB();
+    await db.put(SETTING_STORE, { key: 'calendarCollapsedMap', value: updatedMap });
   };
 
   const handleAddExtraCard = async () => {
@@ -277,6 +336,7 @@ export default function Anarchist() {
     await db.put(SETTING_STORE, { key: 'extraCards', value: extraCards });
     await db.put(SETTING_STORE, { key: 'cardCollapsedMap', value: cardCollapsedMap });
     await db.put(SETTING_STORE, { key: 'monthCollapsedMap', value: monthCollapsedMap });
+    await db.put(SETTING_STORE, { key: 'calendarCollapsedMap', value: calendarCollapsedMap });
     alert('모든 스케줄 및 도장판 정보가 저장되었습니다! 💾');
   };
 
@@ -288,6 +348,34 @@ export default function Anarchist() {
     navigator.clipboard.writeText(copyText)
       .then(() => {
         alert(`클립보드에 복사되었습니다: "${copyText}" 📋`);
+      })
+      .catch(err => alert("복사 실패: " + err));
+  };
+
+  const handleExcelCopy = (item) => {
+    const [monthStr, dayStr] = item.date.split('.');
+    const formattedDate = `${parseInt(monthStr, 10)}월${parseInt(dayStr, 10)}일`;
+    const excelText = `${formattedDate}\t${item.time}`;
+
+    navigator.clipboard.writeText(excelText)
+      .then(() => {
+        alert(`엑셀용 복사 완료! 📋\n(${formattedDate} / ${item.time})\n(엑셀 날짜 칸에 바로 Ctrl + V 하세요)`);
+      })
+      .catch(err => alert("복사 실패: " + err));
+  };
+
+  const handleOpenRangeModal = (monthNum) => {
+    setTargetMonthForRange(monthNum);
+    setRangeInputs({ start: '1일', end: '15일' });
+    setIsRangeModalOpen(true);
+  };
+
+  const executeRangeCopy = () => {
+    const textToCopy = `${targetMonthForRange}월${rangeInputs.start}~${rangeInputs.end}`;
+    navigator.clipboard.writeText(textToCopy)
+      .then(() => {
+        alert(`클립보드에 복사되었습니다: "${textToCopy}" 📋`);
+        setIsRangeModalOpen(false);
       })
       .catch(err => alert("복사 실패: " + err));
   };
@@ -327,7 +415,8 @@ export default function Anarchist() {
       cardBonuses, 
       extraCards,
       cardCollapsedMap,
-      monthCollapsedMap
+      monthCollapsedMap,
+      calendarCollapsedMap
     };
     const dataStr = JSON.stringify(backupObject, null, 2);
     const blob = new Blob([dataStr], { type: 'application/json' });
@@ -372,6 +461,9 @@ export default function Anarchist() {
           if (importedData.monthCollapsedMap !== undefined) {
             await db.put(SETTING_STORE, { key: 'monthCollapsedMap', value: importedData.monthCollapsedMap });
           }
+          if (importedData.calendarCollapsedMap !== undefined) {
+            await db.put(SETTING_STORE, { key: 'calendarCollapsedMap', value: importedData.calendarCollapsedMap });
+          }
 
           alert('성공적으로 스케줄 및 도장판 데이터를 복구했습니다! 📂');
           loadInitialData();
@@ -393,6 +485,7 @@ export default function Anarchist() {
       setExtraCards(0);
       setCardCollapsedMap({});
       setMonthCollapsedMap({});
+      setCalendarCollapsedMap({ 9: false, 10: false });
       loadInitialData();
       alert('초기화가 완료되었습니다.');
     }
@@ -520,6 +613,13 @@ export default function Anarchist() {
   const filteredSchedules = schedules.filter(item => {
     if (!searchActor.trim()) return true;
     const query = searchActor.trim();
+    if (query.includes('/')) {
+      const keywords = query.split('/').map(k => k.trim()).filter(Boolean);
+      return schedules.filter(item => {
+        const castString = `${item.actor1} ${item.actor2} ${item.mainActor}`;
+        return keywords.every(kw => castString.includes(kw));
+      });
+    }
     return (
       item.actor1.includes(query) ||
       item.actor2.includes(query) ||
@@ -563,6 +663,30 @@ export default function Anarchist() {
     ));
   };
 
+  const generateCalendarDays = (year, month) => {
+    const firstDay = new Date(year, month - 1, 1).getDay();
+    const lastDate = new Date(year, month, 0).getDate();
+    const days = [];
+
+    for (let i = 0; i < firstDay; i++) {
+      days.push({ empty: true, key: `empty-${i}` });
+    }
+
+    for (let d = 1; d <= lastDate; d++) {
+      const formattedD = d < 10 ? `0${d}` : `${d}`;
+      const formattedM = month < 10 ? `0${month}` : `${month}`;
+      const dateStr = `${formattedM}.${formattedD}`;
+      
+      days.push({
+        empty: false,
+        dayNum: d,
+        dateStr: dateStr,
+        key: `day-${month}-${d}`
+      });
+    }
+    return days;
+  };
+
   return (
     <div className="anarchist-wrapper p-3 md:p-6 lg:p-8 flex flex-col items-center max-w-4xl mx-auto pb-28 selection:bg-stone-900 selection:text-[#F3B329]">
       
@@ -585,9 +709,17 @@ export default function Anarchist() {
             href={FIRST_TICKET_LINK}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-3.5 py-2 bg-red-700 hover:bg-red-800 text-white rounded-xl text-xs font-black shadow-sm flex items-center gap-1 border border-red-900 transition-all active:scale-95"
+            className="px-3 py-2 bg-red-700 hover:bg-red-800 text-white rounded-xl text-xs font-black shadow-sm flex items-center gap-1 border border-red-900 transition-all active:scale-95"
           >
             <span>🎟️</span> 1차
+          </a>
+          <a
+            href={SECOND_TICKET_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3 py-2 bg-red-800 hover:bg-red-900 text-white rounded-xl text-xs font-black shadow-sm flex items-center gap-1 border border-red-950 transition-all active:scale-95"
+          >
+            <span>🎟️</span> 2차
           </a>
           <a
             href={SEAT_MAP_NOTICE_LINK}
@@ -620,7 +752,7 @@ export default function Anarchist() {
       <div className="w-full relative mb-4">
         <input 
           type="text" 
-          placeholder="🔍 출연 배우 이름으로 필터링 (예: 이진혁, 정재환, 김도빈, 김재한)" 
+          placeholder="🔍 배우 검색 (예: 이진혁 또는 이진혁/박준형 입력 시 동시 출연작만 조회)" 
           value={searchActor}
           onChange={(e) => setSearchActor(e.target.value)}
           className="w-full p-3.5 text-xs border-2 border-stone-900 rounded-2xl bg-[#FFFDF5] shadow-md focus:outline-none focus:ring-2 focus:ring-amber-500 font-bold placeholder:text-stone-400"
@@ -776,7 +908,7 @@ export default function Anarchist() {
       {/* 📸 [캡처 대상 영역 시작] 스케줄 ~ 좌석 배치도 */}
       <div ref={captureAreaRef} className="w-full flex flex-col items-center bg-[#1C1A17] p-2 rounded-3xl">
         
-        {/* 3️⃣ [월별 스케줄] */}
+        {/* 3️⃣ [월별 스케줄 리스트] */}
         <main className="w-full flex flex-col gap-5 text-sm mb-5">
           {[9, 10].map(m => {
             const monthSchedules = filteredSchedules.filter(item => item.month === m);
@@ -799,7 +931,19 @@ export default function Anarchist() {
                 </div>
 
                 {!isMonthCollapsed && (
-                  <div className="w-full select-none animate-in fade-in duration-150">
+                  <div className="w-full select-none animate-in fade-in duration-150 p-2 bg-[#FFFDF5]">
+                    
+                    {/* 📅 기간 직접 입력 복사 버튼 */}
+                    <div className="flex mb-2.5 pb-2 border-b border-stone-200 justify-center">
+                      <button 
+                        type="button"
+                        onClick={() => handleOpenRangeModal(m)}
+                        className="px-3 py-1 bg-amber-100 hover:bg-amber-200 text-stone-900 text-[10.5px] font-black rounded-lg border border-amber-400 transition-all active:scale-95 shadow-xs flex items-center gap-1"
+                      >
+                        <span>✏️</span> {m}월 기간 직접 복사
+                      </button>
+                    </div>
+
                     <div className="divide-y divide-stone-900/10">
                       {monthSchedules.map((item) => {
                         const eventInfo = getEventForDate(item.date);
@@ -822,7 +966,7 @@ export default function Anarchist() {
                                     {item.mainActor}
                                   </span>
 
-                                  {/* 🦊 클릭 시 복사되는 여우 아이콘 버튼 */}
+                                  {/* 🦊 캐스트 복사 여우 아이콘 */}
                                   <button 
                                     type="button"
                                     onClick={() => handleCastInfoClick(item)} 
@@ -831,15 +975,29 @@ export default function Anarchist() {
                                   >
                                     🦊
                                   </button>
+
+                                  {/* 📋 엑셀복사 버튼 */}
+                                  <button 
+                                    type="button"
+                                    onClick={() => handleExcelCopy(item)} 
+                                    className="p-1 bg-emerald-100 hover:bg-emerald-300 text-emerald-800 rounded-md text-[10px] font-black transition-all active:scale-95 shadow-sm"
+                                    title="클릭 시 엑셀 붙여넣기용 복사"
+                                  >
+                                    📋엑셀
+                                  </button>
                                 </div>
 
                                 {eventInfo && (
                                   <div>
-                                    <span
-                                      className={`inline-block px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] border leading-tight ${eventInfo.color}`}
+                                    <a
+                                      href={eventInfo.link}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className={`inline-block px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] border transition-all hover:opacity-85 leading-tight ${eventInfo.color}`}
+                                      title={`${eventInfo.name} (클릭 시 공지 이동)`}
                                     >
                                       🎁 {eventInfo.name}
-                                    </span>
+                                    </a>
                                   </div>
                                 )}
                               </div>
@@ -884,6 +1042,110 @@ export default function Anarchist() {
             );
           })}
         </main>
+
+        {/* 🗓️ [스케줄 리스트 바로 밑 독립된 영역] 월별 아코디언 캘린더 뷰 (수정된 이벤트명 반영) */}
+        <section className="w-full flex flex-col gap-4 mb-5">
+          {[9, 10].map(m => {
+            const monthSchedules = filteredSchedules.filter(item => item.month === m);
+            if (monthSchedules.length === 0) return null;
+            const isCalendarCollapsed = Boolean(calendarCollapsedMap[m]);
+
+            return (
+              <div key={`cal-section-${m}`} className="bg-[#FFFDF5] border-2 border-stone-900 rounded-2xl overflow-hidden shadow-md">
+                <div 
+                  onClick={() => toggleCalendarCollapse(m)}
+                  className="p-3 bg-stone-800 text-[#F3B329] font-black text-center text-xs tracking-widest uppercase flex items-center justify-center gap-2 cursor-pointer select-none hover:bg-stone-700 transition-colors"
+                  title={`${m}월 캘린더 접기/펼치기`}
+                >
+                  <span>🗓️</span> 
+                  {m}월 캘린더로 보기 
+                  <span className="text-[10px] text-amber-200/90 font-bold ml-1">
+                    {isCalendarCollapsed ? '▶ 펼치기' : '▼ 접기'}
+                  </span>
+                </div>
+
+                {!isCalendarCollapsed && (
+                  <div className="p-3 bg-[#FFFDF5] animate-in fade-in duration-150">
+                    <div className="grid grid-cols-7 text-center font-black text-[11px] text-stone-700 mb-2">
+                      <span className="text-red-600">일</span>
+                      <span>월</span>
+                      <span>화</span>
+                      <span>수</span>
+                      <span>목</span>
+                      <span>금</span>
+                      <span className="text-blue-600">토</span>
+                    </div>
+
+                    <div className="grid grid-cols-7 gap-1.5">
+                      {generateCalendarDays(2026, m).map((dayObj) => {
+                        if (dayObj.empty) {
+                          return <div key={dayObj.key} className="h-32 md:h-36 bg-transparent" />;
+                        }
+
+                        const dayShows = monthSchedules.filter(s => s.date === dayObj.dateStr);
+                        const hasShows = dayShows.length > 0;
+                        const eventInfo = getEventForDate(dayObj.dateStr);
+
+                        return (
+                          <div 
+                            key={dayObj.key} 
+                            className={`h-32 md:h-36 p-1 border rounded-lg flex flex-col justify-between overflow-hidden transition-all ${
+                              hasShows 
+                                ? 'bg-amber-50/90 border-amber-400 shadow-xs' 
+                                : 'bg-white border-stone-200 opacity-60'
+                            }`}
+                          >
+                            <div className="flex flex-col gap-0.5">
+                              <div className="flex justify-start items-center">
+                                <span className="text-[11px] font-black text-stone-900 tabular-nums">{dayObj.dayNum}</span>
+                              </div>
+
+                              {/* 🎁 이벤트명 (수정된 이름 반영) */}
+                              {eventInfo && (
+                                <div className="bg-purple-700 text-white text-[7.5px] font-black px-1 py-0.5 rounded leading-tight whitespace-normal text-center shadow-xs">
+                                  🎁 {eventInfo.name}
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="flex flex-col gap-1 overflow-y-auto max-h-[58px] text-[8px]">
+                              {hasShows ? (
+                                dayShows.map(show => {
+                                  const isWatched = show.seat && show.seat.trim() !== "";
+                                  return (
+                                    <div 
+                                      key={`cal-show-${show.id}`}
+                                      className={`px-1 py-0.5 rounded font-bold flex flex-col ${
+                                        isWatched 
+                                          ? 'bg-[#F3B329] text-stone-950 font-black' 
+                                          : 'bg-stone-200 text-stone-800'
+                                      }`}
+                                      title={`${show.time} | 자경:${show.actor1} 무혁:${show.actor2} 덕형:${show.mainActor} ${isWatched ? `[${show.seat}]` : ''}`}
+                                    >
+                                      <div className="flex justify-between items-center">
+                                        <span className="font-mono text-[7.5px]">{show.time.substring(0, 5)}</span>
+                                        {isWatched && <span className="text-[7px]">✓</span>}
+                                      </div>
+                                      <div className="text-[7px] truncate font-medium text-stone-900">
+                                        {show.actor1}·{show.actor2}·<span className="font-black text-red-800">{show.mainActor}</span>
+                                      </div>
+                                    </div>
+                                  );
+                                })
+                              ) : (
+                                <span className="text-[8px] text-stone-400 text-center my-auto">휴관</span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </section>
 
         {/* 🏷️ '아나키스트 정산' 문구 영역 */}
         <div className="w-full bg-[#FFF9E6] border-2 border-stone-900 rounded-2xl py-3 px-4 mb-5 text-center shadow-md">
@@ -991,6 +1253,45 @@ export default function Anarchist() {
         </div>
         <button onClick={handleReset} className="px-3.5 py-2 bg-red-100 hover:bg-red-200 text-red-800 rounded-xl font-black transition-all border border-red-300">초기화</button>
       </div>
+
+      {/* 📅 기간 직접 입력 모달 */}
+      {isRangeModalOpen && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
+          <div className="bg-[#FFFDF5] rounded-3xl w-full max-w-xs shadow-2xl border-2 border-stone-900 overflow-hidden flex flex-col">
+            <div className="bg-stone-900 p-4 text-[#F3B329] flex justify-between items-center border-b border-stone-800">
+              <h3 className="font-black text-sm flex items-center gap-1">📅 {targetMonthForRange}월 기간 직접 입력</h3>
+              <button onClick={() => setIsRangeModalOpen(false)} className="text-xl font-bold text-stone-400 hover:text-white transition-colors">×</button>
+            </div>
+            <div className="p-4 flex flex-col gap-3 text-xs text-stone-800">
+              <p className="text-[11px] text-stone-600 font-bold">
+                예: 시작일에 <span className="text-red-700">1일</span>, 종료일에 <span className="text-red-700">15일</span>을 적으면 <br />
+                <span className="font-mono font-black text-stone-900 bg-amber-100 px-1 rounded">{targetMonthForRange}월1일~15일</span> 형식으로 복사됩니다.
+              </p>
+              <div className="flex items-center gap-2">
+                <input 
+                  type="text" 
+                  value={rangeInputs.start} 
+                  onChange={(e) => setRangeInputs(prev => ({ ...prev, start: e.target.value }))}
+                  placeholder="예: 1일" 
+                  className="w-full p-2.5 border-2 border-stone-900 rounded-xl bg-white text-center font-black"
+                />
+                <span className="font-black">~</span>
+                <input 
+                  type="text" 
+                  value={rangeInputs.end} 
+                  onChange={(e) => setRangeInputs(prev => ({ ...prev, end: e.target.value }))}
+                  placeholder="예: 15일" 
+                  className="w-full p-2.5 border-2 border-stone-900 rounded-xl bg-white text-center font-black"
+                />
+              </div>
+            </div>
+            <div className="p-3.5 bg-[#FFF9E6] border-t-2 border-stone-900 flex gap-2">
+              <button onClick={() => setIsRangeModalOpen(false)} className="flex-1 py-2.5 bg-stone-300 hover:bg-stone-400 text-stone-900 font-black rounded-xl">취소</button>
+              <button onClick={executeRangeCopy} className="flex-1 py-2.5 bg-[#F3B329] hover:bg-[#e0a21f] text-stone-950 font-black rounded-xl shadow border border-stone-900 active:scale-95 transition-all">📋 복사하기</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 📋 양도 모달 */}
       {isModalOpen && selectedItem && (
