@@ -137,7 +137,7 @@ const floor2Rows = {
   Q: [null, null, 20, 19, 18, 17, null, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
 };
 
-const DB_NAME = 'MusicalSchedulerDB_Anarchist_vRemoveCalendarLinks';
+const DB_NAME = 'MusicalSchedulerDB_Anarchist_vRemoveRangeCopyBtn';
 const STORE_NAME = 'schedules';
 const SETTING_STORE = 'settings';
 const DB_VERSION = 1;
@@ -184,10 +184,6 @@ export default function Anarchist() {
   const [monthCollapsedMap, setMonthCollapsedMap] = useState({});
 
   const [calendarCollapsedMap, setCalendarCollapsedMap] = useState({ 9: false, 10: false });
-
-  const [isRangeModalOpen, setIsRangeModalOpen] = useState(false);
-  const [targetMonthForRange, setTargetMonthForRange] = useState(9);
-  const [rangeInputs, setRangeInputs] = useState({ start: '1일', end: '15일' });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -320,15 +316,6 @@ export default function Anarchist() {
     });
   };
 
-  const handleScheduleDelete = async (id) => {
-    if (window.confirm('정말 이 회차 스케줄을 삭제하시겠습니까?')) {
-      const db = await initDB();
-      await db.delete(STORE_NAME, id);
-      alert('스케줄이 삭제되었습니다.');
-      loadInitialData();
-    }
-  };
-
   const handleAllSave = async () => {
     const db = await initDB();
     for (const item of schedules) {
@@ -350,22 +337,6 @@ export default function Anarchist() {
     navigator.clipboard.writeText(copyText)
       .then(() => {
         alert(`클립보드에 복사되었습니다: "${copyText}" 📋`);
-      })
-      .catch(err => alert("복사 실패: " + err));
-  };
-
-  const handleOpenRangeModal = (monthNum) => {
-    setTargetMonthForRange(monthNum);
-    setRangeInputs({ start: '1일', end: '15일' });
-    setIsRangeModalOpen(true);
-  };
-
-  const executeRangeCopy = () => {
-    const textToCopy = `${targetMonthForRange}월${rangeInputs.start}~${rangeInputs.end}`;
-    navigator.clipboard.writeText(textToCopy)
-      .then(() => {
-        alert(`클립보드에 복사되었습니다: "${textToCopy}" 📋`);
-        setIsRangeModalOpen(false);
       })
       .catch(err => alert("복사 실패: " + err));
   };
@@ -923,17 +894,6 @@ export default function Anarchist() {
                 {!isMonthCollapsed && (
                   <div className="w-full select-none animate-in fade-in duration-150 p-2 bg-[#FFFDF5]">
                     
-                    {/* 📅 기간 직접 입력 복사 버튼 */}
-                    <div className="flex mb-2.5 pb-2 border-b border-stone-200 justify-center">
-                      <button 
-                        type="button"
-                        onClick={() => handleOpenRangeModal(m)}
-                        className="px-3 py-1 bg-amber-100 hover:bg-amber-200 text-stone-900 text-[10.5px] font-black rounded-lg border border-amber-400 transition-all active:scale-95 shadow-xs flex items-center gap-1"
-                      >
-                        <span>✏️</span> {m}월 기간 직접 복사
-                      </button>
-                    </div>
-
                     <div className="divide-y divide-stone-900/10">
                       {monthSchedules.map((item) => {
                         const eventInfo = getEventForDate(item.date);
@@ -1003,7 +963,6 @@ export default function Anarchist() {
                               </select>
 
                               <button onClick={() => handleOpenCopyModal(item)} className="px-1.5 sm:px-2 py-1 text-[10px] anarchist-btn-copy rounded-lg h-7 flex items-center justify-center">양도</button>
-                              <button onClick={() => handleScheduleDelete(item.id)} className="px-1.5 sm:px-2 py-1 text-[10px] bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold h-7 flex items-center justify-center">삭제</button>
                             </div>
 
                           </div>
@@ -1017,7 +976,7 @@ export default function Anarchist() {
           })}
         </main>
 
-        {/* 🗓️ [스케줄 리스트 바로 밑 독립된 영역] 월별 아코디언 캘린더 뷰 (링크 제거 완료 & 작은 화면 최적화) */}
+        {/* 🗓️ [스케줄 리스트 바로 밑 독립된 영역] 월별 아코디언 캘린더 뷰 (삭제 버튼 제거 반영) */}
         <section className="w-full flex flex-col gap-4 mb-5">
           {[9, 10].map(m => {
             const monthSchedules = filteredSchedules.filter(item => item.month === m);
@@ -1075,7 +1034,7 @@ export default function Anarchist() {
                                 <span className="text-[10px] md:text-[11px] font-black text-stone-900 tabular-nums">{dayObj.dayNum}</span>
                               </div>
 
-                              {/* 🎁 이벤트 바 (링크 없이 순수 박스로 표시) */}
+                              {/* 🎁 이벤트 형광펜 연속 바 */}
                               {eventInfo && (
                                 <div
                                   className={`block text-[6.5px] md:text-[7.5px] font-black px-1 py-0.5 leading-tight whitespace-normal text-center shadow-xs border ${eventInfo.color} ${
@@ -1228,45 +1187,6 @@ export default function Anarchist() {
         </div>
         <button onClick={handleReset} className="px-3.5 py-2 bg-red-100 hover:bg-red-200 text-red-800 rounded-xl font-black transition-all border border-red-300">초기화</button>
       </div>
-
-      {/* 📅 기간 직접 입력 모달 */}
-      {isRangeModalOpen && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
-          <div className="bg-[#FFFDF5] rounded-3xl w-full max-w-xs shadow-2xl border-2 border-stone-900 overflow-hidden flex flex-col">
-            <div className="bg-stone-900 p-4 text-[#F3B329] flex justify-between items-center border-b border-stone-800">
-              <h3 className="font-black text-sm flex items-center gap-1">📅 {targetMonthForRange}월 기간 직접 입력</h3>
-              <button onClick={() => setIsRangeModalOpen(false)} className="text-xl font-bold text-stone-400 hover:text-white transition-colors">×</button>
-            </div>
-            <div className="p-4 flex flex-col gap-3 text-xs text-stone-800">
-              <p className="text-[11px] text-stone-600 font-bold">
-                예: 시작일에 <span className="text-red-700">1일</span>, 종료일에 <span className="text-red-700">15일</span>을 적으면 <br />
-                <span className="font-mono font-black text-stone-900 bg-amber-100 px-1 rounded">{targetMonthForRange}월1일~15일</span> 형식으로 복사됩니다.
-              </p>
-              <div className="flex items-center gap-2">
-                <input 
-                  type="text" 
-                  value={rangeInputs.start} 
-                  onChange={(e) => setRangeInputs(prev => ({ ...prev, start: e.target.value }))}
-                  placeholder="예: 1일" 
-                  className="w-full p-2.5 border-2 border-stone-900 rounded-xl bg-white text-center font-black"
-                />
-                <span className="font-black">~</span>
-                <input 
-                  type="text" 
-                  value={rangeInputs.end} 
-                  onChange={(e) => setRangeInputs(prev => ({ ...prev, end: e.target.value }))}
-                  placeholder="예: 15일" 
-                  className="w-full p-2.5 border-2 border-stone-900 rounded-xl bg-white text-center font-black"
-                />
-              </div>
-            </div>
-            <div className="p-3.5 bg-[#FFF9E6] border-t-2 border-stone-900 flex gap-2">
-              <button onClick={() => setIsRangeModalOpen(false)} className="flex-1 py-2.5 bg-stone-300 hover:bg-stone-400 text-stone-900 font-black rounded-xl">취소</button>
-              <button onClick={executeRangeCopy} className="flex-1 py-2.5 bg-[#F3B329] hover:bg-[#e0a21f] text-stone-950 font-black rounded-xl shadow border border-stone-900 active:scale-95 transition-all">📋 복사하기</button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* 📋 양도 모달 */}
       {isModalOpen && selectedItem && (
