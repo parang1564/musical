@@ -1059,8 +1059,6 @@ export default function OthelloIago() {
 
                         const dayShows = monthSchedules.filter(s => s.date === dayObj.dateStr);
                         const hasShows = dayShows.length > 0;
-                        const eventInfo = getEventForDate(dayObj.dateStr, dayShows[0]?.time);
-                        const isEventStart = eventInfo && eventInfo.startDate === dayObj.dateStr;
 
                         return (
                           <div 
@@ -1075,21 +1073,13 @@ export default function OthelloIago() {
                               <div className="flex justify-start items-center">
                                 <span className="text-[10px] md:text-[11px] font-black text-[#F5EAD4] tabular-nums">{dayObj.dayNum}</span>
                               </div>
-
-                              {eventInfo && (
-                                <div
-                                  className={`block text-[6.5px] md:text-[7.5px] font-bold px-1 py-0.5 leading-tight whitespace-normal text-center shadow-xs border ${eventInfo.color} ${
-                                    isEventStart ? 'rounded-md' : 'rounded-none'
-                                  }`}
-                                >
-                                  {isEventStart ? eventInfo.name : '\u00A0'}
-                                </div>
-                              )}
                             </div>
 
-                            <div className="flex flex-col gap-1 overflow-y-auto max-h-[85px] text-[7.5px] md:text-[8.5px]">
+                            <div className="flex flex-col gap-1 overflow-y-auto max-h-[100px] text-[7px] md:text-[8px]">
                               {hasShows && dayShows.map(show => {
                                 const isWatched = show.seat && show.seat.trim() !== "";
+                                const eventInfo = getEventForDate(show.date, show.time);
+
                                 return (
                                   <div 
                                     key={`cal-show-${show.id}`}
@@ -1098,15 +1088,20 @@ export default function OthelloIago() {
                                         ? 'bg-gradient-to-br from-[#E2B755] to-[#B38728] text-[#120406] font-black' 
                                         : 'bg-[#24080D] text-stone-300 border border-[#4A141A]'
                                     }`}
-                                    title={`${show.time} | 오셀로:${show.actor1} 이아고:${show.actor2} ${isWatched ? `[${show.seat}]` : ''}`}
+                                    title={`${show.time} | 오셀로:${show.actor1} 이아고:${show.actor2} ${eventInfo ? `| ${eventInfo.name}` : ''} ${isWatched ? `[${show.seat}]` : ''}`}
                                   >
                                     <div className="flex justify-between items-center">
-                                      <span className="font-mono text-[7px] md:text-[7.5px] font-bold">● {show.time.substring(0, 5)}</span>
-                                      {isWatched && <span className="text-[6.5px]">✓</span>}
+                                      <span className="font-mono text-[6.5px] md:text-[7px] font-bold">● {show.time.substring(0, 5)}</span>
+                                      {isWatched && <span className="text-[6px]">✓</span>}
                                     </div>
-                                    <div className="text-[6.5px] md:text-[7.5px] leading-tight font-medium pl-0.5">
+                                    <div className="text-[6.5px] md:text-[7px] leading-tight font-medium pl-0.5">
                                       {show.actor1}, {show.actor2}
                                     </div>
+                                    {eventInfo && (
+                                      <div className="mt-0.5 text-[6px] text-amber-900 bg-amber-200/90 rounded px-0.5 truncate font-bold text-center" title={eventInfo.name}>
+                                        {eventInfo.name.replace('스페셜 커튼콜: ', '커튼콜: ')}
+                                      </div>
+                                    )}
                                   </div>
                                 );
                               })}
@@ -1207,7 +1202,7 @@ export default function OthelloIago() {
       <div className="w-full bg-[#140407] border border-[#4A141A] rounded-2xl p-4 shadow-xl flex items-center justify-between text-xs flex-wrap gap-3">
         <div className="flex gap-2 flex-wrap">
           <button onClick={handleExportFile} className="px-3.5 py-2 bg-[#21060B] hover:bg-[#330910] text-[#D4AF37] rounded-xl font-bold shadow transition-all border border-[#52131B] active:scale-95">📥 파일 백업</button>
-          <button onClick={() => fileInputRef.current.click()} className="px-3.5 py-2 bg-gradient-to-r from-[#D4AF37] to-[#AA8520] hover:from-[#E2BF4D] hover:to-[#B89228] text-[#140406] rounded-xl font-black shadow transition-all border border-[#F2D785] active:scale-95">📤 파일 복구</button>
+          <button onClick={() => fileInputRef.current.click()} className="px-3.5 py-2 bg-gradient-to-r from-[#D4AF37] to-[#AA8520] hover:from-[#E2BF4D] hover:to-[#B89228] text-[#140406] rounded-xl font-black shadow-sm transition-all border border-[#F2D785] active:scale-95">📤 파일 복구</button>
           <button onClick={handleCaptureImage} className="px-3.5 py-2 bg-[#7A1C26] hover:bg-[#961D2B] text-[#F5EAD4] rounded-xl font-bold shadow transition-all border border-[#8C1F2B] active:scale-95 flex items-center gap-1"><span>📷</span> 이미지 저장</button>
           <input type="file" ref={fileInputRef} onChange={handleImportFile} accept=".json" className="hidden" />
         </div>
