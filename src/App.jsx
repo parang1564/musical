@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Routes, Route, Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import Gloomy from './lee/glo/gloomy.jsx';       
 import Anarchist from './lee/ana/anarchist.jsx'; 
+import Mahagonny from './lee/maha/mahagonny.jsx';
 import Western from './park/western/western.jsx';    
 import Othello from "./park/oi/othelloIago.jsx"; 
 
@@ -11,6 +12,7 @@ export default function App() {
       <Route path="/" element={<MainDirectory />} />
       <Route path="/lee/glo" element={<Gloomy />} />
       <Route path="/lee/ana" element={<Anarchist />} /> 
+      <Route path="/lee/maha" element={<Mahagonny />} />
       <Route path="/park/western" element={<Western />} />
       <Route path="/park/oi" element={<Othello />} />
       <Route path="*" element={<Navigate to="/" replace />} />

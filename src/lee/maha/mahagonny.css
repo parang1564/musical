@@ -1,0 +1,100 @@
+/* 🎡 뮤지컬 마하고니 (Midnight Carnival) 전용 테마 CSS */
+
+:root {
+  --bg-deep-night: #090614;
+  --panel-bg: rgba(20, 14, 38, 0.82);
+  --panel-sub: rgba(30, 20, 58, 0.72);
+  --border-neon: rgba(192, 132, 252, 0.28);
+  --border-neon-bright: rgba(232, 121, 249, 0.6);
+  --text-main: #f5f3ff;
+  --text-muted: #c4b5fd;
+  --neon-magenta: #d946ef;
+  --neon-purple: #a855f7;
+}
+
+/* 🌌 전체 배경: 딥 네이비 + 몽환적인 바이올렛/마젠타 안개 조명 */
+.mahagonny-wrapper {
+  background-color: var(--bg-deep-night);
+  background-image: 
+    radial-gradient(ellipse at 50% 8%, rgba(138, 43, 226, 0.42) 0%, transparent 65%),
+    radial-gradient(circle at 85% 65%, rgba(217, 70, 239, 0.22) 0%, transparent 50%),
+    radial-gradient(circle at 15% 80%, rgba(67, 56, 202, 0.3) 0%, transparent 55%),
+    linear-gradient(180deg, #090614 0%, #0d0822 50%, #080512 100%);
+  background-attachment: fixed;
+  color: var(--text-main);
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* 🔮 메인 카드: 블러 처리된 다크 글래스 + 퍼플 림라이트 */
+.mahagonny-card {
+  background: var(--panel-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.5px solid var(--border-neon);
+  border-radius: 1.25rem;
+  box-shadow: 
+    0 10px 30px -5px rgba(0, 0, 0, 0.8),
+    0 0 20px rgba(168, 85, 247, 0.15),
+    inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  color: var(--text-main);
+}
+
+/* 🏷️ 내부 서브 박스 (도장판 내부, 검색 박스 등) */
+.mahagonny-subcard {
+  background: var(--panel-sub);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--border-neon);
+  border-radius: 1rem;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  color: var(--text-muted);
+}
+
+/* 🎟️ 네온 마젠타 액션 버튼 */
+.mahagonny-btn-neon {
+  background: linear-gradient(135deg, #d946ef 0%, #9333ea 100%);
+  color: #ffffff;
+  font-weight: 800;
+  border: 1px solid var(--border-neon-bright);
+  border-radius: 0.65rem;
+  box-shadow: 0 0 12px rgba(217, 70, 239, 0.4);
+  transition: all 0.18s ease-in-out;
+}
+.mahagonny-btn-neon:hover {
+  background: linear-gradient(135deg, #e879f9 0%, #a855f7 100%);
+  box-shadow: 0 0 18px rgba(232, 121, 249, 0.7);
+  transform: translateY(-1px);
+}
+.mahagonny-btn-neon:active {
+  transform: scale(0.96);
+}
+
+/* 🌫️ 회차 리스트 행 호버 애니메이션 */
+.mahagonny-row-item {
+  transition: background 0.18s ease-in-out;
+  border-bottom: 1px solid rgba(168, 85, 247, 0.12);
+}
+.mahagonny-row-item:hover {
+  background: rgba(168, 85, 247, 0.15);
+}
+
+/* 🪟 인풋 & 셀렉트 다크 스타일 */
+.mahagonny-input-dark {
+  background: rgba(13, 8, 28, 0.85);
+  color: #ffffff;
+  border: 1.5px solid rgba(192, 132, 252, 0.35);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.mahagonny-input-dark:focus {
+  border-color: #d946ef;
+  box-shadow: 0 0 10px rgba(217, 70, 239, 0.4);
+  outline: none;
+}
+
+/* 💡 타이틀 글로우 */
+.mahagonny-glow-text {
+  text-shadow: 
+    0 0 10px rgba(217, 70, 239, 0.6),
+    0 0 20px rgba(168, 85, 247, 0.35);
+}
