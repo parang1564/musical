@@ -4,11 +4,51 @@ import { openDB } from 'idb';
 // 🔗 공지 및 링크 상수
 const FIRST_TICKET_LINK = "https://x.com/newpro_OI/status/2085603813692711207?s=20";
 const SECOND_TICKET_LINK = "https://x.com/newpro_OI/status/2090310432401789041?s=20";
+const THIRD_TICKET_LINK = "https://x.com/newpro_OI/status/2100143902783402408?s=20";
+const NUMBER_LINK = "https://x.com/newpro_OI/status/2099732629168029882?s=20";
 const REVISIT_BENEFIT_LINK = "https://x.com/newpro_OI/status/2084874609149784274?s=20";
 const SEAT_CHART_LINK = "https://x.com/newpro_OI/status/2084874555882082479?s=20";
 const SEEYA_LINK = "https://musicalseeya.com/seeyatheater/25";
 
-// 🎟️ 티켓 원가 및 할인 계산 데이터 (원가 66,000원 + 예매 수수료 2,000원)
+const EVENT_NOTICE_LINK1 = "https://x.com/newpro_OI/status/2085603813692711207?s=20";
+
+// 🎁 일자별 이벤트 및 스페셜 커튼콜/특전 넘버 정의
+const getEventForDate = (dateStr, timeStr) => {
+  if (dateStr >= "09.08" && dateStr <= "09.10") {
+    return { name: "첫공 무대인사", startDate: "09.08", endDate: "09.10", color: "bg-amber-300 text-amber-950", link: EVENT_NOTICE_LINK1, isTriple: false };
+  }
+  if (dateStr >= "09.08" && dateStr <= "09.13") {
+    return { name: "프리뷰", startDate: "09.08", endDate: "09.13", color: "bg-stone-300 text-stone-900", link: EVENT_NOTICE_LINK1, isTriple: false };
+  }
+  if (dateStr >= "09.15" && dateStr <= "09.20") {
+    return { name: "커튼콜 위크 + 더블적립 위크", startDate: "09.15", endDate: "09.20", color: "bg-red-200 text-red-950", link: EVENT_NOTICE_LINK1, isTriple: true };
+  }
+  if (dateStr >= "09.22" && dateStr <= "09.27") {
+    let curtainCallName = "1차 스페셜 커튼콜 위크";
+    
+    if (dateStr === "09.22" && timeStr === "20:00") curtainCallName = "스페셜 커튼콜: M1. 기뻐하라";
+    else if (dateStr === "09.23" && timeStr === "16:00") curtainCallName = "스페셜 커튼콜: M7. 질투를 조심하라";
+    else if (dateStr === "09.23" && timeStr === "20:00") curtainCallName = "스페셜 커튼콜: M11. 오셀로의 전쟁";
+    else if (dateStr === "09.24" && timeStr === "14:00") curtainCallName = "스페셜 커튼콜: M1. 기뻐하라";
+    else if (dateStr === "09.24" && timeStr === "18:00") curtainCallName = "스페셜 커튼콜: M5. 불안";
+    else if (dateStr === "09.25" && timeStr === "14:00") curtainCallName = "스페셜 커튼콜: M7. 질투를 조심하라";
+    else if (dateStr === "09.26" && timeStr === "14:00") curtainCallName = "스페셜 커튼콜: M9. 계획";
+    else if (dateStr === "09.26" && timeStr === "18:00") curtainCallName = "스페셜 커튼콜: M7. 질투를 조심하라";
+    else if (dateStr === "09.27" && timeStr === "14:00") curtainCallName = "스페셜 커튼콜: M11. 오셀로의 전쟁";
+    else if (dateStr === "09.27" && timeStr === "18:00") curtainCallName = "스페셜 커튼콜: M1. 기뻐하라";
+
+    return { name: curtainCallName, startDate: "09.22", endDate: "09.27", color: "bg-red-200 text-red-950", link: EVENT_NOTICE_LINK1, isTriple: false };
+  }
+
+  if ((dateStr >= "09.29" && dateStr <= "09.30") || (dateStr >= "10.01" && dateStr <= "10.05")) {
+    const start = dateStr <= "09.30" ? "09.29" : "10.01";
+    const end = dateStr <= "09.30" ? "09.30" : "10.05";
+    return { name: "미공개 프로필컷 엽서 증정 위크", startDate: start, endDate: end, color: "bg-amber-200 text-amber-950", link: EVENT_NOTICE_LINK1, isTriple: false };
+  }
+  return null;
+};
+
+// 🎟️ 티켓 원가 및 할인 계산 데이터
 const TICKET_ORIGIN_PRICE = 66000;
 const TICKET_FEE = 2000;
 
@@ -19,14 +59,13 @@ const DISCOUNT_OPTIONS = {
   "40% 할인권": { rate: 0.4, label: "40% 할인권" }
 };
 
-// 할인 계산 헬퍼 함수
 const calcDiscountPrice = (discountKey) => {
   const option = DISCOUNT_OPTIONS[discountKey] || DISCOUNT_OPTIONS["재관람할인 25%"];
   const discounted = TICKET_ORIGIN_PRICE * (1 - option.rate) + TICKET_FEE;
   return `${discounted.toLocaleString()}원`;
 };
 
-// 📅 9월 프리뷰 및 1차 캐스팅 스케줄 기본 데이터
+// 📅 스케줄 기본 데이터
 const defaultInitialData = [
   { id: 1, month: 9, date: "09.08", day: "화", time: "20:00", actor1: "박규원", actor2: "양지원", seat: "", cardTarget: 1 },
   { id: 2, month: 9, date: "09.09", day: "수", time: "20:00", actor1: "변희상", actor2: "곽민수", seat: "", cardTarget: 1 },
@@ -43,15 +82,14 @@ const defaultInitialData = [
   { id: 13, month: 9, date: "09.19", day: "토", time: "18:00", actor1: "김지온", actor2: "김경록", seat: "", cardTarget: 1 },
   { id: 14, month: 9, date: "09.20", day: "일", time: "14:00", actor1: "박규원", actor2: "곽민수", seat: "", cardTarget: 1 },
   { id: 15, month: 9, date: "09.20", day: "일", time: "18:00", actor1: "김지온", actor2: "양지원", seat: "", cardTarget: 1 },
-  // ➕ 추가된 이미지 스케줄 데이터 (9월 22일 ~ 10월 11일)
   { id: 16, month: 9, date: "09.22", day: "화", time: "20:00", actor1: "박규원", actor2: "양지원", seat: "", cardTarget: 1 },
   { id: 17, month: 9, date: "09.23", day: "수", time: "16:00", actor1: "변희상", actor2: "곽민수", seat: "", cardTarget: 1 },
   { id: 18, month: 9, date: "09.23", day: "수", time: "20:00", actor1: "박규원", actor2: "김경록", seat: "", cardTarget: 1 },
   { id: 19, month: 9, date: "09.24", day: "목", time: "14:00", actor1: "김지온", actor2: "곽민수", seat: "", cardTarget: 1 },
-  { id: 20, month: 9, date: "09.24", day: "목", time: "18:00", actor1: "변희상", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 20, month: 9, date: "09.24", day: "목", time: "18:00", actor1: "변희상", actor2: "김경록", seat: "", cardTarget: 1 },
   { id: 21, month: 9, date: "09.25", day: "금", time: "14:00", actor1: "김지온", actor2: "김경록", seat: "", cardTarget: 1 },
   { id: 22, month: 9, date: "09.26", day: "토", time: "14:00", actor1: "변희상", actor2: "곽민수", seat: "", cardTarget: 1 },
-  { id: 23, month: 9, date: "09.26", day: "토", time: "18:00", actor1: "박규원", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 23, month: 9, date: "09.26", day: "토", time: "18:00", actor1: "박규원", actor2: "김경록", seat: "", cardTarget: 1 },
   { id: 24, month: 9, date: "09.27", day: "일", time: "14:00", actor1: "김지온", actor2: "곽민수", seat: "", cardTarget: 1 },
   { id: 25, month: 9, date: "09.27", day: "일", time: "18:00", actor1: "변희상", actor2: "김경록", seat: "", cardTarget: 1 },
   { id: 26, month: 9, date: "09.29", day: "화", time: "20:00", actor1: "박규원", actor2: "곽민수", seat: "", cardTarget: 1 },
@@ -73,10 +111,38 @@ const defaultInitialData = [
   { id: 42, month: 10, date: "10.10", day: "토", time: "14:00", actor1: "김지온", actor2: "김경록", seat: "", cardTarget: 1 },
   { id: 43, month: 10, date: "10.10", day: "토", time: "18:00", actor1: "변희상", actor2: "양지원", seat: "", cardTarget: 1 },
   { id: 44, month: 10, date: "10.11", day: "일", time: "14:00", actor1: "김지온", actor2: "곽민수", seat: "", cardTarget: 1 },
-  { id: 45, month: 10, date: "10.11", day: "일", time: "18:00", actor1: "박규원", actor2: "김경록", seat: "", cardTarget: 1 }
+  { id: 45, month: 10, date: "10.11", day: "일", time: "18:00", actor1: "박규원", actor2: "김경록", seat: "", cardTarget: 1 },
+  { id: 46, month: 10, date: "10.13", day: "화", time: "20:00", actor1: "박규원", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 47, month: 10, date: "10.14", day: "수", time: "16:00", actor1: "변희상", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 48, month: 10, date: "10.14", day: "수", time: "20:00", actor1: "박규원", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 49, month: 10, date: "10.15", day: "목", time: "20:00", actor1: "김지온", actor2: "김경록", seat: "", cardTarget: 1 },
+  { id: 50, month: 10, date: "10.16", day: "금", time: "20:00", actor1: "변희상", actor2: "김경록", seat: "", cardTarget: 1 },
+  { id: 51, month: 10, date: "10.17", day: "토", time: "14:00", actor1: "김지온", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 52, month: 10, date: "10.17", day: "토", time: "18:00", actor1: "변희상", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 53, month: 10, date: "10.18", day: "일", time: "14:00", actor1: "박규원", actor2: "김경록", seat: "", cardTarget: 1 },
+  { id: 54, month: 10, date: "10.18", day: "일", time: "18:00", actor1: "김지온", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 55, month: 10, date: "10.20", day: "화", time: "20:00", actor1: "김지온", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 56, month: 10, date: "10.21", day: "수", time: "16:00", actor1: "박규원", actor2: "김경록", seat: "", cardTarget: 1 },
+  { id: 57, month: 10, date: "10.21", day: "수", time: "20:00", actor1: "김지온", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 58, month: 10, date: "10.22", day: "목", time: "20:00", actor1: "변희상", actor2: "김경록", seat: "", cardTarget: 1 },
+  { id: 59, month: 10, date: "10.23", day: "금", time: "16:00", actor1: "김지온", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 60, month: 10, date: "10.23", day: "금", time: "20:00", actor1: "변희상", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 61, month: 10, date: "10.24", day: "토", time: "14:00", actor1: "김지온", actor2: "김경록", seat: "", cardTarget: 1 },
+  { id: 62, month: 10, date: "10.24", day: "토", time: "18:00", actor1: "박규원", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 63, month: 10, date: "10.25", day: "일", time: "14:00", actor1: "변희상", actor2: "김경록", seat: "", cardTarget: 1 },
+  { id: 64, month: 10, date: "10.25", day: "일", time: "18:00", actor1: "박규원", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 65, month: 10, date: "10.27", day: "화", time: "20:00", actor1: "박규원", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 66, month: 10, date: "10.28", day: "수", time: "16:00", actor1: "김지온", actor2: "김경록", seat: "", cardTarget: 1 },
+  { id: 67, month: 10, date: "10.28", day: "수", time: "20:00", actor1: "변희상", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 68, month: 10, date: "10.29", day: "목", time: "20:00", actor1: "박규원", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 69, month: 10, date: "10.30", day: "금", time: "20:00", actor1: "김지온", actor2: "김경록", seat: "", cardTarget: 1 },
+  { id: 70, month: 10, date: "10.31", day: "토", time: "14:00", actor1: "변희상", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 71, month: 10, date: "10.31", day: "토", time: "18:00", actor1: "김지온", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 72, month: 11, date: "11.01", day: "일", time: "14:00", actor1: "박규원", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 73, month: 11, date: "11.01", day: "일", time: "18:00", actor1: "변희상", actor2: "김경록", seat: "", cardTarget: 1 }
 ];
 
-// 🪑 오셀로와 이아고 좌석 배치도
+// 🪑 좌석 배치도
 const othelloSeatRows = {
   A: [null, null, null, 4, 5, 6, null, 7, 8, 9, 10, 11, 12, 13, null, 14, 15, 16, 17, 18, 19, null],
   B: [null, null, null, 4, 5, 6, null, 7, 8, 9, 10, 11, 12, 13, 14, null, 15, 16, 17, 18, 19, 20],
@@ -92,7 +158,7 @@ const othelloSeatRows = {
   L: [1, 2, 3, 4, 5, 6, null, 7, 8, 9, 10, 11, 12, 13, 14, null, 15, 16, 17, 18, 19, 20]
 };
 
-const DB_NAME = 'MusicalSchedulerDB_OthelloIago_vFinal_Cards';
+const DB_NAME = 'MusicalSchedulerDB_OthelloIago_FullFinal_v1';
 const STORE_NAME = 'schedules';
 const SETTING_STORE = 'settings';
 const DB_VERSION = 1;
@@ -116,26 +182,15 @@ export default function OthelloIago() {
   const fileInputRef = useRef(null);
   const captureRef = useRef(null);
   
-  // 🌟 기준 배우: localStorage에서 마지막 입력값을 불러오며, 없으면 빈 문자열("")
   const [mainTargetActor, setMainTargetActor] = useState(() => {
     return localStorage.getItem(STORAGE_ACTOR_KEY) || '';
   });
 
-  const [formData, setFormData] = useState({
-    month: 9, date: '', day: '', time: '20:00', actor1: '', actor2: '', seat: '', cardTarget: 1
-  });
-  const [editingId, setEditingId] = useState(null);
-  const [showForm, setShowForm] = useState(false);
-
-  // 🎫 각 도장판별 추가 도장 맵 및 추가판 수
   const [cardBonuses, setCardBonuses] = useState({});
   const [extraCards, setExtraCards] = useState(0);
-
-  // 📂 도장판별 개별 접힘 상태 맵 { 1: true/false, ... }
   const [cardCollapsedMap, setCardCollapsedMap] = useState({});
-
-  // 📅 월별 스케줄 개별 접힘 상태 맵 { 9: false, 10: false, ... }
   const [monthCollapsedMap, setMonthCollapsedMap] = useState({});
+  const [calendarCollapsedMap, setCalendarCollapsedMap] = useState({ 9: false, 10: false, 11: false });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -148,7 +203,6 @@ export default function OthelloIago() {
     twitterTag: '@YeonMyuticket'
   });
 
-  // 기준 배우 입력 핸들러 (실시간 localStorage 저장)
   const handleTargetActorChange = (val) => {
     setMainTargetActor(val);
     localStorage.setItem(STORAGE_ACTOR_KEY, val);
@@ -186,13 +240,15 @@ export default function OthelloIago() {
 
     const savedMonthCollapsed = await db.get(SETTING_STORE, 'monthCollapsedMap');
     if (savedMonthCollapsed) setMonthCollapsedMap(savedMonthCollapsed.value || {});
+
+    const savedCalendarCollapsed = await db.get(SETTING_STORE, 'calendarCollapsedMap');
+    if (savedCalendarCollapsed) setCalendarCollapsedMap(savedCalendarCollapsed.value || { 9: false, 10: false, 11: false });
   };
 
   useEffect(() => {
     loadInitialData();
   }, []);
 
-  // 📸 이미지 다운로드 핸들러 (html2canvas 동적 로드)
   const handleCaptureImage = async () => {
     if (!captureRef.current) return;
     try {
@@ -207,8 +263,8 @@ export default function OthelloIago() {
       }
 
       const canvas = await window.html2canvas(captureRef.current, {
-        scale: 2, // 고해상도
-        backgroundColor: '#0D0B0C', // 다크 배경 유지
+        scale: 2,
+        backgroundColor: '#0D0B0C',
         useCORS: true
       });
 
@@ -252,6 +308,15 @@ export default function OthelloIago() {
     await db.put(SETTING_STORE, { key: 'monthCollapsedMap', value: updatedMap });
   };
 
+  const toggleCalendarCollapse = async (monthNum) => {
+    const currentState = Boolean(calendarCollapsedMap[monthNum]);
+    const updatedMap = { ...calendarCollapsedMap, [monthNum]: !currentState };
+
+    setCalendarCollapsedMap(updatedMap);
+    const db = await initDB();
+    await db.put(SETTING_STORE, { key: 'calendarCollapsedMap', value: updatedMap });
+  };
+
   const handleAddExtraCard = async () => {
     const nextVal = extraCards + 1;
     setExtraCards(nextVal);
@@ -265,14 +330,6 @@ export default function OthelloIago() {
     setExtraCards(nextVal);
     const db = await initDB();
     await db.put(SETTING_STORE, { key: 'extraCards', value: nextVal });
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: name === 'month' || name === 'cardTarget' ? Number(value) : (name === 'seat' ? formatSeatInput(value) : value)
-    }));
   };
 
   const handleSeatChange = (id, value) => {
@@ -300,44 +357,16 @@ export default function OthelloIago() {
     });
   };
 
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
-    if (!formData.date || !formData.actor1 || !formData.actor2) {
-      alert('필수 정보를 입력해 주세요!');
-      return;
-    }
+  const handleCastInfoClick = (item) => {
+    const [monthStr, dayStr] = item.date.split('.');
+    const formattedDate = `${parseInt(monthStr, 10)}/${parseInt(dayStr, 10)}`;
+    const copyText = `${formattedDate} ${item.actor1} ${item.actor2}`;
 
-    const db = await initDB();
-    if (editingId) {
-      const updatedItem = { ...formData, id: editingId };
-      await db.put(STORE_NAME, updatedItem);
-      setEditingId(null);
-      alert('스케줄이 수정되었습니다! ✏️');
-    } else {
-      const newItem = { ...formData, id: Date.now() };
-      await db.put(STORE_NAME, newItem);
-      alert('새로운 스케줄이 추가되었습니다! 📅');
-    }
-
-    setFormData({ month: 9, date: '', day: '', time: '20:00', actor1: mainTargetActor, actor2: '', seat: '', cardTarget: 1 });
-    setShowForm(false);
-    loadInitialData();
-  };
-
-  const handleEditStart = (item) => {
-    setEditingId(item.id);
-    setFormData({ ...item, cardTarget: item.cardTarget || 1 });
-    setShowForm(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleScheduleDelete = async (id) => {
-    if (window.confirm('정말 이 회차 스케줄을 삭제하시겠습니까?')) {
-      const db = await initDB();
-      await db.delete(STORE_NAME, id);
-      alert('스케줄이 삭제되었습니다.');
-      loadInitialData();
-    }
+    navigator.clipboard.writeText(copyText)
+      .then(() => {
+        alert(`클립보드에 복사되었습니다: "${copyText}" 📋`);
+      })
+      .catch(err => alert("복사 실패: " + err));
   };
 
   const handleAllSave = async () => {
@@ -349,6 +378,7 @@ export default function OthelloIago() {
     await db.put(SETTING_STORE, { key: 'extraCards', value: extraCards });
     await db.put(SETTING_STORE, { key: 'cardCollapsedMap', value: cardCollapsedMap });
     await db.put(SETTING_STORE, { key: 'monthCollapsedMap', value: monthCollapsedMap });
+    await db.put(SETTING_STORE, { key: 'calendarCollapsedMap', value: calendarCollapsedMap });
     alert('모든 스케줄 및 도장판 정보가 저장되었습니다! 💾');
   };
 
@@ -362,7 +392,8 @@ export default function OthelloIago() {
       cardBonuses, 
       extraCards,
       cardCollapsedMap,
-      monthCollapsedMap
+      monthCollapsedMap,
+      calendarCollapsedMap
     };
     const dataStr = JSON.stringify(backupObject, null, 2);
     const blob = new Blob([dataStr], { type: 'application/json' });
@@ -407,6 +438,9 @@ export default function OthelloIago() {
           if (importedData.monthCollapsedMap !== undefined) {
             await db.put(SETTING_STORE, { key: 'monthCollapsedMap', value: importedData.monthCollapsedMap });
           }
+          if (importedData.calendarCollapsedMap !== undefined) {
+            await db.put(SETTING_STORE, { key: 'calendarCollapsedMap', value: importedData.calendarCollapsedMap });
+          }
 
           alert('성공적으로 스케줄 및 도장판 데이터를 복구했습니다! 📂');
           loadInitialData();
@@ -420,7 +454,7 @@ export default function OthelloIago() {
   };
 
   const handleReset = async () => {
-    if (window.confirm('정말 최초 기본 상태로 되돌리시겠습니까? (스케줄 및 도장판이 초기화됩니다)')) {
+    if (window.confirm('정말 최초 기본 상태로 되돌리시겠습니까?')) {
       const db = await initDB();
       await db.clear(STORE_NAME);
       await db.clear(SETTING_STORE);
@@ -432,6 +466,7 @@ export default function OthelloIago() {
       setExtraCards(0);
       setCardCollapsedMap({});
       setMonthCollapsedMap({});
+      setCalendarCollapsedMap({ 9: false, 10: false, 11: false });
       handleTargetActorChange('');
       alert('초기화가 완료되었습니다.');
     }
@@ -495,7 +530,6 @@ export default function OthelloIago() {
     targetActorTrimmed ? (item.actor1.includes(targetActorTrimmed) || item.actor2.includes(targetActorTrimmed)) : true
   ).length;
 
-  // 🎫 도장판 계산 로직 (4회: 40%할인권 2매, 7회: 실황 OST)
   const maxTargetedCard = useMemo(() => {
     return watchedShows.reduce((max, cur) => Math.max(max, cur.cardTarget || 1), 1);
   }, [watchedShows]);
@@ -508,7 +542,11 @@ export default function OthelloIago() {
     const cards = [];
     for (let c = 1; c <= totalCardBoards; c++) {
       const cardShows = watchedShows.filter(item => (item.cardTarget || 1) === c);
-      const earnedStamps = cardShows.length;
+      const earnedStamps = cardShows.reduce((acc, item) => {
+        const event = getEventForDate(item.date, item.time);
+        return acc + (event && event.isTriple ? 3 : 1);
+      }, 0);
+
       const thisBonus = cardBonuses[c] || 0;
       const totalInThisCard = earnedStamps + thisBonus;
 
@@ -596,6 +634,30 @@ export default function OthelloIago() {
     ));
   };
 
+  const generateCalendarDays = (year, month) => {
+    const firstDay = new Date(year, month - 1, 1).getDay();
+    const lastDate = new Date(year, month, 0).getDate();
+    const days = [];
+
+    for (let i = 0; i < firstDay; i++) {
+      days.push({ empty: true, key: `empty-${i}` });
+    }
+
+    for (let d = 1; d <= lastDate; d++) {
+      const formattedD = d < 10 ? `0${d}` : `${d}`;
+      const formattedM = month < 10 ? `0${month}` : `${month}`;
+      const dateStr = `${formattedM}.${formattedD}`;
+      
+      days.push({
+        empty: false,
+        dayNum: d,
+        dateStr: dateStr,
+        key: `day-${month}-${d}`
+      });
+    }
+    return days;
+  };
+
   return (
     <div className="bg-[#0D0B0C] text-[#E8DCC4] min-h-screen w-full p-3 md:p-6 lg:p-8 flex flex-col items-center max-w-4xl mx-auto pb-28 selection:bg-[#680D16] selection:text-[#FFDF73]">
       
@@ -636,6 +698,22 @@ export default function OthelloIago() {
             <span>🎟️</span> 2차
           </a>
           <a
+            href={THIRD_TICKET_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3 py-1.5 bg-gradient-to-r from-red-900 to-red-950 hover:from-red-800 hover:to-red-900 text-amber-100 rounded-xl text-xs font-bold shadow-lg border border-red-700 transition-all active:scale-95 flex items-center gap-1"
+          >
+            <span>🎟️</span> 3차
+          </a>
+          <a
+            href={NUMBER_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3.5 py-2 bg-gradient-to-r from-[#800F1A] to-[#450208] hover:from-[#9E1B28] hover:to-[#570710] text-[#FFDF73] rounded-xl text-xs font-black shadow-lg border border-[#C92A38] transition-all active:scale-95 flex items-center gap-1"
+          >
+            <span>🎵</span> 넘버
+          </a>
+          <a
             href={SEAT_CHART_LINK}
             target="_blank"
             rel="noopener noreferrer"
@@ -661,52 +739,6 @@ export default function OthelloIago() {
           </a>
         </div>
       </header>
-
-      {/* ➕ 스케줄 추가 / 수정 입력 폼 */}
-      {showForm && (
-        <form onSubmit={handleFormSubmit} className="w-full bg-[#18080B] border border-[#5C141D] rounded-2xl p-5 mb-5 flex flex-col gap-3.5 shadow-2xl animate-in fade-in">
-          <h3 className="font-serif font-black text-[#D4AF37] text-sm flex items-center gap-1.5 border-b border-[#3D0D14] pb-2">
-            <span>⚙️</span> {editingId ? '스케줄 정보 수정하기' : '새로운 회차 등록하기'}
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 text-xs">
-            <select name="month" value={formData.month} onChange={handleInputChange} className="p-2.5 border border-[#4A141A] rounded-xl bg-[#0D0406] font-bold text-stone-200 focus:outline-none focus:border-[#D4AF37]">
-              <option value={9}>9월</option>
-              <option value={10}>10월</option>
-              <option value={11}>11월</option>
-              <option value={12}>12월</option>
-            </select>
-            <input type="text" name="date" placeholder="날짜 (예: 09.08)" value={formData.date} onChange={handleInputChange} className="p-2.5 border border-[#4A141A] rounded-xl bg-[#0D0406] font-bold text-stone-200 placeholder:text-stone-600 focus:outline-none focus:border-[#D4AF37]" />
-            <input type="text" name="day" placeholder="요일" value={formData.day} onChange={handleInputChange} className="p-2.5 border border-[#4A141A] rounded-xl bg-[#0D0406] font-bold text-stone-200 placeholder:text-stone-600 focus:outline-none focus:border-[#D4AF37]" />
-            <input type="text" name="time" placeholder="시간 (예: 20:00)" value={formData.time} onChange={handleInputChange} className="p-2.5 border border-[#4A141A] rounded-xl bg-[#0D0406] font-bold text-stone-200 placeholder:text-stone-600 focus:outline-none focus:border-[#D4AF37]" />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 text-xs">
-            <input type="text" name="actor1" placeholder="오셀로" value={formData.actor1} onChange={handleInputChange} className="p-2 border border-[#7A1C26] bg-[#24080D] rounded-xl font-black text-[#F5D77F] focus:outline-none focus:border-[#D4AF37]" />
-            <input type="text" name="actor2" placeholder="이아고" value={formData.actor2} onChange={handleInputChange} className="p-2 border border-[#4A141A] rounded-xl bg-[#0D0406] font-bold text-stone-200 placeholder:text-stone-600 focus:outline-none focus:border-[#D4AF37]" />
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
-            <div className="flex flex-col gap-1">
-              <label className="font-bold text-[#E56A77] text-[11px]">📍 관람 기록용 좌석 (배치도 자동 반영)</label>
-              <input type="text" name="seat" placeholder="예: A11 또는 B5 등 하이픈 없이 적어도 자동인식" value={formData.seat} onChange={handleInputChange} className="p-2.5 border border-[#7A1C26] rounded-xl bg-[#24080D] font-black text-[#FFDF73] uppercase focus:outline-none focus:border-[#D4AF37]" />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label className="font-bold text-[#D4AF37] text-[11px]">🎫 적립할 도장판 번호</label>
-              <select name="cardTarget" value={formData.cardTarget || 1} onChange={handleInputChange} className="p-2.5 border border-[#4A141A] rounded-xl bg-[#0D0406] font-bold text-stone-200 focus:outline-none focus:border-[#D4AF37]">
-                {Array.from({ length: Math.max(3, totalCardBoards) }).map((_, i) => (
-                  <option key={`opt-form-${i+1}`} value={i+1}>{i+1}번 도장판에 적립</option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div className="flex gap-2 text-xs mt-1">
-            <button type="submit" className="flex-1 py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#AA8520] hover:from-[#E2BF4D] hover:to-[#B89228] text-[#140406] font-black rounded-xl shadow transition-all border border-[#F2D785]">
-              {editingId ? '수정 완료하기' : '이 스케줄 저장하기'}
-            </button>
-            <button type="button" onClick={() => { setShowForm(false); setEditingId(null); }} className="px-4 py-2.5 bg-[#21060B] hover:bg-[#330910] text-stone-400 font-bold rounded-xl border border-[#4A141A]">
-              닫기
-            </button>
-          </div>
-        </form>
-      )}
 
       {/* 1️⃣ [기준 배우 입력] 🌟 기준 배우 설정 */}
       <div className="w-full bg-[#140407] border border-[#4A141A] rounded-2xl p-3.5 shadow-xl mb-5 flex items-center justify-between gap-2.5">
@@ -807,10 +839,13 @@ export default function OthelloIago() {
                       <span className="text-stone-500 font-medium">아직 배정된 회차가 없습니다 (스케줄에서 선택)</span>
                     ) : (
                       board.shows.map(s => {
+                        const event = getEventForDate(s.date, s.time);
                         return (
                           <span key={`mapped-tag-${s.id}`} className="bg-[#24080D] text-[#F5EAD4] border border-[#52131B] font-bold px-1.5 py-0.5 rounded flex items-center gap-1">
                             {s.date}
-                            <span className="font-serif text-[#D4AF37] text-[9px]">(+1)</span>
+                            <span className={`font-serif text-[9px] ${event && event.isTriple ? 'text-purple-400 font-black' : 'text-[#D4AF37]'}`}>
+                              ({event && event.isTriple ? '+3' : '+1'})
+                            </span>
                           </span>
                         );
                       })
@@ -863,108 +898,231 @@ export default function OthelloIago() {
         </div>
       </section>
 
-      {/* 3️⃣ [월별 스케줄] 📅 월별 스케줄 리스트 */}
-      <main className="w-full flex flex-col gap-5 text-sm mb-5">
-        {[9, 10, 11, 12].map(m => {
-          const monthSchedules = filteredSchedules.filter(item => item.month === m);
-          if (monthSchedules.length === 0) return null;
-          const isMonthCollapsed = Boolean(monthCollapsedMap[m]);
-
-          return (
-            <div key={m} className="bg-[#140407] border border-[#4A141A] rounded-2xl overflow-hidden shadow-2xl">
-              <div 
-                onClick={() => toggleMonthCollapse(m)}
-                className="p-3 bg-gradient-to-r from-[#2B080E] via-[#4A0D15] to-[#2B080E] text-[#D4AF37] font-serif font-bold text-center text-xs tracking-widest uppercase flex items-center justify-center gap-2 cursor-pointer select-none hover:bg-[#3D0C14] transition-colors border-b border-[#5C141D]"
-                title={`${m}월 스케줄 접기/펼치기`}
-              >
-                <span>✦</span> 
-                {m}월 회차 스케줄 {mainTargetActor && `('${mainTargetActor}' 출연)`} ({monthSchedules.length}회) 
-                <span className="text-[10px] text-stone-400 font-sans font-normal ml-1">
-                  {isMonthCollapsed ? '▶ 펼치기' : '▼ 접기'}
-                </span>
-                <span>✦</span>
-              </div>
-              
-              {!isMonthCollapsed && (
-                <div className="w-full select-none animate-in fade-in duration-150">
-                  <div className="divide-y divide-[#260509]">
-                    {monthSchedules.map((item) => {
-                      const isActor1Target = targetActorTrimmed && item.actor1.includes(targetActorTrimmed);
-                      const isActor2Target = targetActorTrimmed && item.actor2.includes(targetActorTrimmed);
-                      const isWatched = item.seat && item.seat.trim() !== "";
-
-                      return (
-                        <div key={item.id} className="p-2.5 flex items-center justify-between gap-2 hover:bg-[#1F070B] transition-colors">
-                          
-                          {/* 👈 [좌측]: 일자/시간 + 출연진 */}
-                          <div className="flex items-center gap-2.5 sm:gap-3.5 min-w-0 flex-1">
-                            <div className="flex flex-col items-start flex-shrink-0">
-                              <span className="font-serif font-black text-[#F5EAD4] text-xs tabular-nums">{item.date}</span>
-                              <span className="text-[9px] text-[#D4AF37] bg-[#24060A] border border-[#52131B] px-1 rounded mt-0.5 tabular-nums font-bold">{item.time}</span>
-                            </div>
-
-                            <div className="flex items-center gap-2 flex-wrap min-w-0">
-                              <span className={`text-[11px] sm:text-xs font-bold truncate ${isActor1Target ? 'text-[#FFDF73] font-black underline underline-offset-4 decoration-[#9E1B28]' : 'text-stone-300'}`} title={`오셀로: ${item.actor1}`}>
-                                {item.actor1}
-                              </span>
-                              <span className="text-stone-600 text-[10px]">·</span>
-                              <span className={`text-[11px] sm:text-xs font-bold truncate ${isActor2Target ? 'text-[#FFDF73] font-black underline underline-offset-4 decoration-[#9E1B28]' : 'text-stone-300'}`} title={`이아고: ${item.actor2}`}>
-                                {item.actor2}
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* 👉 [우측]: 좌석 입력란 + 도장판 번호 선택 + 조작 버튼 */}
-                          <div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
-                            <input 
-                              type="text" 
-                              placeholder="좌석" 
-                              value={item.seat || ""} 
-                              onChange={(e) => handleSeatChange(item.id, e.target.value)} 
-                              className="w-11 sm:w-14 p-1 text-[11px] border border-[#52131B] text-[#FFDF73] bg-[#0A0203] rounded-lg text-center font-black uppercase placeholder:font-normal placeholder:text-[9px] placeholder:text-stone-600 h-7 focus:outline-none focus:border-[#D4AF37]" 
-                            />
-
-                            <select
-                              value={item.cardTarget || 1}
-                              onChange={(e) => handleCardTargetChange(item.id, e.target.value)}
-                              disabled={!isWatched}
-                              className={`p-1 text-[10px] border rounded-lg font-bold h-7 focus:outline-none transition-colors ${
-                                isWatched 
-                                  ? 'border-[#7A1C26] bg-[#24080D] text-[#F5D77F] cursor-pointer' 
-                                  : 'border-[#2E0A10] bg-[#0D0204] text-stone-600 opacity-60'
-                              }`}
-                              title={isWatched ? '적립할 도장판 번호를 선택하세요' : '좌석 입력 시 도장판에 자동 매핑됩니다'}
-                            >
-                              {Array.from({ length: Math.max(3, totalCardBoards) }).map((_, i) => (
-                                <option key={`card-opt-${i+1}`} value={i+1}>{i+1}번</option>
-                              ))}
-                            </select>
-
-                            <button 
-                              onClick={() => handleOpenCopyModal(item)} 
-                              className="px-1.5 sm:px-2 py-1 text-[10px] bg-gradient-to-r from-[#D4AF37] to-[#AA8520] hover:from-[#E2BF4D] hover:to-[#B89228] text-[#140406] font-black rounded-lg h-7 flex items-center justify-center shadow transition-all active:scale-95"
-                            >
-                              양도
-                            </button>
-                            <button onClick={() => handleEditStart(item)} className="px-1.5 sm:px-2 py-1 text-[10px] bg-[#24080D] hover:bg-[#380D14] text-stone-300 rounded-lg font-bold h-7 flex items-center justify-center border border-[#4A141A]">수정</button>
-                            <button onClick={() => handleScheduleDelete(item.id)} className="px-1.5 sm:px-2 py-1 text-[10px] bg-[#570912] hover:bg-[#780C19] text-[#F5EAD4] rounded-lg font-bold h-7 flex items-center justify-center border border-[#8C1422]">삭제</button>
-                          </div>
-
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </main>
-
-      {/* 📸 캡처 대상 영역 (오셀로와 이아고 정산 타이틀부터 배치도까지) */}
+      {/* 📸 캡처 대상 영역 시작 */}
       <div ref={captureRef} className="w-full flex flex-col items-center bg-[#0D0B0C]">
-        
-        {/* 타이틀 헤더 (스케줄 밑) */}
+
+        {/* 3️⃣ [월별 스케줄] 📅 월별 스케줄 리스트 */}
+        <main className="w-full flex flex-col gap-5 text-sm mb-5">
+          {[9, 10, 11, 12].map(m => {
+            const monthSchedules = filteredSchedules.filter(item => item.month === m);
+            if (monthSchedules.length === 0) return null;
+            const isMonthCollapsed = Boolean(monthCollapsedMap[m]);
+
+            return (
+              <div key={m} className="bg-[#140407] border border-[#4A141A] rounded-2xl overflow-hidden shadow-2xl">
+                <div 
+                  onClick={() => toggleMonthCollapse(m)}
+                  className="p-3 bg-gradient-to-r from-[#2B080E] via-[#4A0D15] to-[#2B080E] text-[#D4AF37] font-serif font-bold text-center text-xs tracking-widest uppercase flex items-center justify-center gap-2 cursor-pointer select-none hover:bg-[#3D0C14] transition-colors border-b border-[#5C141D]"
+                  title={`${m}월 스케줄 접기/펼치기`}
+                >
+                  <span>✦</span> 
+                  {m}월 회차 스케줄 {mainTargetActor && `('${mainTargetActor}' 출연)`} ({monthSchedules.length}회) 
+                  <span className="text-[10px] text-stone-400 font-sans font-normal ml-1">
+                    {isMonthCollapsed ? '▶ 펼치기' : '▼ 접기'}
+                  </span>
+                  <span>✦</span>
+                </div>
+                
+                {!isMonthCollapsed && (
+                  <div className="w-full select-none animate-in fade-in duration-150">
+                    <div className="divide-y divide-[#260509]">
+                      {monthSchedules.map((item) => {
+                        const isActor1Target = targetActorTrimmed && item.actor1.includes(targetActorTrimmed);
+                        const isActor2Target = targetActorTrimmed && item.actor2.includes(targetActorTrimmed);
+                        const isWatched = item.seat && item.seat.trim() !== "";
+                        const eventInfo = getEventForDate(item.date, item.time);
+
+                        return (
+                          <div key={item.id} className="p-2.5 flex items-center justify-between gap-2 hover:bg-[#1F070B] transition-colors">
+                            
+                            {/* 👈 [좌측]: 일자/시간 + 출연진 + 이벤트 뱃지 */}
+                            <div className="flex items-center gap-2.5 sm:gap-3.5 min-w-0 flex-1">
+                              <div className="flex flex-col items-start flex-shrink-0">
+                                <span className="font-serif font-black text-[#F5EAD4] text-xs tabular-nums">{item.date}</span>
+                                <span className="text-[9px] text-[#D4AF37] bg-[#24060A] border border-[#52131B] px-1 rounded mt-0.5 tabular-nums font-bold">{item.time}</span>
+                              </div>
+
+                              <div className="flex flex-col gap-0.5 min-w-0">
+                                <div className="flex items-center gap-2 flex-wrap min-w-0">
+                                  <span className={`text-[11px] sm:text-xs font-bold truncate ${isActor1Target ? 'text-[#FFDF73] font-black underline underline-offset-4 decoration-[#9E1B28]' : 'text-stone-300'}`} title={`오셀로: ${item.actor1}`}>
+                                    {item.actor1}
+                                  </span>
+                                  <span className="text-stone-600 text-[10px]">·</span>
+                                  <span className={`text-[11px] sm:text-xs font-bold truncate ${isActor2Target ? 'text-[#FFDF73] font-black underline underline-offset-4 decoration-[#9E1B28]' : 'text-stone-300'}`} title={`이아고: ${item.actor2}`}>
+                                    {item.actor2}
+                                  </span>
+
+                                  {/* 🐍 캐스트 복사 뱀 아이콘 */}
+                                  <button 
+                                    type="button"
+                                    onClick={() => handleCastInfoClick(item)} 
+                                    className="ml-1 p-1 bg-[#24080D] hover:bg-[#D4AF37] text-stone-300 hover:text-[#140406] rounded-md text-[10px] transition-all active:scale-95 shadow-sm border border-[#4A141A]"
+                                    title="클릭 시 '날짜 캐스트' 정보 복사"
+                                  >
+                                    🐍
+                                  </button>
+                                </div>
+
+                                {eventInfo && (
+                                  <div>
+                                    <span className={`inline-block px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] border leading-tight ${eventInfo.color}`}>
+                                      🎁 {eventInfo.name}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* 👉 [우측]: 좌석 입력란 + 도장판 번호 선택 + 조작 버튼 */}
+                            <div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
+                              <input 
+                                type="text" 
+                                placeholder="좌석" 
+                                value={item.seat || ""} 
+                                onChange={(e) => handleSeatChange(item.id, e.target.value)} 
+                                className="w-11 sm:w-14 p-1 text-[11px] border border-[#52131B] text-[#FFDF73] bg-[#0A0203] rounded-lg text-center font-black uppercase placeholder:font-normal placeholder:text-[9px] placeholder:text-stone-600 h-7 focus:outline-none focus:border-[#D4AF37]" 
+                              />
+
+                              <select
+                                value={item.cardTarget || 1}
+                                onChange={(e) => handleCardTargetChange(item.id, e.target.value)}
+                                disabled={!isWatched}
+                                className={`p-1 text-[10px] border rounded-lg font-bold h-7 focus:outline-none transition-colors ${
+                                  isWatched 
+                                    ? 'border-[#7A1C26] bg-[#24080D] text-[#F5D77F] cursor-pointer' 
+                                    : 'border-[#2E0A10] bg-[#0D0204] text-stone-600 opacity-60'
+                                }`}
+                                title={isWatched ? '적립할 도장판 번호를 선택하세요' : '좌석 입력 시 도장판에 자동 매핑됩니다'}
+                              >
+                                {Array.from({ length: Math.max(3, totalCardBoards) }).map((_, i) => (
+                                  <option key={`card-opt-${i+1}`} value={i+1}>{i+1}번</option>
+                                ))}
+                              </select>
+
+                              <button 
+                                onClick={() => handleOpenCopyModal(item)} 
+                                className="px-1.5 sm:px-2 py-1 text-[10px] bg-gradient-to-r from-[#D4AF37] to-[#AA8520] hover:from-[#E2BF4D] hover:to-[#B89228] text-[#140406] font-black rounded-lg h-7 flex items-center justify-center shadow transition-all active:scale-95"
+                              >
+                                양도
+                              </button>
+                            </div>
+
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </main>
+
+        {/* 🗓️ [월별 아코디언 캘린더 뷰] */}
+        <section className="w-full flex flex-col gap-4 mb-5">
+          {[9, 10, 11].map(m => {
+            const monthSchedules = filteredSchedules.filter(item => item.month === m);
+            if (monthSchedules.length === 0) return null;
+            const isCalendarCollapsed = Boolean(calendarCollapsedMap[m]);
+
+            return (
+              <div key={`cal-section-${m}`} className="bg-[#140407] border border-[#4A141A] rounded-2xl overflow-hidden shadow-2xl">
+                <div 
+                  onClick={() => toggleCalendarCollapse(m)}
+                  className="p-3 bg-gradient-to-r from-[#2B080E] via-[#4A0D15] to-[#2B080E] text-[#D4AF37] font-serif font-bold text-center text-xs tracking-widest uppercase flex items-center justify-center gap-2 cursor-pointer select-none hover:bg-[#3D0C14] transition-colors border-b border-[#5C141D]"
+                  title={`${m}월 캘린더 접기/펼치기`}
+                >
+                  <span>🗓️</span> 
+                  {m}월 캘린더로 보기 
+                  <span className="text-[10px] text-stone-400 font-sans font-normal ml-1">
+                    {isCalendarCollapsed ? '▶ 펼치기' : '▼ 접기'}
+                  </span>
+                </div>
+
+                {!isCalendarCollapsed && (
+                  <div className="p-3 bg-[#140407] animate-in fade-in duration-150">
+                    <div className="grid grid-cols-7 text-center font-serif font-bold text-[11px] text-[#D4AF37] mb-2">
+                      <span className="text-red-400">일</span>
+                      <span>월</span>
+                      <span>화</span>
+                      <span>수</span>
+                      <span>목</span>
+                      <span>금</span>
+                      <span className="text-blue-400">토</span>
+                    </div>
+
+                    <div className="grid grid-cols-7 gap-1.5">
+                      {generateCalendarDays(2026, m).map((dayObj) => {
+                        if (dayObj.empty) {
+                          return <div key={dayObj.key} className="h-20 md:h-24 bg-transparent" />;
+                        }
+
+                        const dayShows = monthSchedules.filter(s => s.date === dayObj.dateStr);
+                        const hasShows = dayShows.length > 0;
+                        const eventInfo = getEventForDate(dayObj.dateStr, dayShows[0]?.time);
+                        const isEventStart = eventInfo && eventInfo.startDate === dayObj.dateStr;
+
+                        return (
+                          <div 
+                            key={dayObj.key} 
+                            className={`p-1 border rounded-lg flex flex-col justify-between overflow-hidden transition-all ${
+                              hasShows 
+                                ? 'min-h-[120px] md:min-h-[140px] bg-[#1F070B] border-[#7A1C26] shadow-xs' 
+                                : 'h-20 md:h-24 bg-[#0A0203] border-[#2E0A10] opacity-40'
+                            }`}
+                          >
+                            <div className="flex flex-col gap-0.5">
+                              <div className="flex justify-start items-center">
+                                <span className="text-[10px] md:text-[11px] font-black text-[#F5EAD4] tabular-nums">{dayObj.dayNum}</span>
+                              </div>
+
+                              {eventInfo && (
+                                <div
+                                  className={`block text-[6.5px] md:text-[7.5px] font-bold px-1 py-0.5 leading-tight whitespace-normal text-center shadow-xs border ${eventInfo.color} ${
+                                    isEventStart ? 'rounded-md' : 'rounded-none'
+                                  }`}
+                                >
+                                  {isEventStart ? eventInfo.name : '\u00A0'}
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="flex flex-col gap-1 overflow-y-auto max-h-[85px] text-[7.5px] md:text-[8.5px]">
+                              {hasShows && dayShows.map(show => {
+                                const isWatched = show.seat && show.seat.trim() !== "";
+                                return (
+                                  <div 
+                                    key={`cal-show-${show.id}`}
+                                    className={`px-1 py-0.5 rounded font-bold flex flex-col ${
+                                      isWatched 
+                                        ? 'bg-gradient-to-br from-[#E2B755] to-[#B38728] text-[#120406] font-black' 
+                                        : 'bg-[#24080D] text-stone-300 border border-[#4A141A]'
+                                    }`}
+                                    title={`${show.time} | 오셀로:${show.actor1} 이아고:${show.actor2} ${isWatched ? `[${show.seat}]` : ''}`}
+                                  >
+                                    <div className="flex justify-between items-center">
+                                      <span className="font-mono text-[7px] md:text-[7.5px] font-bold">● {show.time.substring(0, 5)}</span>
+                                      {isWatched && <span className="text-[6.5px]">✓</span>}
+                                    </div>
+                                    <div className="text-[6.5px] md:text-[7.5px] leading-tight font-medium pl-0.5">
+                                      {show.actor1}, {show.actor2}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </section>
+
+        {/* 타이틀 헤더 */}
         <div className="w-full text-center py-4 mb-2">
           <h2 className="text-xl md:text-2xl font-serif font-black text-[#F5EAD4] tracking-wider">
             오셀로와 이아고 정산
