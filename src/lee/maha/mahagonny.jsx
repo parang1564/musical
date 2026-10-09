@@ -5,8 +5,10 @@ import './mahagonny.css';
 
 // 🔗 외부 링크 설정
 const FIRST_TICKET_LINK = "https://x.com/m_mahagonny/status/2102578699191394393?s=20";
+const SECOND_TICKET_LINK = "https://x.com/m_mahagonny/status/2107637035645149509?s=20";
+const PROFILE1_LINK = "https://x.com/m_mahagonny/status/2097853005722943604?s=20";
+const PROFILE2_LINK = "https://x.com/m_mahagonny/status/2105123865794101315?s=20";
 const REVISIT_BENEFIT_LINK = "https://x.com/m_mahagonny/status/2100842809024823529?s=20";
-const SEAT_MAP_NOTICE_LINK = "https://x.com/m_mahagonny/status/2100851762018337144?s=20";
 const SEEYA_LINK = "https://musicalseeya.com/seeyatheater/62";
 
 // 🎟️ 티켓 원가 및 할인 계산 데이터
@@ -55,7 +57,7 @@ const formatTimeSimple = (timeStr) => {
 
 const getEventForDate = (dateStr) => null;
 
-// 📅 마하고니 스케줄 데이터
+// 📅 마하고니 전체 스케줄 데이터 (11월 ~ 12월)
 const defaultInitialData = [
   { id: 1, month: 11, date: "11.03", day: "화", time: "20:00", actor1: "최재웅", actor2: "이율", chorus: ["김한결", "마이삭", "★", "최민경", "박민주"], seat: "", cardTarget: 1 },
   { id: 2, month: 11, date: "11.04", day: "수", time: "20:00", actor1: "이진혁", actor2: "이종석", chorus: ["♠", "마이삭", "한비", "최민경", "박민주"], seat: "", cardTarget: 1 },
@@ -74,10 +76,40 @@ const defaultInitialData = [
   { id: 15, month: 11, date: "11.14", day: "토", time: "15:00", actor1: "김찬종", actor2: "온주완", chorus: ["♠", "마이삭", "한비", "최민경", "박민주"], seat: "", cardTarget: 1 },
   { id: 16, month: 11, date: "11.14", day: "토", time: "19:00", actor1: "이진혁", actor2: "이종석", chorus: ["김한결", "♣", "한비", "최민경", "박민주"], seat: "", cardTarget: 1 },
   { id: 17, month: 11, date: "11.15", day: "일", time: "14:00", actor1: "임예진", actor2: "이지연", chorus: ["김한결", "마이삭", "★", "최민경", "박민주"], seat: "", cardTarget: 1 },
-  { id: 18, month: 11, date: "11.15", day: "일", time: "18:00", actor1: "최재웅", actor2: "이율", chorus: ["김한결", "마이삭", "★", "최민경", "박민주"], seat: "", cardTarget: 1 }
+  { id: 18, month: 11, date: "11.15", day: "일", time: "18:00", actor1: "최재웅", actor2: "이율", chorus: ["김한결", "마이삭", "★", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 19, month: 11, date: "11.17", day: "화", time: "20:00", actor1: "선한국", actor2: "정민", chorus: ["김한결", "마이삭", "★", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 20, month: 11, date: "11.18", day: "수", time: "16:00", actor1: "임예진", actor2: "이지연", chorus: ["김한결", "마이삭", "한비", "♥", "박민주"], seat: "", cardTarget: 1 },
+  { id: 21, month: 11, date: "11.18", day: "수", time: "20:00", actor1: "김찬종", actor2: "온주완", chorus: ["김한결", "♣", "한비", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 22, month: 11, date: "11.19", day: "목", time: "20:00", actor1: "최재웅", actor2: "이율", chorus: ["김한결", "♣", "한비", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 23, month: 11, date: "11.20", day: "금", time: "16:00", actor1: "이진혁", actor2: "이종석", chorus: ["김한결", "마이삭", "★", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 24, month: 11, date: "11.20", day: "금", time: "20:00", actor1: "임예진", actor2: "이지연", chorus: ["김한결", "마이삭", "★", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 25, month: 11, date: "11.21", day: "토", time: "15:00", actor1: "김찬종", actor2: "온주완", chorus: ["♠", "마이삭", "한비", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 26, month: 11, date: "11.21", day: "토", time: "19:00", actor1: "선한국", actor2: "정민", chorus: ["김한결", "마이삭", "한비", "♥", "박민주"], seat: "", cardTarget: 1 },
+  { id: 27, month: 11, date: "11.22", day: "일", time: "14:00", actor1: "최재웅", actor2: "이율", chorus: ["김한결", "마이삭", "한비", "최민경", "◆"], seat: "", cardTarget: 1 },
+  { id: 28, month: 11, date: "11.22", day: "일", time: "18:00", actor1: "이진혁", actor2: "이종석", chorus: ["김한결", "마이삭", "한비", "최민경", "◆"], seat: "", cardTarget: 1 },
+  { id: 29, month: 11, date: "11.24", day: "화", time: "20:00", actor1: "김찬종", actor2: "온주완", chorus: ["김한결", "마이삭", "★", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 30, month: 11, date: "11.25", day: "수", time: "16:00", actor1: "이진혁", actor2: "이종석", chorus: ["김한결", "마이삭", "한비", "최민경", "◆"], seat: "", cardTarget: 1 },
+  { id: 31, month: 11, date: "11.25", day: "수", time: "20:00", actor1: "임예진", actor2: "이지연", chorus: ["김한결", "마이삭", "한비", "최민경", "◆"], seat: "", cardTarget: 1 },
+  { id: 32, month: 11, date: "11.26", day: "목", time: "20:00", actor1: "선한국", actor2: "정민", chorus: ["김한결", "♣", "한비", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 33, month: 11, date: "11.27", day: "금", time: "16:00", actor1: "최재웅", actor2: "이율", chorus: ["김한결", "마이삭", "한비", "♥", "박민주"], seat: "", cardTarget: 1 },
+  { id: 34, month: 11, date: "11.27", day: "금", time: "20:00", actor1: "김찬종", actor2: "온주완", chorus: ["김한결", "마이삭", "한비", "♥", "박민주"], seat: "", cardTarget: 1 },
+  { id: 35, month: 11, date: "11.28", day: "토", time: "15:00", actor1: "이진혁", actor2: "이종석", chorus: ["김한결", "마이삭", "★", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 36, month: 11, date: "11.28", day: "토", time: "19:00", actor1: "최재웅", actor2: "이율", chorus: ["김한결", "마이삭", "★", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 37, month: 11, date: "11.29", day: "일", time: "14:00", actor1: "선한국", actor2: "정민", chorus: ["♠", "마이삭", "한비", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 38, month: 11, date: "11.29", day: "일", time: "18:00", actor1: "임예진", actor2: "이지연", chorus: ["♠", "마이삭", "한비", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 39, month: 12, date: "12.01", day: "화", time: "20:00", actor1: "선한국", actor2: "이종석", chorus: ["김한결", "마이삭", "★", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 40, month: 12, date: "12.02", day: "수", time: "16:00", actor1: "임예진", actor2: "이지연", chorus: ["김한결", "♣", "한비", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 41, month: 12, date: "12.02", day: "수", time: "20:00", actor1: "이진혁", actor2: "온주완", chorus: ["김한결", "♣", "한비", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 42, month: 12, date: "12.03", day: "목", time: "20:00", actor1: "선한국", actor2: "정민", chorus: ["김한결", "마이삭", "★", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 43, month: 12, date: "12.04", day: "금", time: "16:00", actor1: "이진혁", actor2: "이종석", chorus: ["김한결", "마이삭", "한비", "♥", "박민주"], seat: "", cardTarget: 1 },
+  { id: 44, month: 12, date: "12.04", day: "금", time: "20:00", actor1: "임예진", actor2: "이지연", chorus: ["김한결", "마이삭", "한비", "♥", "박민주"], seat: "", cardTarget: 1 },
+  { id: 45, month: 12, date: "12.05", day: "토", time: "15:00", actor1: "최재웅", actor2: "이율", chorus: ["김한결", "마이삭", "한비", "최민경", "◆"], seat: "", cardTarget: 1 },
+  { id: 46, month: 12, date: "12.05", day: "토", time: "19:00", actor1: "김찬종", actor2: "온주완", chorus: ["김한결", "마이삭", "한비", "최민경", "◆"], seat: "", cardTarget: 1 },
+  { id: 47, month: 12, date: "12.06", day: "일", time: "14:00", actor1: "최재웅", actor2: "정민", chorus: ["♠", "마이삭", "한비", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 48, month: 12, date: "12.06", day: "일", time: "18:00", actor1: "김찬종", actor2: "이율", chorus: ["♠", "마이삭", "한비", "최민경", "박민주"], seat: "", cardTarget: 1 }
 ];
 
-// 🪑 링크아트센터 드림1관 실제 배치도 (A~S열 완벽 구현)
+// 🪑 링크아트센터 드림1관 실제 배치도 (A~S열)
 const mahagonnySeatingRows = {
   A: [null, null, 1, 2, 3, 4, null, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, null, 17, 18, 19, 20, 21, 22, null, null],
   B: [null, null, 1, 2, 3, 4, null, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, null, 17, 18, 19, 20, 21, 22, 23, null],
@@ -100,7 +132,7 @@ const mahagonnySeatingRows = {
   S: [1, 2, null, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, null]
 };
 
-const DB_NAME = 'MusicalSchedulerDB_Mahagonny_Production_V3';
+const DB_NAME = 'MusicalSchedulerDB_Mahagonny_Production_V5';
 const STORE_NAME = 'schedules';
 const SETTING_STORE = 'settings';
 const DB_VERSION = 1;
@@ -121,7 +153,6 @@ const initDB = async () => {
 export default function Mahagonny() {
   const [schedules, setSchedules] = useState([]);
   const fileInputRef = useRef(null);
-  const captureAreaRef = useRef(null); // 📸 [캡처 시작 기준점]
   const [isCapturing, setIsCapturing] = useState(false);
 
   const [searchActor, setSearchActor] = useState('이진혁');
@@ -130,7 +161,7 @@ export default function Mahagonny() {
   const [extraCards, setExtraCards] = useState(0);
   const [cardCollapsedMap, setCardCollapsedMap] = useState({});
   const [monthCollapsedMap, setMonthCollapsedMap] = useState({});
-  const [calendarCollapsedMap, setCalendarCollapsedMap] = useState({ 11: false });
+  const [calendarCollapsedMap, setCalendarCollapsedMap] = useState({ 11: false, 12: false });
 
   // 📋 양도 모달
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -159,12 +190,14 @@ export default function Mahagonny() {
     bottomNote: '맘찍 후 디엠 주세요'
   });
 
-  // 🪑 좌석 포맷팅 (D12 -> D-12)
   const formatSeatInput = (val) => {
-    let clean = val.toUpperCase().trim().replace(/\s+/g, '').replace(/-/g, '');
-    if (!clean) return '';
-    const match = clean.match(/^([A-S])(\d+)$/);
-    if (match) return `${match[1]}-${match[2]}`;
+    if (!val) return '';
+    const clean = val.toUpperCase().replace(/\s+/g, '').replace(/열|번/g, '');
+    const rowMatch = clean.match(/[A-S]/);
+    const numMatch = clean.match(/\d+/);
+    if (rowMatch && numMatch) {
+      return `${rowMatch[0]}-${numMatch[0]}`;
+    }
     return clean;
   };
 
@@ -178,7 +211,16 @@ export default function Mahagonny() {
       }
       setSchedules(defaultInitialData);
     } else {
-      setSchedules(savedData.sort((a, b) => a.id - b.id));
+      // 💡 기존 저장 데이터에 12월 데이터가 없을 경우 기본 데이터와 병합
+      const mergedData = defaultInitialData.map(defaultItem => {
+        const found = savedData.find(s => s.id === defaultItem.id);
+        return found ? { ...defaultItem, ...found } : defaultItem;
+      });
+
+      for (const item of mergedData) {
+        await db.put(STORE_NAME, item);
+      }
+      setSchedules(mergedData.sort((a, b) => a.id - b.id));
     }
 
     const savedBonuses = await db.get(SETTING_STORE, 'cardBonuses');
@@ -195,7 +237,7 @@ export default function Mahagonny() {
 
     const savedCalendarCollapsed = await db.get(SETTING_STORE, 'calendarCollapsedMap');
     if (savedCalendarCollapsed) {
-      setCalendarCollapsedMap(savedCalendarCollapsed.value || { 11: false });
+      setCalendarCollapsedMap(savedCalendarCollapsed.value || { 11: false, 12: false });
     }
   };
 
@@ -255,27 +297,35 @@ export default function Mahagonny() {
     await db.put(SETTING_STORE, { key: 'extraCards', value: nextVal });
   };
 
-  const handleSeatChange = (id, value) => {
-    setSchedules(prev =>
-      prev.map(item => item.id === id ? { ...item, seat: formatSeatInput(value) } : item)
-    );
+  const handleSeatChange = async (id, value) => {
+    const formatted = formatSeatInput(value);
+    const updated = schedules.map(item => item.id === id ? { ...item, seat: formatted } : item);
+    setSchedules(updated);
+
+    const db = await initDB();
+    const targetItem = updated.find(item => item.id === id);
+    if (targetItem) {
+      await db.put(STORE_NAME, targetItem);
+    }
   };
 
-  const handleCardTargetChange = (targetId, value) => {
+  const handleCardTargetChange = async (targetId, value) => {
     const targetCardNum = Number(value);
 
-    setSchedules(prev => {
-      const targetIndex = prev.findIndex(item => item.id === targetId);
-      if (targetIndex === -1) return prev;
-
-      return prev.map((item, idx) => {
-        if (item.id === targetId) return { ...item, cardTarget: targetCardNum };
-        if (idx > targetIndex && (!item.seat || item.seat.trim() === "")) {
-          return { ...item, cardTarget: targetCardNum };
-        }
-        return item;
-      });
+    const updated = schedules.map((item, idx) => {
+      const targetIndex = schedules.findIndex(s => s.id === targetId);
+      if (item.id === targetId) return { ...item, cardTarget: targetCardNum };
+      if (idx > targetIndex && (!item.seat || item.seat.trim() === "")) {
+        return { ...item, cardTarget: targetCardNum };
+      }
+      return item;
     });
+
+    setSchedules(updated);
+    const db = await initDB();
+    for (const item of updated) {
+      await db.put(STORE_NAME, item);
+    }
   };
 
   const handleAllSave = async () => {
@@ -302,13 +352,12 @@ export default function Mahagonny() {
       .catch(err => alert("복사 실패: " + err));
   };
 
-  // 📸 [흰 패딩 완벽 제거 & 지정 영역만 100% 캡처]
   const handleCaptureImage = async () => {
-    if (!captureAreaRef.current) return;
+    const targetEl = document.getElementById('mahagonny-capture-target');
+    if (!targetEl) return;
+
     try {
       setIsCapturing(true);
-
-      const targetEl = captureAreaRef.current;
 
       const canvas = await html2canvas(targetEl, {
         scale: 2,
@@ -317,12 +366,13 @@ export default function Mahagonny() {
         logging: false,
         scrollX: 0,
         scrollY: 0,
-        x: 0,
-        y: 0,
-        width: targetEl.clientWidth,
-        height: targetEl.clientHeight,
         onclone: (clonedDoc) => {
-          // oklab / oklch 에러 방지
+          const captureNode = clonedDoc.getElementById('mahagonny-capture-target');
+          if (captureNode) {
+            captureNode.style.margin = '0';
+            captureNode.style.borderRadius = '0';
+          }
+
           const allElements = clonedDoc.querySelectorAll('*');
           allElements.forEach((el) => {
             const computedStyle = window.getComputedStyle(el);
@@ -417,7 +467,7 @@ export default function Mahagonny() {
       setExtraCards(0);
       setCardCollapsedMap({});
       setMonthCollapsedMap({});
-      setCalendarCollapsedMap({ 11: false });
+      setCalendarCollapsedMap({ 11: false, 12: false });
       loadInitialData();
       alert('초기화되었습니다.');
     }
@@ -655,10 +705,10 @@ export default function Mahagonny() {
     });
   }, [schedules, searchActor]);
 
-  // 🪑 좌석 블록 렌더러 (입력 형식이 D12, D-12, d 12 등 무엇이든 완벽 매칭)
+  // 🪑 좌석 블록 렌더러
   const renderMahagonnySeating = () => {
     return Object.keys(mahagonnySeatingRows).map(row => (
-      <div key={row} className="flex items-center gap-0.5 md:gap-1 justify-center">
+      <div key={`row-${row}`} className="flex items-center gap-0.5 md:gap-1 justify-center">
         <span className="w-4 md:w-5 font-black text-fuchsia-400 text-center mr-0.5 md:mr-1 text-[11px] font-mono">{row}</span>
 
         {mahagonnySeatingRows[row].map((seatNumber, index) => {
@@ -666,13 +716,12 @@ export default function Mahagonny() {
             return <div key={`space-${row}-${index}`} className="w-[11px] md:w-[15px] h-[18px] md:h-[20px] flex-shrink-0 bg-transparent" />;
           }
 
-          // 💡 입력된 좌석에서 열(알파벳)과 번호(숫자)를 추출하여 정확히 비교
           const matchingShows = schedules.filter(s => {
             if (!s.seat) return false;
-            const clean = s.seat.toUpperCase().trim();
-            const match = clean.match(/^([A-S])\D*(\d+)$/);
-            if (!match) return false;
-            return match[1] === row && parseInt(match[2], 10) === seatNumber;
+            const clean = s.seat.toUpperCase().replace(/\s+/g, '').replace(/열|번/g, '');
+            const rowChar = clean.match(/[A-S]/)?.[0];
+            const numVal = parseInt(clean.match(/\d+/)?.[0] || '0', 10);
+            return rowChar === row && numVal === seatNumber;
           });
           const visitCount = matchingShows.length;
 
@@ -733,8 +782,14 @@ export default function Mahagonny() {
           <a href={FIRST_TICKET_LINK} target="_blank" rel="noopener noreferrer" className="px-3.5 py-2 bg-purple-950/70 hover:bg-purple-900 text-fuchsia-200 rounded-xl text-xs font-bold border border-purple-600/40 transition-all active:scale-95 flex items-center gap-1">
             <span>🎟️</span> 1차
           </a>
-          <a href={SEAT_MAP_NOTICE_LINK} target="_blank" rel="noopener noreferrer" className="px-3.5 py-2 mahagonny-btn-neon rounded-xl text-xs font-black transition-all active:scale-95 flex items-center gap-1">
-            <span>🪑</span> 좌석
+          <a href={SECOND_TICKET_LINK} target="_blank" rel="noopener noreferrer" className="px-3.5 py-2 bg-purple-950/70 hover:bg-purple-900 text-fuchsia-200 rounded-xl text-xs font-bold border border-purple-600/40 transition-all active:scale-95 flex items-center gap-1">
+            <span>🎟️</span> 2차
+          </a>
+          <a href={PROFILE1_LINK} target="_blank" rel="noopener noreferrer" className="px-3.5 py-2 mahagonny-btn-neon rounded-xl text-xs font-black transition-all active:scale-95 flex items-center gap-1">
+            <span>🎭</span> 프로필1
+          </a>
+          <a href={PROFILE2_LINK} target="_blank" rel="noopener noreferrer" className="px-3.5 py-2 mahagonny-btn-neon rounded-xl text-xs font-black transition-all active:scale-95 flex items-center gap-1">
+            <span>🎭</span> 프로필2
           </a>
           <a href={SEEYA_LINK} target="_blank" rel="noopener noreferrer" className="px-3.5 py-2 bg-indigo-950/70 hover:bg-indigo-900 text-indigo-200 rounded-xl text-xs font-bold border border-indigo-600/40 transition-all active:scale-95 flex items-center gap-1">
             <span>🔭</span> 시야
@@ -882,15 +937,15 @@ export default function Mahagonny() {
         </div>
       </section>
 
-      {/* 3️⃣ [월별 회차 스케줄] (캡처 대상 제외) */}
+      {/* 3️⃣ [월별 회차 스케줄 - 11월, 12월 표시] */}
       <main className="w-full flex flex-col gap-5 text-sm mb-5">
-        {[11].map(m => {
+        {[11, 12].map(m => {
           const monthSchedules = filteredSchedules.filter(item => item.month === m);
           if (monthSchedules.length === 0) return null;
           const isMonthCollapsed = Boolean(monthCollapsedMap[m]);
 
           return (
-            <div key={m} className="mahagonny-card overflow-hidden transition-all">
+            <div key={`month-schedule-${m}`} className="mahagonny-card overflow-hidden transition-all">
               <div
                 onClick={() => toggleMonthCollapse(m)}
                 className="p-3 bg-[#130d29]/90 text-fuchsia-300 font-black text-center text-xs tracking-widest uppercase flex items-center justify-center gap-2 cursor-pointer select-none hover:bg-purple-950 border-b border-purple-800/40"
@@ -991,9 +1046,9 @@ export default function Mahagonny() {
         })}
       </main>
 
-      {/* 🗓️ [월별 캘린더 뷰] (캡처 대상 제외) */}
+      {/* 🗓️ [월별 캘린더 뷰 - 11월, 12월 표시] */}
       <section className="w-full flex flex-col gap-4 mb-5">
-        {[11].map(m => {
+        {[11, 12].map(m => {
           const monthSchedules = filteredSchedules.filter(item => item.month === m);
           if (monthSchedules.length === 0) return null;
           const isCalendarCollapsed = Boolean(calendarCollapsedMap[m]);
@@ -1089,22 +1144,27 @@ export default function Mahagonny() {
         })}
       </section>
 
-      {/* 📸 [📸 이미지 캡처 대상: ✨ 정산 타이틀부터 좌석표까지만 ✨] */}
+      {/* 📸 [📸 캡처 대상: ID로 직접 잡아 흰 여백 100% 차단] */}
       <div 
-        ref={captureAreaRef} 
-        className="w-full flex flex-col items-center rounded-3xl"
-        style={{ backgroundColor: '#090614', padding: '16px', boxSizing: 'border-box' }}
+        id="mahagonny-capture-target" 
+        className="w-full flex flex-col items-center"
+        style={{ 
+          backgroundColor: '#090614', 
+          padding: '24px 16px', 
+          boxSizing: 'border-box',
+          width: '100%' 
+        }}
       >
 
         {/* 🏷️ 마하고니 정산 메인 타이틀 바 */}
-        <div className="w-full mahagonny-card py-3 px-4 mb-5 text-center shadow-md">
+        <div className="w-full mahagonny-card py-3.5 px-4 mb-4 text-center shadow-md border border-purple-800/40">
           <h2 className="text-base md:text-lg font-black text-white tracking-tight mahagonny-glow-text">
             ✨ 뮤지컬 마하고니 정산 ✨
           </h2>
         </div>
 
         {/* 4️⃣ [총 관람 합계] */}
-        <section className="w-full mahagonny-card p-4 flex justify-around text-center mb-5">
+        <section className="w-full mahagonny-card p-4 flex justify-around text-center mb-4 border border-purple-800/40">
           <div className="flex-1 border-r border-purple-800/40">
             <p className="text-xs font-black text-fuchsia-400">이진혁 배우 관람</p>
             <p className="text-2xl font-black mt-1 text-white">{leeJinHyukCount} <span className="text-xs font-bold text-purple-300/60">/ {totalLeeJinHyuk}회</span></p>
@@ -1116,7 +1176,7 @@ export default function Mahagonny() {
         </section>
 
         {/* 5️⃣ [페어 현황] */}
-        <section className="w-full mahagonny-card p-4 mb-5">
+        <section className="w-full mahagonny-card p-4 mb-4 border border-purple-800/40">
           <div className="flex items-center justify-between mb-3 border-b border-purple-800/40 pb-2">
             <h2 className="font-black text-xs md:text-sm text-fuchsia-300 flex items-center gap-1.5">
               <span>👥</span> {searchActor ? `'${searchActor}' 포함 페어 현황` : '전체 페어별 현황'}
@@ -1161,7 +1221,7 @@ export default function Mahagonny() {
         </section>
 
         {/* 6️⃣ [마하고니 단층 좌석 배치도 (A~S열)] */}
-        <section className="w-full mahagonny-card p-4 md:p-6 flex flex-col items-center">
+        <section className="w-full mahagonny-card p-4 md:p-6 flex flex-col items-center border border-purple-800/40">
           <div className="w-full flex justify-between items-center mb-3">
             <div className="py-1 px-4 mahagonny-btn-neon rounded-md font-black tracking-widest text-[11px]">S T A G E</div>
             <span className="text-[10px] text-fuchsia-300 font-bold">링크아트센터 드림1관 (A~S열)</span>
@@ -1188,7 +1248,7 @@ export default function Mahagonny() {
         </section>
 
       </div>
-      {/* 📸 [이미지 캡처 대상 끝] */}
+      {/* 📸 [캡처 대상 끝] */}
 
       {/* 💾 백업 / 복구 / 이미지 저장 바 */}
       <div className="w-full mahagonny-card p-4 flex items-center justify-between text-xs mt-6">

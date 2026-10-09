@@ -5,12 +5,13 @@ import { openDB } from 'idb';
 const FIRST_TICKET_LINK = "https://x.com/newpro_OI/status/2085603813692711207?s=20";
 const SECOND_TICKET_LINK = "https://x.com/newpro_OI/status/2090310432401789041?s=20";
 const THIRD_TICKET_LINK = "https://x.com/newpro_OI/status/2100143902783402408?s=20";
+const FOURTH_TICKET_LINK = "https://x.com/newpro_OI/status/2107689906038554808?s=20";
 const NUMBER_LINK = "https://x.com/newpro_OI/status/2099732629168029882?s=20";
 const REVISIT_BENEFIT_LINK = "https://x.com/newpro_OI/status/2084874609149784274?s=20";
-const SEAT_CHART_LINK = "https://x.com/newpro_OI/status/2084874555882082479?s=20";
 const SEEYA_LINK = "https://musicalseeya.com/seeyatheater/25";
 
 const EVENT_NOTICE_LINK1 = "https://x.com/newpro_OI/status/2085603813692711207?s=20";
+const EVENT_NOTICE_LINK2 = "https://x.com/newpro_OI/status/2090310432401789041?s=20";
 
 // 🎁 일자별 이벤트 및 스페셜 커튼콜/특전 넘버 정의
 const getEventForDate = (dateStr, timeStr) => {
@@ -45,6 +46,17 @@ const getEventForDate = (dateStr, timeStr) => {
     const end = dateStr <= "09.30" ? "09.30" : "10.05";
     return { name: "미공개 프로필컷 엽서 증정 위크", startDate: start, endDate: end, color: "bg-amber-200 text-amber-950", link: EVENT_NOTICE_LINK1, isTriple: false };
   }
+
+  // 🎁 10월 7일 - 10월 11일: 포토카드 증정
+  if (dateStr >= "10.07" && dateStr <= "10.11") {
+    return { name: "포토카드 증정", startDate: "10.07", endDate: "10.11", color: "bg-purple-200 text-purple-950", link: EVENT_NOTICE_LINK2, isTriple: false };
+  }
+
+  // 🎁 10월 13일 - 10월 18일: 종이 증표 팔찌 증정
+  if (dateStr >= "10.13" && dateStr <= "10.18") {
+    return { name: "종이 증표 팔찌 증정", startDate: "10.13", endDate: "10.18", color: "bg-emerald-200 text-emerald-950", link: EVENT_NOTICE_LINK2, isTriple: false };
+  }
+
   return null;
 };
 
@@ -65,7 +77,7 @@ const calcDiscountPrice = (discountKey) => {
   return `${discounted.toLocaleString()}원`;
 };
 
-// 📅 스케줄 기본 데이터
+// 📅 스케줄 기본 데이터 (캐스팅 변경 사항 반영 완료)
 const defaultInitialData = [
   { id: 1, month: 9, date: "09.08", day: "화", time: "20:00", actor1: "박규원", actor2: "양지원", seat: "", cardTarget: 1 },
   { id: 2, month: 9, date: "09.09", day: "수", time: "20:00", actor1: "변희상", actor2: "곽민수", seat: "", cardTarget: 1 },
@@ -86,28 +98,28 @@ const defaultInitialData = [
   { id: 17, month: 9, date: "09.23", day: "수", time: "16:00", actor1: "변희상", actor2: "곽민수", seat: "", cardTarget: 1 },
   { id: 18, month: 9, date: "09.23", day: "수", time: "20:00", actor1: "박규원", actor2: "김경록", seat: "", cardTarget: 1 },
   { id: 19, month: 9, date: "09.24", day: "목", time: "14:00", actor1: "김지온", actor2: "곽민수", seat: "", cardTarget: 1 },
-  { id: 20, month: 9, date: "09.24", day: "목", time: "18:00", actor1: "변희상", actor2: "김경록", seat: "", cardTarget: 1 },
+  { id: 20, month: 9, date: "09.24", day: "목", time: "18:00", actor1: "변희상", actor2: "김경록", seat: "", cardTarget: 1 }, // 변경: 양지원 -> 김경록
   { id: 21, month: 9, date: "09.25", day: "금", time: "14:00", actor1: "김지온", actor2: "김경록", seat: "", cardTarget: 1 },
   { id: 22, month: 9, date: "09.26", day: "토", time: "14:00", actor1: "변희상", actor2: "곽민수", seat: "", cardTarget: 1 },
-  { id: 23, month: 9, date: "09.26", day: "토", time: "18:00", actor1: "박규원", actor2: "김경록", seat: "", cardTarget: 1 },
+  { id: 23, month: 9, date: "09.26", day: "토", time: "18:00", actor1: "박규원", actor2: "김경록", seat: "", cardTarget: 1 }, // 변경: 양지원 -> 김경록
   { id: 24, month: 9, date: "09.27", day: "일", time: "14:00", actor1: "김지온", actor2: "곽민수", seat: "", cardTarget: 1 },
   { id: 25, month: 9, date: "09.27", day: "일", time: "18:00", actor1: "변희상", actor2: "김경록", seat: "", cardTarget: 1 },
   { id: 26, month: 9, date: "09.29", day: "화", time: "20:00", actor1: "박규원", actor2: "곽민수", seat: "", cardTarget: 1 },
   { id: 27, month: 9, date: "09.30", day: "수", time: "16:00", actor1: "변희상", actor2: "김경록", seat: "", cardTarget: 1 },
-  { id: 28, month: 9, date: "09.30", day: "수", time: "20:00", actor1: "김지온", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 28, month: 9, date: "09.30", day: "수", time: "20:00", actor1: "김지온", actor2: "곽민수", seat: "", cardTarget: 1 }, // 변경: 양지원 -> 곽민수
   { id: 29, month: 10, date: "10.01", day: "목", time: "20:00", actor1: "박규원", actor2: "김경록", seat: "", cardTarget: 1 },
-  { id: 30, month: 10, date: "10.02", day: "금", time: "20:00", actor1: "김지온", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 30, month: 10, date: "10.02", day: "금", time: "20:00", actor1: "김지온", actor2: "김경록", seat: "", cardTarget: 1 }, // 변경: 곽민수 -> 김경록
   { id: 31, month: 10, date: "10.03", day: "토", time: "14:00", actor1: "변희상", actor2: "김경록", seat: "", cardTarget: 1 },
   { id: 32, month: 10, date: "10.03", day: "토", time: "18:00", actor1: "김지온", actor2: "양지원", seat: "", cardTarget: 1 },
-  { id: 33, month: 10, date: "10.04", day: "일", time: "14:00", actor1: "박규원", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 33, month: 10, date: "10.04", day: "일", time: "14:00", actor1: "박규원", actor2: "양지원", seat: "", cardTarget: 1 }, // 변경: 곽민수 -> 양지원
   { id: 34, month: 10, date: "10.04", day: "일", time: "18:00", actor1: "변희상", actor2: "김경록", seat: "", cardTarget: 1 },
-  { id: 35, month: 10, date: "10.05", day: "월", time: "14:00", actor1: "박규원", actor2: "양지원", seat: "", cardTarget: 1 },
-  { id: 36, month: 10, date: "10.05", day: "월", time: "18:00", actor1: "김지온", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 35, month: 10, date: "10.05", day: "월", time: "14:00", actor1: "박규원", actor2: "김경록", seat: "", cardTarget: 1 }, // 변경: 양지원 -> 김경록
+  { id: 36, month: 10, date: "10.05", day: "월", time: "18:00", actor1: "김지온", actor2: "김경록", seat: "", cardTarget: 1 },
   { id: 37, month: 10, date: "10.07", day: "수", time: "16:00", actor1: "박규원", actor2: "양지원", seat: "", cardTarget: 1 },
   { id: 38, month: 10, date: "10.07", day: "수", time: "20:00", actor1: "변희상", actor2: "김경록", seat: "", cardTarget: 1 },
-  { id: 39, month: 10, date: "10.08", day: "목", time: "20:00", actor1: "박규원", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 39, month: 10, date: "10.08", day: "목", time: "20:00", actor1: "박규원", actor2: "김경록", seat: "", cardTarget: 1 }, // 변경: 곽민수 -> 김경록
   { id: 40, month: 10, date: "10.09", day: "금", time: "14:00", actor1: "김지온", actor2: "김경록", seat: "", cardTarget: 1 },
-  { id: 41, month: 10, date: "10.09", day: "금", time: "18:00", actor1: "변희상", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 41, month: 10, date: "10.09", day: "금", time: "18:00", actor1: "변희상", actor2: "양지원", seat: "", cardTarget: 1 }, // 변경: 곽민수 -> 양지원
   { id: 42, month: 10, date: "10.10", day: "토", time: "14:00", actor1: "김지온", actor2: "김경록", seat: "", cardTarget: 1 },
   { id: 43, month: 10, date: "10.10", day: "토", time: "18:00", actor1: "변희상", actor2: "양지원", seat: "", cardTarget: 1 },
   { id: 44, month: 10, date: "10.11", day: "일", time: "14:00", actor1: "김지온", actor2: "곽민수", seat: "", cardTarget: 1 },
@@ -139,7 +151,33 @@ const defaultInitialData = [
   { id: 70, month: 10, date: "10.31", day: "토", time: "14:00", actor1: "변희상", actor2: "곽민수", seat: "", cardTarget: 1 },
   { id: 71, month: 10, date: "10.31", day: "토", time: "18:00", actor1: "김지온", actor2: "양지원", seat: "", cardTarget: 1 },
   { id: 72, month: 11, date: "11.01", day: "일", time: "14:00", actor1: "박규원", actor2: "곽민수", seat: "", cardTarget: 1 },
-  { id: 73, month: 11, date: "11.01", day: "일", time: "18:00", actor1: "변희상", actor2: "김경록", seat: "", cardTarget: 1 }
+  { id: 73, month: 11, date: "11.01", day: "일", time: "18:00", actor1: "변희상", actor2: "김경록", seat: "", cardTarget: 1 },
+  { id: 74, month: 11, date: "11.03", day: "화", time: "20:00", actor1: "김지온", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 75, month: 11, date: "11.04", day: "수", time: "16:00", actor1: "박규원", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 76, month: 11, date: "11.04", day: "수", time: "20:00", actor1: "변희상", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 77, month: 11, date: "11.05", day: "목", time: "20:00", actor1: "박규원", actor2: "김경록", seat: "", cardTarget: 1 },
+  { id: 78, month: 11, date: "11.06", day: "금", time: "20:00", actor1: "김지온", actor2: "김경록", seat: "", cardTarget: 1 },
+  { id: 79, month: 11, date: "11.07", day: "토", time: "14:00", actor1: "변희상", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 80, month: 11, date: "11.07", day: "토", time: "18:00", actor1: "김지온", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 81, month: 11, date: "11.08", day: "일", time: "14:00", actor1: "박규원", actor2: "김경록", seat: "", cardTarget: 1 },
+  { id: 82, month: 11, date: "11.08", day: "일", time: "18:00", actor1: "김지온", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 83, month: 11, date: "11.10", day: "화", time: "20:00", actor1: "변희상", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 84, month: 11, date: "11.11", day: "수", time: "16:00", actor1: "박규원", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 85, month: 11, date: "11.11", day: "수", time: "20:00", actor1: "김지온", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 86, month: 11, date: "11.12", day: "목", time: "20:00", actor1: "박규원", actor2: "김경록", seat: "", cardTarget: 1 },
+  { id: 87, month: 11, date: "11.13", day: "금", time: "20:00", actor1: "변희상", actor2: "김경록", seat: "", cardTarget: 1 },
+  { id: 88, month: 11, date: "11.14", day: "토", time: "14:00", actor1: "김지온", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 89, month: 11, date: "11.14", day: "토", time: "18:00", actor1: "변희상", actor2: "김경록", seat: "", cardTarget: 1 },
+  { id: 90, month: 11, date: "11.15", day: "일", time: "14:00", actor1: "김지온", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 91, month: 11, date: "11.15", day: "일", time: "18:00", actor1: "박규원", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 92, month: 11, date: "11.17", day: "화", time: "20:00", actor1: "박규원", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 93, month: 11, date: "11.18", day: "수", time: "16:00", actor1: "변희상", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 94, month: 11, date: "11.18", day: "수", time: "20:00", actor1: "김지온", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 95, month: 11, date: "11.19", day: "목", time: "20:00", actor1: "김지온", actor2: "김경록", seat: "", cardTarget: 1 },
+  { id: 96, month: 11, date: "11.20", day: "금", time: "20:00", actor1: "박규원", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 97, month: 11, date: "11.21", day: "토", time: "14:00", actor1: "김지온", actor2: "양지원", seat: "", cardTarget: 1 },
+  { id: 98, month: 11, date: "11.21", day: "토", time: "18:00", actor1: "변희상", actor2: "곽민수", seat: "", cardTarget: 1 },
+  { id: 99, month: 11, date: "11.22", day: "일", time: "14:00", actor1: "박규원", actor2: "김경록", seat: "", cardTarget: 1 }
 ];
 
 // 🪑 좌석 배치도
@@ -158,7 +196,7 @@ const othelloSeatRows = {
   L: [1, 2, 3, 4, 5, 6, null, 7, 8, 9, 10, 11, 12, 13, 14, null, 15, 16, 17, 18, 19, 20]
 };
 
-const DB_NAME = 'MusicalSchedulerDB_OthelloIago_FullFinal_v1';
+const DB_NAME = 'MusicalSchedulerDB_OthelloIago_FullFinal_v3';
 const STORE_NAME = 'schedules';
 const SETTING_STORE = 'settings';
 const DB_VERSION = 1;
@@ -706,20 +744,20 @@ export default function OthelloIago() {
             <span>🎟️</span> 3차
           </a>
           <a
+            href={FOURTH_TICKET_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3 py-1.5 bg-gradient-to-r from-red-900 to-red-950 hover:from-red-800 hover:to-red-900 text-amber-100 rounded-xl text-xs font-bold shadow-lg border border-red-700 transition-all active:scale-95 flex items-center gap-1"
+          >
+            <span>🎟️</span> 4차
+          </a>
+          <a
             href={NUMBER_LINK}
             target="_blank"
             rel="noopener noreferrer"
             className="px-3.5 py-2 bg-gradient-to-r from-[#800F1A] to-[#450208] hover:from-[#9E1B28] hover:to-[#570710] text-[#FFDF73] rounded-xl text-xs font-black shadow-lg border border-[#C92A38] transition-all active:scale-95 flex items-center gap-1"
           >
             <span>🎵</span> 넘버
-          </a>
-          <a
-            href={SEAT_CHART_LINK}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-3.5 py-2 bg-[#171415] hover:bg-[#262123] text-stone-300 rounded-xl text-xs font-bold shadow-md flex items-center gap-1 border border-stone-700 transition-all active:scale-95"
-          >
-            <span>🗺️</span> 좌석
           </a>
           <a
             href={SEEYA_LINK}
