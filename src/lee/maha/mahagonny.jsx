@@ -6,6 +6,7 @@ import './mahagonny.css';
 // 🔗 외부 링크 설정
 const FIRST_TICKET_LINK = "https://x.com/m_mahagonny/status/2102578699191394393?s=20";
 const SECOND_TICKET_LINK = "https://x.com/m_mahagonny/status/2107637035645149509?s=20";
+const THIRD_TICKET_LINK = "https://x.com/m_mahagonny/status/2118207144067760380?a=MszsxAgSJnXlfeu3tnk&s=20";
 const PROFILE1_LINK = "https://x.com/m_mahagonny/status/2097853005722943604?s=20";
 const PROFILE2_LINK = "https://x.com/m_mahagonny/status/2105123865794101315?s=20";
 const REVISIT_BENEFIT_LINK = "https://x.com/m_mahagonny/status/2100842809024823529?s=20";
@@ -106,7 +107,37 @@ const defaultInitialData = [
   { id: 45, month: 12, date: "12.05", day: "토", time: "15:00", actor1: "최재웅", actor2: "이율", chorus: ["김한결", "마이삭", "한비", "최민경", "◆"], seat: "", cardTarget: 1 },
   { id: 46, month: 12, date: "12.05", day: "토", time: "19:00", actor1: "김찬종", actor2: "온주완", chorus: ["김한결", "마이삭", "한비", "최민경", "◆"], seat: "", cardTarget: 1 },
   { id: 47, month: 12, date: "12.06", day: "일", time: "14:00", actor1: "최재웅", actor2: "정민", chorus: ["♠", "마이삭", "한비", "최민경", "박민주"], seat: "", cardTarget: 1 },
-  { id: 48, month: 12, date: "12.06", day: "일", time: "18:00", actor1: "김찬종", actor2: "이율", chorus: ["♠", "마이삭", "한비", "최민경", "박민주"], seat: "", cardTarget: 1 }
+  { id: 48, month: 12, date: "12.06", day: "일", time: "18:00", actor1: "김찬종", actor2: "이율", chorus: ["♠", "마이삭", "한비", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 49, month: 12, date: "12.08", day: "화", time: "20:00", actor1: "임예진", actor2: "이지연", chorus: ["김한결", "마이삭", "♠", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 50, month: 12, date: "12.09", day: "수", time: "16:00", actor1: "선한국", actor2: "온주완", chorus: ["김한결", "마이삭", "한비", "최민경"], seat: "", cardTarget: 1 },
+  { id: 51, month: 12, date: "12.09", day: "수", time: "20:00", actor1: "이진혁", actor2: "이종석", chorus: ["김한결", "마이삭", "한비", "최민경", "◆"], seat: "", cardTarget: 1 },
+  { id: 52, month: 12, date: "12.10", day: "목", time: "16:00", actor1: "최재웅", actor2: "이율", chorus: ["김한결", "♣", "한비", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 53, month: 12, date: "12.10", day: "목", time: "20:00", actor1: "김찬종", actor2: "온주완", chorus: ["김한결", "♣", "한비", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 54, month: 12, date: "12.11", day: "금", time: "20:00", actor1: "선한국", actor2: "정민", chorus: ["♠", "마이삭", "한비", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 55, month: 12, date: "12.12", day: "토", time: "15:00", actor1: "김찬종", actor2: "이율", chorus: ["김한결", "마이삭", "♠", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 56, month: 12, date: "12.12", day: "토", time: "19:00", actor1: "최재웅", actor2: "이종석", chorus: ["김한결", "마이삭", "♠", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 57, month: 12, date: "12.13", day: "일", time: "14:00", actor1: "임예진", actor2: "이지연", chorus: ["김한결", "마이삭", "한비", "♥", "박민주"], seat: "", cardTarget: 1 },
+  { id: 58, month: 12, date: "12.13", day: "일", time: "18:00", actor1: "이진혁", actor2: "정민", chorus: ["김한결", "마이삭", "한비", "♥", "박민주"], seat: "", cardTarget: 1 },
+  { id: 59, month: 12, date: "12.15", day: "화", time: "20:00", actor1: "최재웅", actor2: "이종석", chorus: ["김한결", "마이삭", "♠", "최민경"], seat: "", cardTarget: 1 },
+  { id: 60, month: 12, date: "12.16", day: "수", time: "16:00", actor1: "김찬종", actor2: "온주완", chorus: ["김한결", "마이삭", "한비", "♥", "박민주"], seat: "", cardTarget: 1 },
+  { id: 61, month: 12, date: "12.16", day: "수", time: "20:00", actor1: "이진혁", actor2: "이율", chorus: ["김한결", "마이삭", "한비", "♥", "박민주"], seat: "", cardTarget: 1 },
+  { id: 62, month: 12, date: "12.17", day: "목", time: "16:00", actor1: "선한국", actor2: "정민", chorus: ["김한결", "마이삭", "한비", "최민경"], seat: "", cardTarget: 1 },
+  { id: 63, month: 12, date: "12.17", day: "목", time: "20:00", actor1: "임예진", actor2: "이지연", chorus: ["김한결", "마이삭", "한비", "최민경"], seat: "", cardTarget: 1 },
+  { id: 64, month: 12, date: "12.18", day: "금", time: "20:00", actor1: "최재웅", actor2: "이율", chorus: ["♠", "마이삭", "한비", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 65, month: 12, date: "12.19", day: "토", time: "15:00", actor1: "이진혁", actor2: "이종석", chorus: ["김한결", "♣", "한비", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 66, month: 12, date: "12.19", day: "토", time: "19:00", actor1: "김찬종", actor2: "정민", chorus: ["김한결", "♣", "한비", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 67, month: 12, date: "12.20", day: "일", time: "14:00", actor1: "선한국", actor2: "온주완", chorus: ["김한결", "마이삭", "한비", "최민경"], seat: "", cardTarget: 1 },
+  { id: 68, month: 12, date: "12.20", day: "일", time: "18:00", actor1: "임예진", actor2: "이지연", chorus: ["김한결", "마이삭", "한비", "최민경"], seat: "", cardTarget: 1 },
+  { id: 69, month: 12, date: "12.22", day: "화", time: "20:00", actor1: "이진혁", actor2: "정민", chorus: ["김한결", "마이삭", "한비", "♥", "박민주"], seat: "", cardTarget: 1 },
+  { id: 70, month: 12, date: "12.23", day: "수", time: "16:00", actor1: "최재웅", actor2: "이율", chorus: ["김한결", "마이삭", "한비", "최민경"], seat: "", cardTarget: 1 },
+  { id: 71, month: 12, date: "12.23", day: "수", time: "20:00", actor1: "임예진", actor2: "이종석", chorus: ["김한결", "마이삭", "한비"], seat: "", cardTarget: 1 },
+  { id: 72, month: 12, date: "12.24", day: "목", time: "20:00", actor1: "선한국", actor2: "이지연", chorus: ["김한결", "♠", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 73, month: 12, date: "12.25", day: "금", time: "14:00", actor1: "임예진", actor2: "온주완", chorus: ["김한결", "마이삭", "한비", "♥", "박민주"], seat: "", cardTarget: 1 },
+  { id: 74, month: 12, date: "12.25", day: "금", time: "18:00", actor1: "김찬종", actor2: "이율", chorus: ["김한결", "마이삭", "한비", "♥"], seat: "", cardTarget: 1 },
+  { id: 75, month: 12, date: "12.26", day: "토", time: "15:00", actor1: "선한국", actor2: "정민", chorus: ["♠", "마이삭", "한비", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 76, month: 12, date: "12.26", day: "토", time: "19:00", actor1: "이진혁", actor2: "이지연", chorus: ["♠", "마이삭", "한비", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 77, month: 12, date: "12.27", day: "일", time: "14:00", actor1: "최재웅", actor2: "이종석", chorus: ["김한결", "♣", "한비", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 78, month: 12, date: "12.27", day: "일", time: "18:00", actor1: "김찬종", actor2: "온주완", chorus: ["김한결", "♣", "한비", "최민경", "박민주"], seat: "", cardTarget: 1 }
 ];
 
 // 🪑 링크아트센터 드림1관 실제 배치도 (A~S열)
@@ -784,6 +815,9 @@ export default function Mahagonny() {
           </a>
           <a href={SECOND_TICKET_LINK} target="_blank" rel="noopener noreferrer" className="px-3.5 py-2 bg-purple-950/70 hover:bg-purple-900 text-fuchsia-200 rounded-xl text-xs font-bold border border-purple-600/40 transition-all active:scale-95 flex items-center gap-1">
             <span>🎟️</span> 2차
+          </a>
+          <a href={THIRD_TICKET_LINK} target="_blank" rel="noopener noreferrer" className="px-3.5 py-2 bg-purple-950/70 hover:bg-purple-900 text-fuchsia-200 rounded-xl text-xs font-bold border border-purple-600/40 transition-all active:scale-95 flex items-center gap-1">
+            <span>🎟️</span> 3차
           </a>
           <a href={PROFILE1_LINK} target="_blank" rel="noopener noreferrer" className="px-3.5 py-2 mahagonny-btn-neon rounded-xl text-xs font-black transition-all active:scale-95 flex items-center gap-1">
             <span>🎭</span> 프로필1
