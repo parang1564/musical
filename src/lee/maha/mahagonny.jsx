@@ -100,7 +100,7 @@ const defaultInitialData = [
   { id: 38, month: 11, date: "11.29", day: "일", time: "18:00", actor1: "임예진", actor2: "이지연", chorus: ["♠", "마이삭", "한비", "최민경", "박민주"], seat: "", cardTarget: 1 },
   { id: 39, month: 12, date: "12.01", day: "화", time: "20:00", actor1: "선한국", actor2: "이종석", chorus: ["김한결", "마이삭", "★", "최민경", "박민주"], seat: "", cardTarget: 1 },
   { id: 40, month: 12, date: "12.02", day: "수", time: "16:00", actor1: "임예진", actor2: "이지연", chorus: ["김한결", "♣", "한비", "최민경", "박민주"], seat: "", cardTarget: 1 },
-  { id: 41, month: 12, date: "12.02", day: "수", time: "20:00", actor1: "이진혁", actor2: "온주완", chorus: ["김한결", "♣", "한비", "최민경", "박민주"], seat: "", cardTarget: 1 },
+  { id: 41, month: 12, date: "12.02", day: "수", time: "20:00", actor1: "이진혁", actor2: "온주완", chorus: ["김한결", "마이삭", "한비", "최민경", "◆"], seat: "", cardTarget: 1 },
   { id: 42, month: 12, date: "12.03", day: "목", time: "20:00", actor1: "선한국", actor2: "정민", chorus: ["김한결", "마이삭", "★", "최민경", "박민주"], seat: "", cardTarget: 1 },
   { id: 43, month: 12, date: "12.04", day: "금", time: "16:00", actor1: "이진혁", actor2: "이종석", chorus: ["김한결", "마이삭", "한비", "♥", "박민주"], seat: "", cardTarget: 1 },
   { id: 44, month: 12, date: "12.04", day: "금", time: "20:00", actor1: "임예진", actor2: "이지연", chorus: ["김한결", "마이삭", "한비", "♥", "박민주"], seat: "", cardTarget: 1 },
